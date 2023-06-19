@@ -15,7 +15,7 @@ jobs:
       - name: get code
         run: |
           git clone https://github.com/SagerNet/sing-box
-          cp sing-box/* ./
+          cp -r sing-box/* ./
           rm -rf sing-box
 
       - name: Set up Go
