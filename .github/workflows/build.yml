@@ -21,7 +21,7 @@ jobs:
       - name: Build
         run: |
             go install -v -tags with_gvisor,with_quic,with_dhcp,with_wireguard,with_utls,with_reality_server,with_acme github.com/sagernet/sing-box/cmd/sing-box@latest
-            ls /__t/go/1.20.5/x64/bin
+            find / -name "*sing*"
 
     #   - name: Upload binaries to release
     #     uses: svenstaro/upload-release-action@v2
