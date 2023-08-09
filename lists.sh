@@ -38,7 +38,7 @@ curl -LJ https://raw.githubusercontent.com/dnswarden/blocklist-staging/main/whit
 curl -LJ https://raw.githubusercontent.com/hagezi/dns-blocklists/main/whitelist.txt >> 1.txt
 sed -i '/^#/d' 1.txt
 sed -i 's/ .*//' 1.txt
-awk '{gsub(/^[[:space:]]+|[[:space:]]+$/, ""); if (length > 0) print $0}' 2.txt > temp.txt && mv temp.txt 1.txt
+awk '{gsub(/^[[:space:]]+|[[:space:]]+$/, ""); if (length > 0) print $0}' 1.txt > temp.txt && mv temp.txt 1.txt
 sed -i 's/#.*//' 1.txt
 input_file="1.txt"
 output_file="whitelist.txt"
