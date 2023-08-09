@@ -10,7 +10,7 @@ jobs:
       - name: Get project dependencies
         run: |
           apt update
-          apt install -y ca-certificates git
+          apt install -y ca-certificates git curl gawk awk
 
       - name: get code
         run: |
