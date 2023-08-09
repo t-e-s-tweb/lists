@@ -31,11 +31,11 @@ connectIPVersion: v4
 blocking:
   blackLists:
     ads:
-      - https://github.com/shahidcodes/firebog-ticked-list/releases/latest/download/ads.txt
+      - https://github.com/t-e-s-tweb/lists/releases/download/main/blocklist.txt
       - |  
   whiteLists:
      ads:
-      - https://raw.githubusercontent.com/hagezi/dns-blocklists/main/whitelist.txt
+      - https://github.com/t-e-s-tweb/lists/releases/download/main/whitelist.txt
       - |
   clientGroupsBlock:
     default:
