@@ -52,7 +52,7 @@ blocking:
     # default: blocking failOnError fast
     strategy: fast
     # default: 5 -1 disable
-    maxErrorsPerSource: 5
+    maxErrorsPerSource: -1
 
 caching:
   minTime: 5m
