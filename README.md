@@ -1,1 +1,1 @@
-# singbox-build
+Wildcard to Regex
