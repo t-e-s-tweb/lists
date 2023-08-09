@@ -10,7 +10,7 @@ jobs:
       - name: Get project dependencies
         run: |
           apt update
-          apt install -y ca-certificates git curl gawk awk
+          apt install -y ca-certificates git curl gawk 1:4.1.4+dfsg-1build1
 
       - name: get code
         run: |
@@ -27,7 +27,7 @@ jobs:
       - name: Upload binaries to release
         uses: svenstaro/upload-release-action@v2
         with:
-          repo_token: ${{ secrets.PAT }}
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: ./*.*
           tag: ${{ github.ref }}
           overwrite: true
