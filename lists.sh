@@ -93,5 +93,5 @@ awk -v regex1="$(sed 's/\\/\\\\/g' "$regex_output_file1" 2>/dev/null)" -v regex2
     }
     { print }
 ' "$input_file" > temp_file && mv temp_file config.yml && echo "Processed regex lines have been inserted in $input_file"
-awk '!seen[$0]++' blocklist.txt > temp.txt && mv temp.txt blocklist.txt
-awk '!seen[$0]++' whitelist.txt > temp.txt && mv temp.txt whitelist.txt
+awk '!seen[$0]++' blocklist.txt > temp2.txt && mv temp2.txt blocklist.txt
+awk '!seen[$0]++' whitelist.txt > temp1.txt && mv temp1.txt whitelist.txt
