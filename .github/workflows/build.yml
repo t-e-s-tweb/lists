@@ -10,7 +10,7 @@ jobs:
       - name: Get project dependencies
         run: |
           apt update
-          apt install -y ca-certificates git curl gawk 1:4.1.4+dfsg-1build1
+          apt install -y ca-certificates git curl
 
       - name: get code
         run: |
