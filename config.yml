@@ -1,0 +1,120 @@
+upstreams:
+  groups:
+    default:
+    - tcp-tls:8.8.4.4
+    - https://8.8.4.4/dns-query
+    - tcp-tls:8.8.8.8
+    - https://8.8.8.8/dns-query
+    - tcp-tls:dns.google
+    - https://dns.google/dns-query
+    - tcp-tls:9.9.9.10
+    - https://9.9.9.10/dns-query
+    - https://dns10.quad9.net/dns-query
+    - tcp-tls:1.1.1.1
+    - https://1.1.1.1/dns-query
+    - tcp-tls:1.0.0.1
+    - https://1.0.0.1/dns-query
+    - https://cloudflare-dns.com/dns-query
+    - https://mozilla.cloudflare-dns.com/dns-query
+    - tcp-tls:open.dns0.eu
+    - https://open.dns0.eu/dns-query
+    - https://dns.dnswarden.com/uncensored
+    - tcp-tls:ordns.he.net
+    - https://ordns.he.net/dns-query
+  timeout: 2s
+
+startVerifyUpstream: false
+
+# accepted: dual, v4, v6
+connectIPVersion: v4
+
+blocking:
+  blackLists:
+    ads:
+      - https://github.com/shahidcodes/firebog-ticked-list/releases/latest/download/ads.txt
+      - |  
+  whiteLists:
+     ads:
+      - https://raw.githubusercontent.com/hagezi/dns-blocklists/main/whitelist.txt
+      - |
+  clientGroupsBlock:
+    default:
+      - ads
+  blockType: zeroIp
+  blockTTL: 30m
+  loading:
+    refreshPeriod: 24h
+    downloads:
+      timeout: 120s
+      attempts: 5
+      cooldown: 10s
+    concurrency: 1
+    # default: blocking failOnError fast
+    strategy: fast
+    # default: 5 -1 disable
+    maxErrorsPerSource: 5
+
+caching:
+  minTime: 5m
+  maxTime: 30m
+  maxItemsCount: 10000
+  prefetching: true
+  prefetchExpires: 2h
+  prefetchThreshold: 5
+  prefetchMaxItemsCount: 2000
+  cacheTimeNegative: 30m
+
+# optional: Mininal TLS version that the DoH and DoT server will use
+minTlsServeVersion: 1.2
+
+# if https port > 0: path to cert and key file for SSL encryption. if not set, self-signed certificate will be generated
+#certFile: server.crt
+#keyFile: server.key
+
+# optional: use these DNS servers to resolve blacklist urls and upstream DNS servers. It is useful if no system DNS resolver is configured, and/or to encrypt the bootstrap queries.
+bootstrapDns:
+  - tcp+udp:1.1.1.1
+  - https://1.1.1.1/dns-query
+  - upstream: https://dns.digitale-gesellschaft.ch/dns-query
+    ips:
+      - 185.95.218.42
+  - upstream: https://dns.quad9.net/dns-query
+    ips:
+      - 9.9.9.9
+      - 149.112.112.112
+  - upstream: https://dns.google/dns-query
+    ips:
+      - 8.8.8.8
+      - 8.8.4.4
+
+# optional: return NXDOMAIN for queries that are not FQDNs.
+fqdnOnly:
+  # default: false
+  enable: false
+
+ports:
+  dns: 3000
+ # tls: 853
+#  https: 443
+  http: 8100
+
+log:
+  # optional: Log level (one from debug, info, warn, error). Default: info
+  level: error
+  # optional: Log format (text or json). Default: text
+  format: text
+  # optional: log timestamps. Default: true
+  timestamp: false
+  # optional: obfuscate log output (replace all alphanumeric characters with *) for user sensitive data like request domains or responses to increase privacy. Default: false
+  privacy: true
+
+# optional: add EDE error codes to dns response
+ede:
+  # enabled if true, Default: false
+  enable: false
+
+# optional: configure optional Special Use Domain Names (SUDN)
+specialUseDomains:
+  # optional: block recomended private TLDs
+  # default: true
+  rfc6762-appendixG: true
