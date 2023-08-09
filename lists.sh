@@ -6,7 +6,7 @@ curl -LJ https://raw.githubusercontent.com/ShadowWhisperer/BlockLists/master/RAW
 curl -LJ https://github.com/shahidcodes/firebog-ticked-list/releases/latest/download/ads.txt >> 2.txt
 sed -i '/^#/d' 2.txt
 sed -i 's/ .*//' 2.txt
-gawk -i inplace '{gsub(/^[[:space:]]+|[[:space:]]+$/, ""); if (length > 0) print $0 }' 2.txt
+awk '{gsub(/^[[:space:]]+|[[:space:]]+$/, ""); if (length > 0) print $0}' 2.txt > temp.txt && mv temp.txt 2.txt
 sed -i 's/#.*//' 2.txt
 input_file="2.txt"
 output_file="blocklist.txt"
@@ -38,7 +38,7 @@ curl -LJ https://raw.githubusercontent.com/dnswarden/blocklist-staging/main/whit
 curl -LJ https://raw.githubusercontent.com/hagezi/dns-blocklists/main/whitelist.txt >> 1.txt
 sed -i '/^#/d' 1.txt
 sed -i 's/ .*//' 1.txt
-gawk -i inplace '{gsub(/^[[:space:]]+|[[:space:]]+$/, ""); if (length > 0) print $0 }' 1.txt
+awk '{gsub(/^[[:space:]]+|[[:space:]]+$/, ""); if (length > 0) print $0}' 2.txt > temp.txt && mv temp.txt 1.txt
 sed -i 's/#.*//' 1.txt
 input_file="1.txt"
 output_file="whitelist.txt"
@@ -93,3 +93,5 @@ awk -v regex1="$(sed 's/\\/\\\\/g' "$regex_output_file1" 2>/dev/null)" -v regex2
     }
     { print }
 ' "$input_file" > temp_file && mv temp_file config.yml && echo "Processed regex lines have been inserted in $input_file"
+awk '!seen[$0]++' blocklist.txt > temp.txt && mv temp.txt blocklist.txt
+awk '!seen[$0]++' whitelist.txt > temp.txt && mv temp.txt whitelist.txt
