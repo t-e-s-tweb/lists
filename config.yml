@@ -45,7 +45,7 @@ blocking:
   loading:
     refreshPeriod: 24h
     downloads:
-      timeout: 120s
+      timeout: 600s
       attempts: 5
       cooldown: 10s
     concurrency: 1
