@@ -7,6 +7,10 @@ mv ./upx-4.1.0-amd64_linux/upx .
 rm -rf upx-4.1.0-amd64_linux.tar.xz
 rm -rf upx-4.1.0-amd64_linux
 
+wget -N https://go.dev/dl/go1.20.4.linux-amd64.tar.gz
+rm -rf /usr/local/go && tar -C /usr/local -xzf go1.20.4.linux-amd64.tar.gz
+export PATH=$PATH:/usr/local/go/bin
+
 git clone https://github.com/SagerNet/sing-box
 cp -r sing-box/* ./
 rm -rf sing-box
