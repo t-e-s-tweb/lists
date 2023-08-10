@@ -12,7 +12,7 @@ jobs:
       - name: Get project dependencies
         run: |
           apt update
-          apt install -y ca-certificates git curl wget
+          apt install -y ca-certificates git curl wget xz-utils
           
           
       - name: build
