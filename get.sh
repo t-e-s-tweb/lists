@@ -1,12 +1,11 @@
 #!/bin/bash
 
 
-wget -qO- https://github.com/upx/upx/releases/download/v4.1.0/upx-4.1.0-amd64_linux.tar.xz | tar -xJvf - upx-4.1.0-amd64_linux/upx
+wget -N https://github.com/upx/upx/releases/download/v4.1.0/upx-4.1.0-amd64_linux.tar.xz  
+tar xvf upx-4.1.0-amd64_linux.tar.xz
 mv ./upx-4.1.0-amd64_linux/upx .
-
-wget -N https://github.com/upx/upx/releases/download/v4.0.2/upx-4.0.2-amd64_linux.tar.xz -O upx.tar.xz
-tar xf upx.tar.xz
-export PATH=$PATH:~/upx-4.0.2-amd64_linux
+rm -rf upx-4.1.0-amd64_linux.tar.xz
+rm -rf upx-4.1.0-amd64_linux
 
 git clone https://github.com/SagerNet/sing-box
 cp -r sing-box/* ./
