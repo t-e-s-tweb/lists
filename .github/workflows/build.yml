@@ -1,9 +1,6 @@
 name: Build and Release
 
 on:
-  push:
-  schedule:
-  - cron:  0 */24 * * *
   workflow_dispatch:
 
   
@@ -17,23 +14,17 @@ jobs:
           apt update
           apt install -y ca-certificates git curl
 
-      - name: get code
-        run: |
-          git clone https://github.com/t-e-s-tweb/lists
-          cp -r lists/* ./
-          rm -rf lists
-
 
       - name: build
         run: |
-          chmod +x lists.sh
-          ./lists.sh
+          chmod +x get.sh
+          ./get.sh
          
       - name: Upload binaries to release
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: ./*.*
+          file: ./sb*
           tag: ${{ github.ref }}
           overwrite: true
           file_glob: true
