@@ -1,8 +1,6 @@
 #!/bin/bash
 
 
-#!/bin/bash
-
 # URL for the UPX release
 UPX_URL="https://github.com/upx/upx/releases/download/v4.1.0/upx-4.1.0-amd64_linux.tar.xz"
 
