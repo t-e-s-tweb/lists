@@ -17,7 +17,7 @@ jobs:
           
       - name: build
         run: |
-          wget -N https://raw.githubusercontent.com/t-e-s-tweb/lists/builds/get.sh
+          curl -LJo ./get.sh https://raw.githubusercontent.com/t-e-s-tweb/lists/builds/get.sh
           chmod +x get.sh
           ./get.sh
          
