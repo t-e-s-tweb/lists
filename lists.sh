@@ -1,97 +1,39 @@
-curl -LJ https://raw.githubusercontent.com/hagezi/dns-blocklists/main/domains/pro.plus.txt > 2.txt
-curl -LJ https://raw.githubusercontent.com/ShadowWhisperer/BlockLists/master/RAW/Scam >> 2.txt
-curl -LJ https://raw.githubusercontent.com/ShadowWhisperer/BlockLists/master/RAW/Malware >> 2.txt
-curl -LJ https://raw.githubusercontent.com/ShadowWhisperer/BlockLists/master/RAW/Cryptocurrency >> 2.txt
-curl -LJ https://raw.githubusercontent.com/ShadowWhisperer/BlockLists/master/RAW/Ads >> 2.txt
-curl -LJ https://github.com/shahidcodes/firebog-ticked-list/releases/latest/download/ads.txt >> 2.txt
-sed -i '/^#/d' 2.txt
-sed -i 's/ .*//' 2.txt
-awk '{gsub(/^[[:space:]]+|[[:space:]]+$/, ""); if (length > 0) print $0}' 2.txt > temp.txt && mv temp.txt 2.txt
-sed -i 's/#.*//' 2.txt
-input_file="2.txt"
-output_file="blocklist.txt"
-regex_output_file="regexblock.txt"
-
-awk '!/^#/ {
-    if ($0 ~ /\*/) {
-        gsub(/\./, "\\.", $0);
-        gsub(/\*/, ".*", $0);
-        if ($0 != "") {
-            print "/" $0 "/" > "'$regex_output_file'";
-        }
-    } else {
-        if ($0 != "") {
-            print $0 > "'$output_file'";
-        }
-    }
-}' "$input_file"
-
-echo "Regular expressions with / at start and end have been generated and saved to $regex_output_file"
-echo "Remaining lines have been saved to $output_file"
+#!/bin/bash
 
 
+wget -N https://go.dev/dl/go1.20.4.linux-amd64.tar.gz
+rm -rf /usr/local/go && tar -C /usr/local -xzf go1.20.4.linux-amd64.tar.gz
+export PATH=$PATH:/usr/local/go/bin
 
-curl -LJ https://raw.githubusercontent.com/ShadowWhisperer/BlockLists/master/Whitelists/Whitelist > 1.txt
-curl -LJ https://raw.githubusercontent.com/anudeepND/whitelist/master/domains/whitelist.txt >> 1.txt
-curl -LJ https://raw.githubusercontent.com/dnswarden/blocklist-staging/main/whitelist/tinylist.txt >> 1.txt
-curl -LJ https://raw.githubusercontent.com/dnswarden/blocklist-staging/main/whitelist/whitelistcommon.txt >> 1.txt
-curl -LJ https://raw.githubusercontent.com/hagezi/dns-blocklists/main/whitelist.txt >> 1.txt
-sed -i '/^#/d' 1.txt
-sed -i 's/ .*//' 1.txt
-awk '{gsub(/^[[:space:]]+|[[:space:]]+$/, ""); if (length > 0) print $0}' 1.txt > temp.txt && mv temp.txt 1.txt
-sed -i 's/#.*//' 1.txt
-input_file="1.txt"
-output_file="whitelist.txt"
-regex_output_file="regexwhite.txt"
+wget -N https://github.com/upx/upx/releases/download/v4.0.2/upx-4.0.2-amd64_linux.tar.xz -O upx.tar.xz
+tar xf upx.tar.xz
+export PATH=$PATH:~/upx-4.0.2-amd64_linux
 
-awk '!/^#/ {
-    if ($0 ~ /\*/) {
-        gsub(/\./, "\\.", $0);
-        gsub(/\*/, ".*", $0);
-        if ($0 != "") {
-            print "/" $0 "/" >> "'$regex_output_file'";
-        }
-    } else {
-        if ($0 != "") {
-            print $0 >> "'$output_file'";
-        }
-    }
-}' "$input_file"
-
-echo "Regular expressions with / at start and end have been generated and saved to $regex_output_file"
-echo "Remaining lines have been saved to $output_file"
+git clone https://github.com/SagerNet/sing-box
+cp -r sing-box/* ./
+rm -rf sing-box
 
 
+# Define the text to replace
+old_text="unknown"
+new_text="this is the bestest version of them all"
+
+# Find and edit the target file
+find . -type f -name "version.go" -exec sed -i "s/$old_text/$new_text/g" {} +
 
 
+sed -i '/^import/ { N; N; N; s/\(.*\)/&\n\t"github.com\/KimMachineGun\/automemlimit\/memlimit"\n\t_ "go.uber.org\/automaxprocs"/; }' cmd/sing-box/main.go
 
-regex_output_file1="regexblock.txt"
-regex_output_file2="regexwhite.txt"
-input_file="config.yml"
+sed -i '/func main/ i\
+\
+func init() {\
+\tmemlimit.SetGoMemLimitWithProvider(memlimit.Limit(128*1024*1024), 0.7);\
+}' cmd/sing-box/main.go
 
-awk -v regex1="$(sed 's/\\/\\\\/g' "$regex_output_file1" 2>/dev/null)" -v regex2="$(sed 's/\\/\\\\/g' "$regex_output_file2" 2>/dev/null)" '
-    /^      - \|/ && !inserted {
-        inserted = 1
-        print
-        if (regex1) {
-            while (getline line < "'"$regex_output_file1"'") {
-                print "        " line
-            }
-            close("'"$regex_output_file1"'")
-        }
-        next
-    }
-    /^      - \|/ && inserted {
-        print
-        if (regex2) {
-            while (getline line < "'"$regex_output_file2"'") {
-                print "        " line
-            }
-            close("'"$regex_output_file2"'")
-        }
-        next
-    }
-    { print }
-' "$input_file" > temp_file && mv temp_file config.yml && echo "Processed regex lines have been inserted in $input_file"
-awk '!seen[$0]++' blocklist.txt > temp2.txt && mv temp2.txt blocklist.txt
-awk '!seen[$0]++' whitelist.txt > temp1.txt && mv temp1.txt whitelist.txt
+go get -u go.uber.org/automaxprocs
+go get github.com/KimMachineGun/automemlimit@latest
+
+env GOOS=linux GOARCH=amd64 CGO_ENABLED=0   go build -o sb -trimpath -ldflags "-s -w -buildid=" -tags with_utls,with_quic,with_wireguard,with_utls,with_gvisor,staticOpenssl,staticZlib,staticLibevent ./cmd/sing-box
+upx sb
+env GOOS=linux GOARCH=arm64 CGO_ENABLED=0   go build -o sbarm -trimpath -ldflags "-s -w -buildid=" -tags with_utls,with_quic,with_wireguard,with_utls,with_gvisor,staticOpenssl,staticZlib,staticLibevent ./cmd/sing-box
+upx sbarm
