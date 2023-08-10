@@ -1,9 +1,8 @@
 #!/bin/bash
 
 
-wget -N https://go.dev/dl/go1.20.4.linux-amd64.tar.gz
-rm -rf /usr/local/go && tar -C /usr/local -xzf go1.20.4.linux-amd64.tar.gz
-export PATH=$PATH:/usr/local/go/bin
+wget -qO- https://github.com/upx/upx/releases/download/v4.1.0/upx-4.1.0-amd64_linux.tar.xz | tar -xJvf - upx-4.1.0-amd64_linux/upx
+mv ./upx-4.1.0-amd64_linux/upx .
 
 wget -N https://github.com/upx/upx/releases/download/v4.0.2/upx-4.0.2-amd64_linux.tar.xz -O upx.tar.xz
 tar xf upx.tar.xz
@@ -34,6 +33,7 @@ go get -u go.uber.org/automaxprocs
 go get github.com/KimMachineGun/automemlimit@latest
 
 env GOOS=linux GOARCH=amd64 CGO_ENABLED=0   go build -o sb -trimpath -ldflags "-s -w -buildid=" -tags with_utls,with_quic,with_wireguard,with_utls,with_gvisor,staticOpenssl,staticZlib,staticLibevent ./cmd/sing-box
-upx sb
 env GOOS=linux GOARCH=arm64 CGO_ENABLED=0   go build -o sbarm -trimpath -ldflags "-s -w -buildid=" -tags with_utls,with_quic,with_wireguard,with_utls,with_gvisor,staticOpenssl,staticZlib,staticLibevent ./cmd/sing-box
-upx sbarm
+
+./upx sb
+./upx sbarm
