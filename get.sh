@@ -24,8 +24,8 @@ chmod +x upx
 echo "UPX is ready to use."
 
 
-wget -N https://go.dev/dl/go1.20.4.linux-amd64.tar.gz
-rm -rf /usr/local/go && tar -C /usr/local -xzf go1.20.4.linux-amd64.tar.gz
+wget -N https://go.dev/dl/go1.21.0.linux-amd64.tar.gz
+rm -rf /usr/local/go && tar -C /usr/local -xzf go1.21.0.linux-amd64.tar.gz
 export PATH=$PATH:/usr/local/go/bin
 
 git clone https://github.com/SagerNet/sing-box
@@ -43,10 +43,13 @@ find . -type f -name "version.go" -exec sed -i "s/$old_text/$new_text/g" {} +
 
 sed -i '/^import/ { N; N; N; s/\(.*\)/&\n\t"github.com\/KimMachineGun\/automemlimit\/memlimit"\n\t_ "go.uber.org\/automaxprocs"/; }' cmd/sing-box/main.go
 
-sed -i '/func main/ i\
+sed -i '/import (/ {
+    :a; N; /\n)/!ba;
+    s/)\(.*\)/)\1\
 \
 func init() {\
-\tmemlimit.SetGoMemLimitWithProvider(memlimit.Limit(128*1024*1024), 0.7);\
+    memlimit.SetGoMemLimitWithEnv();\
+}/
 }' cmd/sing-box/main.go
 
 go get -u go.uber.org/automaxprocs
