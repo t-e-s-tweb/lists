@@ -24,9 +24,12 @@ chmod +x upx
 echo "UPX is ready to use."
 
 
-wget -N https://go.dev/dl/go1.21.0.linux-amd64.tar.gz
-rm -rf /usr/local/go && tar -C /usr/local -xzf go1.21.0.linux-amd64.tar.gz
-export PATH=$PATH:/usr/local/go/bin
+curl -sLo go.tar.gz https://go.dev/dl/go1.21.0.linux-amd64.tar.gz
+rm -r /usr/local/go
+tar -C /usr/local -xzf go.tar.gz
+rm go.tar.gz
+echo -e "export PATH=$PATH:/usr/local/go/bin" > /etc/profile.d/go.sh
+source /etc/profile.d/go.sh
 
 git clone https://github.com/0xERR0R/blocky
 cp -r blocky/* ./
