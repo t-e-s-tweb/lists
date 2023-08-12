@@ -24,19 +24,19 @@ chmod +x upx
 echo "UPX is ready to use."
 
 
-curl -sLo go.tar.gz https://go.dev/dl/go1.21.0.linux-amd64.tar.gz
+curl -sLo go.tar.gz https://go.dev/dl/go1.20.4.linux-amd64.tar.gz
 rm -r /usr/local/go
 tar -C /usr/local -xzf go.tar.gz
 rm go.tar.gz
 echo -e "export PATH=$PATH:/usr/local/go/bin" > /etc/profile.d/go.sh
 source /etc/profile.d/go.sh
 
-git clone https://github.com/0xERR0R/blocky
-cp -r blocky/* ./
-rm -rf blocky
+git clone https://github.com/cloudflare/cloudflared
+cp -r cloudflared/* ./
+rm -rf cloudflared
 
 
-sed -i '/^import/ { N; N; N; s/\(.*\)/&\n\t"github.com\/KimMachineGun\/automemlimit\/memlimit"\n\t_ "go.uber.org\/automaxprocs"/; }' main.go
+sed -i '/^import/ { N; N; N; s/\(.*\)/&\n\t"github.com\/KimMachineGun\/automemlimit\/memlimit"\n\t_ "go.uber.org\/automaxprocs"/; }' cmd/cloudflared/main.go
 
 sed -i '/import (/ {
     :a; N; /\n)/!ba;
@@ -45,13 +45,21 @@ sed -i '/import (/ {
 func init() {\
     memlimit.SetGoMemLimitWithEnv();\
 }/
-}' main.go
+}' cmd/cloudflared/main.go
+
+
 
 go get -u go.uber.org/automaxprocs
-go get github.com/KimMachineGun/automemlimit@latest
+go get github.com/KimMachineGun/automemlimit/memlimit@latest
+go mod vendor
 
-env GOOS=linux GOARCH=arm64 CGO_ENABLED=0  go build -o blockyarm64 -trimpath -ldflags "-s -w -buildid=" ./
-env GOOS=linux GOARCH=amd64 CGO_ENABLED=0  go build -o blocky -trimpath -ldflags "-s -w -buildid=" ./
+#env GOOS=linux GOARCH=arm64 CGO_ENABLED=0  go build -o blockyarm64 -trimpath -ldflags "-s -w -buildid=" ./
+env GOOS=linux GOARCH=amd64 CGO_ENABLED=0  go build -mod=mod -o cloudy -trimpath -ldflags "-s -w -buildid=" ./cmd/cloudflared
+env GOOS=linux GOARCH=arm64 CGO_ENABLED=0  go build -mod=mod -o cloudyarm64 -trimpath -ldflags "-s -w -buildid=" ./cmd/cloudflared
 
-./upx blocky
-./upx blockyarm64
+#env GOOS=linux GOARCH=amd64 CGO_ENABLED=0   go build -o sdns -trimpath -ldflags "-s -w -buildid=" ./
+
+
+./upx cloudy
+./upx cloudyarm64
+#./upx blockyarm64
