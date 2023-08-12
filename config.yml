@@ -32,11 +32,11 @@ blocking:
   blackLists:
     ads:
       - https://github.com/t-e-s-tweb/lists/releases/download/main/blocklist.txt
-      - |  
+      - https://github.com/t-e-s-tweb/lists/releases/download/main/regexwhite.txt 
   whiteLists:
      ads:
       - https://github.com/t-e-s-tweb/lists/releases/download/main/whitelist.txt
-      - |
+      - https://github.com/t-e-s-tweb/lists/releases/download/main/regexwhite.txt
   clientGroupsBlock:
     default:
       - ads
