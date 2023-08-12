@@ -65,33 +65,33 @@ echo "Remaining lines have been saved to $output_file"
 
 
 
-regex_output_file1="regexblock.txt"
-regex_output_file2="regexwhite.txt"
-input_file="config.yml"
+#regex_output_file1="regexblock.txt"
+#regex_output_file2="regexwhite.txt"
+#input_file="config.yml"
 
-awk -v regex1="$(sed 's/\\/\\\\/g' "$regex_output_file1" 2>/dev/null)" -v regex2="$(sed 's/\\/\\\\/g' "$regex_output_file2" 2>/dev/null)" '
-    /^      - \|/ && !inserted {
-        inserted = 1
-        print
-        if (regex1) {
-            while (getline line < "'"$regex_output_file1"'") {
-                print "        " line
-            }
-            close("'"$regex_output_file1"'")
-        }
-        next
-    }
-    /^      - \|/ && inserted {
-        print
-        if (regex2) {
-            while (getline line < "'"$regex_output_file2"'") {
-                print "        " line
-            }
-            close("'"$regex_output_file2"'")
-        }
-        next
-    }
-    { print }
-' "$input_file" > temp_file && mv temp_file config.yml && echo "Processed regex lines have been inserted in $input_file"
+#awk -v regex1="$(sed 's/\\/\\\\/g' "$regex_output_file1" 2>/dev/null)" -v regex2="$(sed 's/\\/\\\\/g' "$regex_output_file2" 2>/dev/null)" '
+#    /^      - \|/ && !inserted {
+#        inserted = 1
+#        print
+#        if (regex1) {
+#            while (getline line < "'"$regex_output_file1"'") {
+#                print "        " line
+#            }
+#            close("'"$regex_output_file1"'")
+#        }
+#        next
+#    }
+#    /^      - \|/ && inserted {
+#        print
+#        if (regex2) {
+#            while (getline line < "'"$regex_output_file2"'") {
+#                print "        " line
+#            }
+#            close("'"$regex_output_file2"'")
+#        }
+#        next
+#    }
+#    { print }
+#' "$input_file" > temp_file && mv temp_file config.yml && echo "Processed regex lines have been inserted in $input_file"
 awk '!seen[$0]++' blocklist.txt > temp2.txt && mv temp2.txt blocklist.txt
 awk '!seen[$0]++' whitelist.txt > temp1.txt && mv temp1.txt whitelist.txt
