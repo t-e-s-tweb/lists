@@ -31,20 +31,20 @@ rm go.tar.gz
 echo -e "export PATH=$PATH:/usr/local/go/bin" > /etc/profile.d/go.sh
 source /etc/profile.d/go.sh
 
-git clone -b dev-next https://github.com/SagerNet/sing-box
-cp -r sing-box/* ./
-rm -rf sing-box
+git clone https://github.com/XTLS/Xray-core
+cp -r Xray-core/* ./
+rm -rf Xray-core
 
 
 # Define the text to replace
-old_text="unknown"
+old_text="Show current version of Xray"
 new_text="this is the bestest version of them all"
 
 # Find and edit the target file
 find . -type f -name "version.go" -exec sed -i "s/$old_text/$new_text/g" {} +
 
 
-sed -i '/^import/ { N; N; N; s/\(.*\)/&\n\t"github.com\/KimMachineGun\/automemlimit\/memlimit"\n\t_ "go.uber.org\/automaxprocs"/; }' cmd/sing-box/main.go
+sed -i '/^import/ { N; N; N; s/\(.*\)/&\n\t"github.com\/KimMachineGun\/automemlimit\/memlimit"\n\t_ "go.uber.org\/automaxprocs"/; }' main/main.go
 
 sed -i '/import (/ {
     :a; N; /\n)/!ba;
@@ -53,13 +53,13 @@ sed -i '/import (/ {
 func init() {\
     memlimit.SetGoMemLimitWithEnv();\
 }/
-}' cmd/sing-box/main.go
+}' main/main.go
 
 go get -u go.uber.org/automaxprocs
 go get github.com/KimMachineGun/automemlimit@latest
 
-env GOOS=linux GOARCH=amd64 CGO_ENABLED=0   go build -o sb -trimpath -ldflags "-s -w -buildid=" -tags with_utls,with_quic,with_wireguard,with_utls,with_gvisor,staticOpenssl,staticZlib,staticLibevent ./cmd/sing-box
-env GOOS=linux GOARCH=arm64 CGO_ENABLED=0   go build -o sbarm -trimpath -ldflags "-s -w -buildid=" -tags with_utls,with_quic,with_wireguard,with_utls,with_gvisor,staticOpenssl,staticZlib,staticLibevent ./cmd/sing-box
+env GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o xadm64 -trimpath -ldflags "-s -w -buildid=" ./main
+env GOOS=linux GOARCH=arm64 CGO_ENABLED=0 go build -o xarm64 -trimpath -ldflags "-s -w -buildid=" ./main
 
-./upx sb
-./upx sbarm
+./upx xadm64
+./upx xarm64
