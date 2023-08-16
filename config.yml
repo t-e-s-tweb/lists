@@ -93,7 +93,7 @@ fqdnOnly:
   enable: false
 
 ports:
-  dns: 3000
+  dns: 3267
  # tls: 853
 #  https: 443
   http: 8100
