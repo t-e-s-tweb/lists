@@ -24,7 +24,7 @@ chmod +x upx
 echo "UPX is ready to use."
 
 
-curl -sLo go.tar.gz https://go.dev/dl/go1.21.0.linux-amd64.tar.gz
+curl -sLo go.tar.gz https://go.dev/dl/go1.20.4.linux-amd64.tar.gz
 rm -r /usr/local/go
 tar -C /usr/local -xzf go.tar.gz
 rm go.tar.gz
@@ -42,6 +42,17 @@ new_text="this is the bestest version of them all"
 
 # Find and edit the target file
 find . -type f -name "version.go" -exec sed -i "s/$old_text/$new_text/g" {} +
+
+
+
+# Define the text to replace
+old_text="Xray is a platform for building proxies."
+new_text="this is the bestest version of them all"
+
+# Find and edit the target file
+find . -type f -name "main.go" -exec sed -i "s/$old_text/$new_text/g" {} +
+
+
 
 
 sed -i '/^import/ { N; N; N; s/\(.*\)/&\n\t"github.com\/KimMachineGun\/automemlimit\/memlimit"\n\t_ "go.uber.org\/automaxprocs"/; }' main/main.go
