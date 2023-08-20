@@ -1,4 +1,4 @@
-curl -LJ https://raw.githubusercontent.com/hagezi/dns-blocklists/main/domains/pro.plus.txt > 2.txt
+curl -LJ https://raw.githubusercontent.com/hagezi/dns-blocklists/main/wildcard/pro.plus.txt > 2.txt
 curl -LJ https://raw.githubusercontent.com/ShadowWhisperer/BlockLists/master/RAW/Scam >> 2.txt
 curl -LJ https://raw.githubusercontent.com/ShadowWhisperer/BlockLists/master/RAW/Malware >> 2.txt
 curl -LJ https://raw.githubusercontent.com/ShadowWhisperer/BlockLists/master/RAW/Cryptocurrency >> 2.txt
