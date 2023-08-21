@@ -16,11 +16,11 @@ upstreams:
     - https://1.0.0.1/dns-query
     - https://cloudflare-dns.com/dns-query
     - https://mozilla.cloudflare-dns.com/dns-query
-    - tcp-tls:open.dns0.eu
-    - https://open.dns0.eu/dns-query
-    - https://dns.dnswarden.com/uncensored
-    - tcp-tls:ordns.he.net
-    - https://ordns.he.net/dns-query
+  #  - tcp-tls:open.dns0.eu
+  #  - https://open.dns0.eu/dns-query
+  #  - https://dns.dnswarden.com/uncensored
+  #  - tcp-tls:ordns.he.net
+  #  - https://ordns.he.net/dns-query
   timeout: 2s
 
 startVerifyUpstream: false
@@ -31,12 +31,14 @@ connectIPVersion: dual
 blocking:
   blackLists:
     ads:
-      - https://github.com/t-e-s-tweb/lists/releases/download/main/blocklist.txt
-    #  - https://github.com/t-e-s-tweb/lists/releases/download/main/regexblock.txt 
+      - https://raw.githubusercontent.com/hagezi/dns-blocklists/main/hosts/pro.txt
+#      - https://github.com/t-e-s-tweb/lists/releases/download/main/regexblock.txt 
   whiteLists:
      ads:
-      - https://github.com/t-e-s-tweb/lists/releases/download/main/whitelist.txt
-      - https://github.com/t-e-s-tweb/lists/releases/download/main/regexwhite.txt
+      - https://raw.githubusercontent.com/iam-py-test/allowlist/main/allowlist.txt
+      - https://raw.githubusercontent.com/rahilpathan/pihole-whitelist/main/1.LowWL.txt
+      - https://raw.githubusercontent.com/dnswarden/blocklist-staging/main/whitelist/whitelistcommon.txt
+      - https://raw.githubusercontent.com/dnswarden/blocklist-staging/main/whitelist/tinylist.txt
   clientGroupsBlock:
     default:
       - ads
