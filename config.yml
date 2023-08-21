@@ -1,27 +1,41 @@
 upstreams:
   groups:
     default:
-    - tcp-tls:8.8.4.4
-    - https://8.8.4.4/dns-query
+    - https://res-acst1.absolight.net/dns-query
+    - https://res-acst3.absolight.net/dns-query
+    - https://resolver1.absolight.net/dns-query
+    - https://resolver3.absolight.net/dns-query
+    - https://blitz.ahadns.com/dns-query
+    - https://dnsnl.alekberg.net/dns-query
+    - https://dnsse-noads.alekberg.net/dns-query
+    - https://dns.artikel10.org/dns-query
+    - https://doh.opendns.com/dns-query
     - tcp-tls:8.8.8.8
     - https://8.8.8.8/dns-query
-    - tcp-tls:dns.google
-    - https://dns.google/dns-query
     - tcp-tls:9.9.9.10
     - https://9.9.9.10/dns-query
-    - https://dns10.quad9.net/dns-query
     - tcp-tls:1.1.1.1
     - https://1.1.1.1/dns-query
-    - tcp-tls:1.0.0.1
-    - https://1.0.0.1/dns-query
-    - https://cloudflare-dns.com/dns-query
-    - https://mozilla.cloudflare-dns.com/dns-query
-  #  - tcp-tls:open.dns0.eu
-  #  - https://open.dns0.eu/dns-query
-  #  - https://dns.dnswarden.com/uncensored
-  #  - tcp-tls:ordns.he.net
-  #  - https://ordns.he.net/dns-query
-  timeout: 2s
+    - https://dns.digitale-gesellschaft.ch/dns-query
+    - https://open.dns0.eu/dns-query
+    - https://sg-sin.doh.sb/dns-query
+    - https://de-ber.doh.sb/dns-query
+    - https://uk-lon.doh.sb/dns-query
+    - https://nl-ams2.doh.sb/dns-query
+    - https://nl-ams.doh.sb/dns-query
+    - https://de-fra.doh.sb/dns-query
+    - https://de-dus.doh.sb/dns-query
+    - https://dns.dnshome.de/dns-query
+    - https://rdns.faelix.net/dns-query
+    - https://ns0.fdn.fr/dns-query
+    - https://ns1.fdn.fr/dns-query
+    - https://doh.ffmuc.net/dns-query
+    - https://doh.applied-privacy.net/query
+    - https://8888.google/dns-query
+    - https://dns.hostux.net/dns-query
+    - https://doh.lacontrevoie.fr/dns-query
+    - https://doh.mullvad.net/dns-query
+  timeout: 1s
 
 startVerifyUpstream: false
 
@@ -36,7 +50,7 @@ blocking:
   whiteLists:
      ads:
       - https://raw.githubusercontent.com/iam-py-test/allowlist/main/allowlist.txt
-      - https://raw.githubusercontent.com/rahilpathan/pihole-whitelist/main/1.LowWL.txt
+     # - https://raw.githubusercontent.com/rahilpathan/pihole-whitelist/main/1.LowWL.txt
       - https://raw.githubusercontent.com/dnswarden/blocklist-staging/main/whitelist/whitelistcommon.txt
       - https://raw.githubusercontent.com/dnswarden/blocklist-staging/main/whitelist/tinylist.txt
   clientGroupsBlock:
@@ -58,7 +72,7 @@ blocking:
 
 caching:
   minTime: 10m
-  maxTime: 72h
+  maxTime: 96h
   maxItemsCount: 10000
   prefetching: true
   prefetchExpires: 2h
@@ -77,6 +91,10 @@ minTlsServeVersion: 1.2
 bootstrapDns:
   - tcp+udp:1.1.1.1
   - https://1.1.1.1/dns-query
+  - tcp+udp:129.250.35.251
+  - tcp+udp:129.250.35.250
+  - tcp+udp:195.113.144.194
+  - tcp+udp:208.67.220.222
   - upstream: https://dns.digitale-gesellschaft.ch/dns-query
     ips:
       - 185.95.218.42
