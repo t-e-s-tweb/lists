@@ -46,7 +46,11 @@ connectIPVersion: dual
 blocking:
   blackLists:
     ads:
-      - https://raw.githubusercontent.com/hagezi/dns-blocklists/main/hosts/pro.txt
+      - https://raw.githubusercontent.com/hagezi/dns-blocklists/main/hosts/pro.plus.txt
+      - https://raw.githubusercontent.com/elliotwutingfeng/SpamdexingSites/main/blocklist.txt
+      - https://raw.githubusercontent.com/elliotwutingfeng/Inversion-DNSBL-Blocklists/main/Google_hostnames_light.txt
+      - https://raw.githubusercontent.com/elliotwutingfeng/GlobalAntiScamOrg-blocklist/main/global-anti-scam-org-scam-urls.txt
+      - https://raw.githubusercontent.com/Zaczero/pihole-phishtank/main/hosts.txt
 #      - https://github.com/t-e-s-tweb/lists/releases/download/main/regexblock.txt 
   whiteLists:
      ads:
