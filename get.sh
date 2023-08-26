@@ -124,5 +124,5 @@ go get github.com/KimMachineGun/automemlimit@latest
 env GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o xadm64 -trimpath -ldflags "-s -w -buildid=" ./main
 env GOOS=linux GOARCH=arm64 CGO_ENABLED=0 go build -o xarm64 -trimpath -ldflags "-s -w -buildid=" ./main
 
-./upx xadm64
-./upx xarm64
+#./upx xadm64
+#./upx xarm64
