@@ -53,5 +53,5 @@ go get github.com/KimMachineGun/automemlimit@latest
 env GOOS=linux GOARCH=arm64 CGO_ENABLED=0  go build -o blockyarm64 -trimpath -ldflags "-s -w -buildid=" ./
 env GOOS=linux GOARCH=amd64 CGO_ENABLED=0  go build -o blocky -trimpath -ldflags "-s -w -buildid=" ./
 
-./upx blocky
-./upx blockyarm64
+#./upx blocky
+#./upx blockyarm64
