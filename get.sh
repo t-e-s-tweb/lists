@@ -24,7 +24,7 @@ chmod +x upx
 echo "UPX is ready to use."
 
 
-curl -sLo go.tar.gz https://go.dev/dl/go1.20.4.linux-amd64.tar.gz
+curl -sLo go.tar.gz https://go.dev/dl/go1.21.0.linux-amd64.tar.gz
 rm -r /usr/local/go
 tar -C /usr/local -xzf go.tar.gz
 rm go.tar.gz
