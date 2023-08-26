@@ -60,6 +60,6 @@ env GOOS=linux GOARCH=arm64 CGO_ENABLED=0  go build -mod=mod -o cloudyarm64 -tri
 #env GOOS=linux GOARCH=amd64 CGO_ENABLED=0   go build -o sdns -trimpath -ldflags "-s -w -buildid=" ./
 
 
-./upx cloudy
-./upx cloudyarm64
+#./upx cloudy
+#./upx cloudyarm64
 #./upx blockyarm64
