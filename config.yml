@@ -5,7 +5,6 @@ upstreams:
     - https://res-acst3.absolight.net/dns-query
     - https://resolver1.absolight.net/dns-query
     - https://resolver3.absolight.net/dns-query
-    - https://blitz.ahadns.com/dns-query
     - https://chewbacca.meganerd.nl/dns-query
     - https://dnsnl.alekberg.net/dns-query
     - https://dnsse-noads.alekberg.net/dns-query
