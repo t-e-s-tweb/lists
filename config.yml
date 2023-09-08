@@ -35,12 +35,12 @@ upstreams:
     - https://dns.hostux.net/dns-query
     - https://doh.lacontrevoie.fr/dns-query
     - https://doh.mullvad.net/dns-query
-  timeout: 1s
+  timeout: 2s
 
 startVerifyUpstream: false
 
 # accepted: dual, v4, v6
-connectIPVersion: dual
+connectIPVersion: v4
 
 blocking:
   blackLists:
@@ -61,7 +61,7 @@ blocking:
     default:
       - ads
   blockType: zeroIp
-  blockTTL: 30m
+  blockTTL: 10m
   loading:
     refreshPeriod: 24h
     downloads:
@@ -75,8 +75,8 @@ blocking:
     maxErrorsPerSource: -1
 
 caching:
-  minTime: 10m
-  maxTime: 96h
+  minTime: 2m
+  maxTime: 24h
   maxItemsCount: 10000
   prefetching: true
   prefetchExpires: 2h
