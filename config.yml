@@ -32,17 +32,14 @@ upstreams:
     - https://open.dns0.eu/dns-query
     - https://doh.dns.sb/dns-query
     - tcp-tls:dot1.applied-privacy.net
-    
     - https://dns.dnshome.de/dns-query
     - https://rdns.faelix.net/dns-query
     - https://ns0.fdn.fr/dns-query
     - https://ns1.fdn.fr/dns-query
     - https://doh.ffmuc.net/dns-query
-    - https://doh.applied-privacy.net/query
     - https://8888.google/dns-query
     - https://dns.hostux.net/dns-query
     - https://doh.lacontrevoie.fr/dns-query
-    - https://doh.mullvad.net/dns-query
   timeout: 2s
 
 startVerifyUpstream: false
