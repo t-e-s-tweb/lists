@@ -2,6 +2,17 @@ upstreams:
   groups:
     default:
     - https://res-acst1.absolight.net/dns-query
+    - https://unfiltered.adguard-dns.com/dns-query
+    - tcp-tls:unfiltered.adguard-dns.com
+    - https://dns.nextdns.io/dns-query
+    - tcp-tls:dns.nextdns.io
+    - https://anycast.dns.nextdns.io
+    - tcp-tls:anycast.dns.nextdns.io
+    - https://doh.seby.io/dns-query
+    - https://doh-2.seby.io/dns-query
+    - tcp-tls:dot.seby.io
+    - https://kaitain.restena.lu/dns-query
+    - https://dns.bebasid.com/unfiltered
     - https://res-acst3.absolight.net/dns-query
     - https://resolver1.absolight.net/dns-query
     - https://resolver3.absolight.net/dns-query
@@ -17,14 +28,11 @@ upstreams:
     - tcp-tls:1.1.1.1
     - https://1.1.1.1/dns-query
     - https://dns.digitale-gesellschaft.ch/dns-query
+    - https://doh.applied-privacy.net/query
     - https://open.dns0.eu/dns-query
-    - https://sg-sin.doh.sb/dns-query
-    - https://de-ber.doh.sb/dns-query
-    - https://uk-lon.doh.sb/dns-query
-    - https://nl-ams2.doh.sb/dns-query
-    - https://nl-ams.doh.sb/dns-query
-    - https://de-fra.doh.sb/dns-query
-    - https://de-dus.doh.sb/dns-query
+    - https://doh.dns.sb/dns-query
+    - tcp-tls:dot1.applied-privacy.net
+    
     - https://dns.dnshome.de/dns-query
     - https://rdns.faelix.net/dns-query
     - https://ns0.fdn.fr/dns-query
