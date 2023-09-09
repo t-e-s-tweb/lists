@@ -1,7 +1,6 @@
 upstreams:
   groups:
     default:
-    - https://res-acst1.absolight.net/dns-query
     - https://unfiltered.adguard-dns.com/dns-query
     - tcp-tls:unfiltered.adguard-dns.com
     - https://dns.nextdns.io/dns-query
@@ -13,9 +12,6 @@ upstreams:
     - tcp-tls:dot.seby.io
     - https://kaitain.restena.lu/dns-query
     - https://dns.bebasid.com/unfiltered
-    - https://res-acst3.absolight.net/dns-query
-    - https://resolver1.absolight.net/dns-query
-    - https://resolver3.absolight.net/dns-query
     - https://chewbacca.meganerd.nl/dns-query
     - https://dnsnl.alekberg.net/dns-query
     - https://dnsse-noads.alekberg.net/dns-query
@@ -40,6 +36,15 @@ upstreams:
     - https://8888.google/dns-query
     - https://dns.hostux.net/dns-query
     - https://doh.lacontrevoie.fr/dns-query
+    - tcp-tls:uncensored.freedns.controld.com
+    - https://freedns.controld.com/uncensored
+    - tcp-tls:uncensored.dns.dnswarden.com
+    - https://dns.dnswarden.com/uncensored
+    - tcp-tls:dns.digitalsize.net
+    - https://dns.digitalsize.net/dns-query
+    - tcp-tls:anycast.uncensoreddns.org
+    - https://anycast.uncensoreddns.org/dns-query
+    
   timeout: 2s
 
 startVerifyUpstream: false
