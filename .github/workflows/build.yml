@@ -17,7 +17,7 @@ jobs:
           
       - name: build
         run: |
-          curl -LJo ./get.sh https://raw.githubusercontent.com/t-e-s-tweb/lists/cloudy/get.sh
+          curl -LJo ./get.sh https://raw.githubusercontent.com/t-e-s-tweb/lists/cloudyzig/get.sh
           chmod +x get.sh
           ./get.sh
          
