@@ -31,6 +31,14 @@ rm go.tar.gz
 echo -e "export PATH=$PATH:/usr/local/go/bin" > /etc/profile.d/go.sh
 source /etc/profile.d/go.sh
 
+
+curl -sLo zig.tar.xz https://ziglang.org/builds/zig-linux-x86_64-0.12.0-dev.307+7827265ea.tar.xz
+tar -C /usr/local -xvf zig.tar.xz
+rm zig.tar.xz
+echo -e "export PATH=$PATH:/usr/local/zig-linux-x86_64-0.12.0-dev.307+7827265ea" > /etc/profile.d/zig.sh
+source /etc/profile.d/zig.sh
+
+
 git clone https://github.com/0xERR0R/blocky
 cp -r blocky/* ./
 rm -rf blocky
@@ -50,8 +58,9 @@ func init() {\
 go get -u go.uber.org/automaxprocs
 go get github.com/KimMachineGun/automemlimit@latest
 
-env GOOS=linux GOARCH=arm64 CGO_ENABLED=0  go build -o blockyarm64 -trimpath -ldflags "-s -w -buildid=" ./
-env GOOS=linux GOARCH=amd64 CGO_ENABLED=0  go build -o blocky -trimpath -ldflags "-s -w -buildid=" ./
+env CGO_ENABLED="1" GOOS=linux GOARCH=arm64 CC="zig cc -target aarch64-linux-musl" CXX="zig c++ -target aarch64-linux-musl" go build -o blockyarm64 -trimpath -ldflags "-s -w -linkmode external -buildid=" ./
+
+env CGO_ENABLED="1" GOOS=linux GOARCH=amd64 CC="zig cc -target x86_64-linux-musl" CXX="zig c++ -target x86_64-linux-musl" go build -o blocky -trimpath -ldflags "-s -w -linkmode external -buildid=" ./
 
 #./upx blocky
 #./upx blockyarm64
