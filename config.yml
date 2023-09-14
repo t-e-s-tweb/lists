@@ -2,6 +2,8 @@ upstreams:
   groups:
     default:
     - https://unfiltered.adguard-dns.com/dns-query
+    - tcp-tls:wikimedia-dns.org
+    - https://wikimedia-dns.org/dns-query
     - tcp-tls:unfiltered.adguard-dns.com
     - https://dns.nextdns.io/dns-query
     - tcp-tls:dns.nextdns.io
@@ -24,10 +26,8 @@ upstreams:
     - tcp-tls:1.1.1.1
     - https://1.1.1.1/dns-query
     - https://dns.digitale-gesellschaft.ch/dns-query
-    - https://doh.applied-privacy.net/query
     - https://open.dns0.eu/dns-query
     - https://doh.dns.sb/dns-query
-    - tcp-tls:dot1.applied-privacy.net
     - https://dns.dnshome.de/dns-query
     - https://rdns.faelix.net/dns-query
     - https://ns0.fdn.fr/dns-query
@@ -50,7 +50,7 @@ upstreams:
 startVerifyUpstream: false
 
 # accepted: dual, v4, v6
-connectIPVersion: v4
+connectIPVersion: dual
 
 blocking:
   blackLists:
@@ -78,24 +78,24 @@ blocking:
       timeout: 600s
       attempts: 5
       cooldown: 10s
-    concurrency: 1
+    concurrency: 16
     # default: blocking failOnError fast
-    strategy: fast
+    strategy: blocking
     # default: 5 -1 disable
     maxErrorsPerSource: -1
 
 caching:
-  minTime: 2m
+  minTime: 5m
   maxTime: 24h
-  maxItemsCount: 10000
+  maxItemsCount: 0
   prefetching: true
   prefetchExpires: 2h
   prefetchThreshold: 5
-  prefetchMaxItemsCount: 2000
+  prefetchMaxItemsCount: 0
   cacheTimeNegative: 30m
 
 # optional: Mininal TLS version that the DoH and DoT server will use
-minTlsServeVersion: 1.2
+minTlsServeVersion: 1.3
 
 # if https port > 0: path to cert and key file for SSL encryption. if not set, self-signed certificate will be generated
 #certFile: server.crt
@@ -124,7 +124,7 @@ bootstrapDns:
 # optional: return NXDOMAIN for queries that are not FQDNs.
 fqdnOnly:
   # default: false
-  enable: false
+  enable: true
 
 ports:
   dns: 3267
