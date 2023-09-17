@@ -39,7 +39,7 @@ echo -e "export PATH=$PATH:/usr/local/zig-linux-x86_64-0.12.0-dev.307+7827265ea"
 source /etc/profile.d/zig.sh
 
 
-git clone https://github.com/0xERR0R/blocky
+git clone -b cache-truncated https://github.com/0xERR0R/blocky
 cp -r blocky/* ./
 rm -rf blocky
 
