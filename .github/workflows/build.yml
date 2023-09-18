@@ -22,10 +22,10 @@ jobs:
           rm -rf lists
 
 
-      - name: build
-        run: |
-          chmod +x lists.sh
-          ./lists.sh
+#      - name: build
+ #       run: |
+  #        chmod +x lists.sh
+   #       ./lists.sh
          
       - name: Upload binaries to release
         uses: svenstaro/upload-release-action@v2
