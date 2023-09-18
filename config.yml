@@ -9,15 +9,15 @@ upstreams:
     - tcp-tls:dns.nextdns.io
     - https://anycast.dns.nextdns.io
     - tcp-tls:anycast.dns.nextdns.io
-    - https://doh.seby.io/dns-query
-    - https://doh-2.seby.io/dns-query
-    - tcp-tls:dot.seby.io
-    - https://kaitain.restena.lu/dns-query
-    - https://dns.bebasid.com/unfiltered
-    - https://chewbacca.meganerd.nl/dns-query
-    - https://dnsnl.alekberg.net/dns-query
-    - https://dnsse-noads.alekberg.net/dns-query
-    - https://dns.artikel10.org/dns-query
+ #   - https://doh.seby.io/dns-query
+ #   - https://doh-2.seby.io/dns-query
+ #   - tcp-tls:dot.seby.io
+ #   - https://kaitain.restena.lu/dns-query
+ #   - https://dns.bebasid.com/unfiltered
+ #   - https://chewbacca.meganerd.nl/dns-query
+ #   - https://dnsnl.alekberg.net/dns-query
+ #   - https://dnsse-noads.alekberg.net/dns-query
+ #   - https://dns.artikel10.org/dns-query
     - https://doh.opendns.com/dns-query
     - tcp-tls:8.8.8.8
     - https://8.8.8.8/dns-query
@@ -25,26 +25,28 @@ upstreams:
     - https://9.9.9.10/dns-query
     - tcp-tls:1.1.1.1
     - https://1.1.1.1/dns-query
-    - https://dns.digitale-gesellschaft.ch/dns-query
+#    - https://dns.digitale-gesellschaft.ch/dns-query
     - https://open.dns0.eu/dns-query
-    - https://doh.dns.sb/dns-query
-    - https://dns.dnshome.de/dns-query
-    - https://rdns.faelix.net/dns-query
-    - https://ns0.fdn.fr/dns-query
-    - https://ns1.fdn.fr/dns-query
-    - https://doh.ffmuc.net/dns-query
-    - https://8888.google/dns-query
-    - https://dns.hostux.net/dns-query
-    - https://doh.lacontrevoie.fr/dns-query
-    - tcp-tls:uncensored.freedns.controld.com
-    - https://freedns.controld.com/uncensored
-    - tcp-tls:uncensored.dns.dnswarden.com
-    - https://dns.dnswarden.com/uncensored
-    - tcp-tls:dns.digitalsize.net
-    - https://dns.digitalsize.net/dns-query
-    - tcp-tls:anycast.uncensoreddns.org
-    - https://anycast.uncensoreddns.org/dns-query
-    
+#    - https://doh.dns.sb/dns-query
+#    - https://dns.dnshome.de/dns-query
+#    - https://rdns.faelix.net/dns-query
+#    - https://ns0.fdn.fr/dns-query
+#    - https://ns1.fdn.fr/dns-query
+#    - https://doh.ffmuc.net/dns-query
+#    - https://8888.google/dns-query
+#    - https://dns.hostux.net/dns-query
+#    - https://doh.lacontrevoie.fr/dns-query
+#    - tcp-tls:uncensored.freedns.controld.com
+#    - https://freedns.controld.com/uncensored
+#    - tcp-tls:uncensored.dns.dnswarden.com
+#    - https://dns.dnswarden.com/uncensored
+#    - tcp-tls:dns.digitalsize.net
+#    - https://dns.digitalsize.net/dns-query
+#    - tcp-tls:anycast.uncensoreddns.org
+#    - https://anycast.uncensoreddns.org/dns-query
+  # accepted: parallel_best, strict
+  # default: parallel_best
+  strategy: parallel_best 
   timeout: 2s
 
 startVerifyUpstream: false
@@ -55,7 +57,7 @@ connectIPVersion: dual
 blocking:
   blackLists:
     ads:
-      - https://raw.githubusercontent.com/hagezi/dns-blocklists/main/hosts/pro.txt
+      - https://raw.githubusercontent.com/hagezi/dns-blocklists/main/hosts/pro.plus.txt
       - https://raw.githubusercontent.com/elliotwutingfeng/SpamdexingSites/main/blocklist.txt
       - https://raw.githubusercontent.com/elliotwutingfeng/Inversion-DNSBL-Blocklists/main/Google_hostnames_light.txt
       - https://raw.githubusercontent.com/elliotwutingfeng/GlobalAntiScamOrg-blocklist/main/global-anti-scam-org-scam-urls.txt
@@ -65,13 +67,13 @@ blocking:
      ads:
       - https://raw.githubusercontent.com/iam-py-test/allowlist/main/allowlist.txt
      # - https://raw.githubusercontent.com/rahilpathan/pihole-whitelist/main/1.LowWL.txt
-      - https://raw.githubusercontent.com/dnswarden/blocklist-staging/main/whitelist/whitelistcommon.txt
+    #  - https://raw.githubusercontent.com/dnswarden/blocklist-staging/main/whitelist/whitelistcommon.txt
       - https://raw.githubusercontent.com/dnswarden/blocklist-staging/main/whitelist/tinylist.txt
   clientGroupsBlock:
     default:
       - ads
   blockType: zeroIp
-  blockTTL: 10m
+  blockTTL: 1m
   loading:
     refreshPeriod: 24h
     downloads:
@@ -80,13 +82,13 @@ blocking:
       cooldown: 10s
     concurrency: 16
     # default: blocking failOnError fast
-    strategy: blocking
+    strategy: fast
     # default: 5 -1 disable
     maxErrorsPerSource: -1
 
 caching:
   minTime: 5m
-  maxTime: 24h
+  maxTime: 72h
   maxItemsCount: 0
   prefetching: true
   prefetchExpires: 2h
@@ -105,13 +107,9 @@ minTlsServeVersion: 1.3
 bootstrapDns:
   - tcp+udp:1.1.1.1
   - https://1.1.1.1/dns-query
-  - tcp+udp:129.250.35.251
-  - tcp+udp:129.250.35.250
-  - tcp+udp:195.113.144.194
+  - tcp+udp:9.9.9.10
+  - tcp+udp:8.8.8.8
   - tcp+udp:208.67.220.222
-  - upstream: https://dns.digitale-gesellschaft.ch/dns-query
-    ips:
-      - 185.95.218.42
   - upstream: https://dns.quad9.net/dns-query
     ips:
       - 9.9.9.9
@@ -132,20 +130,20 @@ ports:
 #  https: 443
   http: 8100
 
-log:
+#log:
   # optional: Log level (one from debug, info, warn, error). Default: info
-  level: error
+#  level: error
   # optional: Log format (text or json). Default: text
-  format: text
+#  format: text
   # optional: log timestamps. Default: true
-  timestamp: false
+#  timestamp: false
   # optional: obfuscate log output (replace all alphanumeric characters with *) for user sensitive data like request domains or responses to increase privacy. Default: false
-  privacy: true
+#  privacy: true
 
 # optional: add EDE error codes to dns response
 ede:
   # enabled if true, Default: false
-  enable: false
+  enable: true
 
 # optional: configure optional Special Use Domain Names (SUDN)
 specialUseDomains:
