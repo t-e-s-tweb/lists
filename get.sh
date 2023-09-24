@@ -31,10 +31,10 @@ rm go.tar.gz
 echo -e "export PATH=$PATH:/usr/local/go/bin" > /etc/profile.d/go.sh
 source /etc/profile.d/go.sh
 
-curl -sLo zig.tar.xz https://ziglang.org/builds/zig-linux-x86_64-0.12.0-dev.307+7827265ea.tar.xz
+curl -sLo zig.tar.xz https://ziglang.org/builds/zig-linux-x86_64-0.12.0-dev.494+a8d2ed806.tar.xz
 tar -C /usr/local -xvf zig.tar.xz
 rm zig.tar.xz
-echo -e "export PATH=$PATH:/usr/local/zig-linux-x86_64-0.12.0-dev.307+7827265ea" > /etc/profile.d/zig.sh
+echo -e "export PATH=$PATH:/usr/local/zig-linux-x86_64-0.12.0-dev.494+a8d2ed806" > /etc/profile.d/zig.sh
 source /etc/profile.d/zig.sh
 
 
