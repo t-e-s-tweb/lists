@@ -9,15 +9,15 @@ upstreams:
     - tcp-tls:dns.nextdns.io
     - https://anycast.dns.nextdns.io
     - tcp-tls:anycast.dns.nextdns.io
- #   - https://doh.seby.io/dns-query
- #   - https://doh-2.seby.io/dns-query
- #   - tcp-tls:dot.seby.io
- #   - https://kaitain.restena.lu/dns-query
- #   - https://dns.bebasid.com/unfiltered
- #   - https://chewbacca.meganerd.nl/dns-query
- #   - https://dnsnl.alekberg.net/dns-query
- #   - https://dnsse-noads.alekberg.net/dns-query
- #   - https://dns.artikel10.org/dns-query
+    - https://doh.seby.io/dns-query
+    - https://doh-2.seby.io/dns-query
+    - tcp-tls:dot.seby.io
+    - https://kaitain.restena.lu/dns-query
+    - https://dns.bebasid.com/unfiltered
+    - https://chewbacca.meganerd.nl/dns-query
+    - https://dnsnl.alekberg.net/dns-query
+    - https://dnsse-noads.alekberg.net/dns-query
+    - https://dns.artikel10.org/dns-query
     - https://doh.opendns.com/dns-query
     - tcp-tls:8.8.8.8
     - https://8.8.8.8/dns-query
@@ -25,25 +25,25 @@ upstreams:
     - https://9.9.9.10/dns-query
     - tcp-tls:1.1.1.1
     - https://1.1.1.1/dns-query
-#    - https://dns.digitale-gesellschaft.ch/dns-query
+    - https://dns.digitale-gesellschaft.ch/dns-query
     - https://open.dns0.eu/dns-query
-#    - https://doh.dns.sb/dns-query
-#    - https://dns.dnshome.de/dns-query
-#    - https://rdns.faelix.net/dns-query
-#    - https://ns0.fdn.fr/dns-query
-#    - https://ns1.fdn.fr/dns-query
-#    - https://doh.ffmuc.net/dns-query
-#    - https://8888.google/dns-query
-#    - https://dns.hostux.net/dns-query
-#    - https://doh.lacontrevoie.fr/dns-query
-#    - tcp-tls:uncensored.freedns.controld.com
-#    - https://freedns.controld.com/uncensored
-#    - tcp-tls:uncensored.dns.dnswarden.com
-#    - https://dns.dnswarden.com/uncensored
-#    - tcp-tls:dns.digitalsize.net
-#    - https://dns.digitalsize.net/dns-query
-#    - tcp-tls:anycast.uncensoreddns.org
-#    - https://anycast.uncensoreddns.org/dns-query
+    - https://doh.dns.sb/dns-query
+    - https://dns.dnshome.de/dns-query
+    - https://rdns.faelix.net/dns-query
+    - https://ns0.fdn.fr/dns-query
+    - https://ns1.fdn.fr/dns-query
+    - https://doh.ffmuc.net/dns-query
+    - https://8888.google/dns-query
+    - https://dns.hostux.net/dns-query
+    - https://doh.lacontrevoie.fr/dns-query
+    - tcp-tls:uncensored.freedns.controld.com
+    - https://freedns.controld.com/uncensored
+    - tcp-tls:uncensored.dns.dnswarden.com
+    - https://dns.dnswarden.com/uncensored
+    - tcp-tls:dns.digitalsize.net
+    - https://dns.digitalsize.net/dns-query
+    - tcp-tls:anycast.uncensoreddns.org
+    - https://anycast.uncensoreddns.org/dns-query
   # accepted: parallel_best, strict
   # default: parallel_best
   strategy: parallel_best 
@@ -65,15 +65,15 @@ blocking:
 #      - https://github.com/t-e-s-tweb/lists/releases/download/main/regexblock.txt 
   whiteLists:
      ads:
-      - https://raw.githubusercontent.com/iam-py-test/allowlist/main/allowlist.txt
+    #  - https://raw.githubusercontent.com/iam-py-test/allowlist/main/allowlist.txt
      # - https://raw.githubusercontent.com/rahilpathan/pihole-whitelist/main/1.LowWL.txt
     #  - https://raw.githubusercontent.com/dnswarden/blocklist-staging/main/whitelist/whitelistcommon.txt
-      - https://raw.githubusercontent.com/dnswarden/blocklist-staging/main/whitelist/tinylist.txt
+     # - https://raw.githubusercontent.com/dnswarden/blocklist-staging/main/whitelist/tinylist.txt
   clientGroupsBlock:
     default:
       - ads
   blockType: zeroIp
-  blockTTL: 1m
+  blockTTL: 5m
   loading:
     refreshPeriod: 24h
     downloads:
@@ -87,13 +87,13 @@ blocking:
     maxErrorsPerSource: -1
 
 caching:
-  minTime: 5m
+  minTime: 10m
   maxTime: 72h
-  maxItemsCount: 0
+  maxItemsCount: 20000
   prefetching: true
   prefetchExpires: 2h
   prefetchThreshold: 5
-  prefetchMaxItemsCount: 0
+  prefetchMaxItemsCount: 5000
   cacheTimeNegative: 30m
 
 # optional: Mininal TLS version that the DoH and DoT server will use
@@ -122,7 +122,7 @@ bootstrapDns:
 # optional: return NXDOMAIN for queries that are not FQDNs.
 fqdnOnly:
   # default: false
-  enable: true
+  enable: false
 
 ports:
   dns: 3267
@@ -143,7 +143,7 @@ ports:
 # optional: add EDE error codes to dns response
 ede:
   # enabled if true, Default: false
-  enable: true
+  enable: false
 
 # optional: configure optional Special Use Domain Names (SUDN)
 specialUseDomains:
