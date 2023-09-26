@@ -39,7 +39,7 @@ echo -e "export PATH=$PATH:/usr/local/zig-linux-x86_64-0.12.0-dev.494+a8d2ed806"
 source /etc/profile.d/zig.sh
 
 #git clone -b dev-next https://github.com/SagerNet/sing-box
-git clone -b 1.5.rc2 https://github.com/MatsuriDayo/sing-box
+git clone -b 1.5.rc5 https://github.com/MatsuriDayo/sing-box
 cp -r sing-box/* ./
 rm -rf sing-box
 
