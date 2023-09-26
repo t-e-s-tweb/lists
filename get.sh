@@ -39,7 +39,7 @@ echo -e "export PATH=$PATH:/usr/local/zig-linux-x86_64-0.12.0-dev.494+a8d2ed806"
 source /etc/profile.d/zig.sh
 
 
-git clone -b ttl-multiple-records https://github.com/0xERR0R/blocky
+git clone https://github.com/0xERR0R/blocky
 cp -r blocky/* ./
 rm -rf blocky
 
