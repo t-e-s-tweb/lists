@@ -10,10 +10,11 @@ jobs:
     name: Delete workflow runs
     runs-on: ubuntu-latest
     steps:
-      - name: Delete skipped
-      - uses: christosgalano/delete-workflow-runs@v1.0.0
+      - name: Delete releases and workflows runs
+        uses: ophub/delete-releases-workflows@main
         with:
-         owner: ${{ inputs.repository_owner }}
-         repo: ${{ inputs.repository_name }}
-         token: ${{ secrets.workflow_PAT }}
-        # workflow: "all" can be omitted since it is the default value
+         del_releases: true
+         releases_keep_latest: 5
+         del_workflows: true
+         workflows_keep_day: 10
+         gh_token: ${{ secrets.GH_TOKEN }}
