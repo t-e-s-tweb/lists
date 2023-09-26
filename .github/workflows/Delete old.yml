@@ -1,0 +1,19 @@
+name: Delete workflow runs
+
+on:
+  schedule:
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+
+jobs:
+  del_runs:
+    name: Delete workflow runs
+    runs-on: ubuntu-latest
+    steps:
+      - name: Delete skipped
+      - uses: christosgalano/delete-workflow-runs@v1.0.0
+        with:
+         owner: ${{ inputs.repository_owner }}
+         repo: ${{ inputs.repository_name }}
+         token: ${{ secrets.workflow_PAT }}
+        # workflow: "all" can be omitted since it is the default value
