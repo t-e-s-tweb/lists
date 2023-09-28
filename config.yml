@@ -2,6 +2,26 @@ upstreams:
   groups:
     default:
     - tcp-tls:8.8.4.4
+    - https://ams01.dnscry.pt/dns-query
+    - https://ams02.dnscry.pt/dns-query
+    - https://dub01.dnscry.pt/dns-query
+    - https://dus01.dnscry.pt/dns-query
+    - https://fra01.dnscry.pt/dns-query
+    - https://ist01.dnscry.pt/dns-query
+    - https://lon01.dnscry.pt/dns-query
+    - https://mad01.dnscry.pt/dns-query
+    - https://muc01.dnscry.pt/dns-query
+    - https://naw01.dnscry.pt/dns-query
+    - https://trf01.dnscry.pt/dns-query
+    - https://sin01.dnscry.pt/dns-query
+    - https://sof01.dnscry.pt/dns-query
+    - https://geg01.dnscry.pt/dns-query
+    - https://sto01.dnscry.pt/dns-query
+    - https://tll01.dnscry.pt/dns-query
+    - https://zal01.dnscry.pt/dns-query
+    - https://vie01.dnscry.pt/dns-query
+    - https://waw01.dnscry.pt/dns-query
+    - https://waw02.dnscry.pt/dns-query
     - https://8.8.4.4/dns-query
     - tcp-tls:8.8.8.8
     - https://8.8.8.8/dns-query
