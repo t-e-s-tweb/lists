@@ -77,11 +77,11 @@ connectIPVersion: dual
 blocking:
   blackLists:
     ads:
-      - https://raw.githubusercontent.com/hagezi/dns-blocklists/main/hosts/pro.plus.txt
-      - https://raw.githubusercontent.com/elliotwutingfeng/SpamdexingSites/main/blocklist.txt
-      - https://raw.githubusercontent.com/elliotwutingfeng/Inversion-DNSBL-Blocklists/main/Google_hostnames_light.txt
-      - https://raw.githubusercontent.com/elliotwutingfeng/GlobalAntiScamOrg-blocklist/main/global-anti-scam-org-scam-urls.txt
-      - https://raw.githubusercontent.com/Zaczero/pihole-phishtank/main/hosts.txt
+      - https://raw.githubusercontent.com/hagezi/dns-blocklists/main/domains/pro.plus.txt
+    #  - https://raw.githubusercontent.com/elliotwutingfeng/SpamdexingSites/main/blocklist.txt
+     # - https://raw.githubusercontent.com/elliotwutingfeng/Inversion-DNSBL-Blocklists/main/Google_hostnames_light.txt
+    #  - https://raw.githubusercontent.com/elliotwutingfeng/GlobalAntiScamOrg-blocklist/main/global-anti-scam-org-scam-urls.txt
+    #  - https://raw.githubusercontent.com/Zaczero/pihole-phishtank/main/hosts.txt
 #      - https://github.com/t-e-s-tweb/lists/releases/download/main/regexblock.txt 
   whiteLists:
      ads:
@@ -100,7 +100,7 @@ blocking:
       timeout: 600s
       attempts: 5
       cooldown: 10s
-    concurrency: 16
+    concurrency: 1
     # default: blocking failOnError fast
     strategy: fast
     # default: 5 -1 disable
@@ -117,7 +117,7 @@ caching:
   cacheTimeNegative: 30m
 
 # optional: Mininal TLS version that the DoH and DoT server will use
-minTlsServeVersion: 1.3
+minTlsServeVersion: 1.2
 
 # if https port > 0: path to cert and key file for SSL encryption. if not set, self-signed certificate will be generated
 #certFile: server.crt
@@ -142,7 +142,7 @@ bootstrapDns:
 # optional: return NXDOMAIN for queries that are not FQDNs.
 fqdnOnly:
   # default: false
-  enable: true
+  enable: false
 
 ports:
   dns: 3267
