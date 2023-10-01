@@ -142,7 +142,7 @@ bootstrapDns:
 # optional: return NXDOMAIN for queries that are not FQDNs.
 fqdnOnly:
   # default: false
-  enable: false
+  enable: true
 
 ports:
   dns: 3267
@@ -150,15 +150,15 @@ ports:
 #  https: 443
   http: 8100
 
-#log:
+log:
   # optional: Log level (one from debug, info, warn, error). Default: info
-#  level: error
+  level: error
   # optional: Log format (text or json). Default: text
-#  format: text
+  format: text
   # optional: log timestamps. Default: true
-#  timestamp: false
+  timestamp: false
   # optional: obfuscate log output (replace all alphanumeric characters with *) for user sensitive data like request domains or responses to increase privacy. Default: false
-#  privacy: true
+  privacy: true
 
 # optional: add EDE error codes to dns response
 ede:
