@@ -38,8 +38,8 @@ rm zig.tar.xz
 echo -e "export PATH=$PATH:/usr/local/zig-linux-x86_64-0.12.0-dev.670+19a82ffdb" > /etc/profile.d/zig.sh
 source /etc/profile.d/zig.sh
 
-#git clone -b dev-next https://github.com/SagerNet/sing-box
-git clone -b 1.5.rc5 https://github.com/MatsuriDayo/sing-box
+git clone -b dev-next https://github.com/SagerNet/sing-box
+#git clone -b 1.5.rc5 https://github.com/MatsuriDayo/sing-box
 cp -r sing-box/* ./
 rm -rf sing-box
 
