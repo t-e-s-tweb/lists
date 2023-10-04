@@ -39,7 +39,7 @@ echo -e "export PATH=$PATH:/usr/local/zig-linux-x86_64-0.12.0-dev.670+19a82ffdb"
 source /etc/profile.d/zig.sh
 
 
-git clone -b gocron-poc https://github.com/0xERR0R/blocky
+git clone -b context https://github.com/0xERR0R/blocky
 cp -r blocky/* ./
 rm -rf blocky
 
