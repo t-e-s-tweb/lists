@@ -42,7 +42,7 @@ jobs:
 
     - name: Modify Imports in main.go
       run: |
-        sed -i '/^import/ { N; N; N; s#\n\t"github.com/KimMachineGun/automemlimit/memlimit"\n\t_ "go.uber.org/automaxprocs"#&; }' cmd/sing-box/main.go
+        sed -i '/^import/ { N; N; N; s/\(.*\)/&\n\t"github.com\/KimMachineGun\/automemlimit\/memlimit"\n\t_ "go.uber.org\/automaxprocs"/; }' cmd/sing-box/main.go
     - name: Add init function to main.go
       run: |
         sed -i '/import (/ {
