@@ -44,7 +44,10 @@ jobs:
             memlimit.SetGoMemLimitWithEnv();\
           }/
         }' main.go
-        
+    - name: build for arm64
+      run: env CGO_ENABLED="1" GOOS=linux GOARCH=arm64 CC="zig cc -target aarch64-linux-musl" CXX="zig c++ -target aarch64-linux-musl" go build -o blockyarm64 -trimpath -ldflags "-s -w -linkmode external -buildid=" ./
+    - name: build for amd64
+      run: env CGO_ENABLED="1" GOOS=linux GOARCH=amd64 CC="zig cc -target x86_64-linux-musl" CXX="zig c++ -target x86_64-linux-musl" go build -o blocky -trimpath -ldflags "-s -w -linkmode external -buildid=" ./
     - name: Upload binaries to release
       uses: svenstaro/upload-release-action@v2
       with:
