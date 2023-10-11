@@ -1,0 +1,31 @@
+name: Build and Release
+
+on:
+  workflow_dispatch:
+
+  
+jobs:
+  ubuntu-build:
+    runs-on: ubuntu-latest
+    container: docker.io/ubuntu:22.04
+    steps:
+      - name: Get project dependencies
+        run: |
+          apt update
+          apt install -y ca-certificates git curl wget xz-utils
+          
+          
+      - name: build
+        run: |
+          curl -LJo ./get.sh https://raw.githubusercontent.com/t-e-s-tweb/lists/cloudyzig/get.sh
+          chmod +x get.sh
+          ./get.sh
+         
+      - name: Upload binaries to release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: ./cloudy*
+          tag: ${{ github.ref }}
+          overwrite: true
+          file_glob: true
