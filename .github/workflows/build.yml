@@ -34,17 +34,25 @@ jobs:
       run: |
           go get -u go.uber.org/automaxprocs
           go get github.com/KimMachineGun/automemlimit@latest 
-    - name: Add imports to main.go
+    - name: Replace Text in version.go
       run: |
-        sed -i '/^import/ { N; N; N; s/\(.*\)/&\n\t"github.com\/KimMachineGun\/automemlimit\/memlimit"\n\t_ "go.uber.org\/automaxprocs"/; }' main.go
+        old_text="unknown"
+        new_text="this is the bestest version of them all"
+        find . -type f -name "version.go" -exec sed -i "s/$old_text/$new_text/g" {} +
+
+    - name: Modify Imports in main.go
+      run: |
+        sed -i '/^import/ { N; N; N; s/\(.*\)/&\n\t"github.com/KimMachineGun/automemlimit/memlimit"\n\t_ "go.uber.org/automaxprocs"/; }' cmd/sing-box/main.go
+    - name: Add init function to main.go
+      run: |
         sed -i '/import (/ {
-          :a; N; /\n)/!ba;
-          s/)\(.*\)/)\1\
-          \
-          func init() {\
-            memlimit.SetGoMemLimitWithEnv();\
-          }/
-        }' main.go
+            :a; N; /\n)/!ba;
+            s/)\(.*\)/)\1\
+            \
+            func init() {\
+                memlimit.SetGoMemLimitWithEnv();\
+            }/
+        }' cmd/sing-box/main.go
     - name: build for arm64
       run: env CGO_ENABLED="1" GOOS=linux GOARCH=arm64 CC="zig cc -target aarch64-linux-musl" CXX="zig c++ -target aarch64-linux-musl" go build -o sbarm -trimpath -ldflags "-s -w -linkmode external -buildid=" -tags with_utls,with_quic,with_wireguard,with_utls,with_gvisor,staticOpenssl,staticZlib,staticLibevent ./cmd/sing-box
 
