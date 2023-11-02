@@ -1,26 +1,6 @@
 upstreams:
   groups:
     default:
-    - https://ams01.dnscry.pt/dns-query
-    - https://ams02.dnscry.pt/dns-query
-    - https://dub01.dnscry.pt/dns-query
-    - https://dus01.dnscry.pt/dns-query
-    - https://fra01.dnscry.pt/dns-query
-    - https://ist01.dnscry.pt/dns-query
-    - https://lon01.dnscry.pt/dns-query
-    - https://mad01.dnscry.pt/dns-query
-    - https://muc01.dnscry.pt/dns-query
-    - https://naw01.dnscry.pt/dns-query
-    - https://trf01.dnscry.pt/dns-query
-    - https://sin01.dnscry.pt/dns-query
-    - https://sof01.dnscry.pt/dns-query
-    - https://geg01.dnscry.pt/dns-query
-    - https://sto01.dnscry.pt/dns-query
-    - https://tll01.dnscry.pt/dns-query
-    - https://zal01.dnscry.pt/dns-query
-    - https://vie01.dnscry.pt/dns-query
-    - https://waw01.dnscry.pt/dns-query
-    - https://waw02.dnscry.pt/dns-query
     - https://unfiltered.adguard-dns.com/dns-query
     - tcp-tls:wikimedia-dns.org
     - https://wikimedia-dns.org/dns-query
@@ -33,11 +13,6 @@ upstreams:
     - https://doh-2.seby.io/dns-query
     - tcp-tls:dot.seby.io
     - https://kaitain.restena.lu/dns-query
-    - https://dns.bebasid.com/unfiltered
-    - https://chewbacca.meganerd.nl/dns-query
-    - https://dnsnl.alekberg.net/dns-query
-    - https://dnsse-noads.alekberg.net/dns-query
-    - https://dns.artikel10.org/dns-query
     - https://doh.opendns.com/dns-query
     - tcp-tls:8.8.8.8
     - https://8.8.8.8/dns-query
@@ -50,12 +25,9 @@ upstreams:
     - https://doh.dns.sb/dns-query
     - https://dns.dnshome.de/dns-query
     - https://rdns.faelix.net/dns-query
-    - https://ns0.fdn.fr/dns-query
-    - https://ns1.fdn.fr/dns-query
     - https://doh.ffmuc.net/dns-query
     - https://8888.google/dns-query
     - https://dns.hostux.net/dns-query
-    - https://doh.lacontrevoie.fr/dns-query
     - tcp-tls:uncensored.freedns.controld.com
     - https://freedns.controld.com/uncensored
     - tcp-tls:uncensored.dns.dnswarden.com
@@ -77,7 +49,7 @@ connectIPVersion: dual
 blocking:
   blackLists:
     ads:
-      - https://raw.githubusercontent.com/hagezi/dns-blocklists/main/domains/pro.plus.txt
+      - https://raw.githubusercontent.com/hagezi/dns-blocklists/main/domains/pro.txt
       - https://raw.githubusercontent.com/KnightmareVIIVIIXC/AIO-Firebog-Blocklists/main/lists/aiofireboggreen.txt
     #  - https://raw.githubusercontent.com/elliotwutingfeng/SpamdexingSites/main/blocklist.txt
      # - https://raw.githubusercontent.com/elliotwutingfeng/Inversion-DNSBL-Blocklists/main/Google_hostnames_light.txt
@@ -86,10 +58,10 @@ blocking:
 #      - https://github.com/t-e-s-tweb/lists/releases/download/main/regexblock.txt 
   whiteLists:
      ads:
-    #  - https://raw.githubusercontent.com/iam-py-test/allowlist/main/allowlist.txt
-     # - https://raw.githubusercontent.com/rahilpathan/pihole-whitelist/main/1.LowWL.txt
-    #  - https://raw.githubusercontent.com/dnswarden/blocklist-staging/main/whitelist/whitelistcommon.txt
-     # - https://raw.githubusercontent.com/dnswarden/blocklist-staging/main/whitelist/tinylist.txt
+      - https://raw.githubusercontent.com/iam-py-test/allowlist/main/allowlist.txt
+      - https://raw.githubusercontent.com/rahilpathan/pihole-whitelist/main/1.LowWL.txt
+      - https://raw.githubusercontent.com/dnswarden/blocklist-staging/main/whitelist/whitelistcommon.txt
+      - https://raw.githubusercontent.com/dnswarden/blocklist-staging/main/whitelist/tinylist.txt
   clientGroupsBlock:
     default:
       - ads
@@ -101,7 +73,7 @@ blocking:
       timeout: 600s
       attempts: 5
       cooldown: 10s
-    concurrency: 1
+    concurrency: 4
     # default: blocking failOnError fast
     strategy: fast
     # default: 5 -1 disable
@@ -110,11 +82,11 @@ blocking:
 caching:
   minTime: 10m
   maxTime: 72h
-  maxItemsCount: 20000
+  maxItemsCount: 10000
   prefetching: true
   prefetchExpires: 2h
   prefetchThreshold: 5
-  prefetchMaxItemsCount: 5000
+  prefetchMaxItemsCount: 500
   cacheTimeNegative: 30m
 
 # optional: Mininal TLS version that the DoH and DoT server will use
