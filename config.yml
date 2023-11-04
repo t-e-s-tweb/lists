@@ -36,9 +36,9 @@ upstreams:
     - https://dns.digitalsize.net/dns-query
     - tcp-tls:anycast.uncensoreddns.org
     - https://anycast.uncensoreddns.org/dns-query
-  # accepted: parallel_best, strict
+  # accepted: parallel_best, strict, random
   # default: parallel_best
-  strategy: parallel_best 
+  strategy: random 
   timeout: 2s
 
 startVerifyUpstream: false
