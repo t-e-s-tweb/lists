@@ -11,8 +11,8 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4.1.0
       with:
-       repository: 'DerRockWolf/blocky'
-       ref: 'feat/resolver-random'
+       repository: 'ThinkChaos/blocky'
+       ref: 'feat/wildcard-lists'
       
     - name: Set up Go
       uses: actions/setup-go@v4.1.0
