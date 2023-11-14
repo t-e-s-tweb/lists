@@ -70,7 +70,7 @@ blocking:
   blackLists:
     ads:
       - https://raw.githubusercontent.com/hagezi/dns-blocklists/main/wildcard/ultimate.txt
-      - https://raw.githubusercontent.com/hagezi/dns-blocklists/main/wildcard/tif.txt
+     # - https://raw.githubusercontent.com/hagezi/dns-blocklists/main/wildcard/tif.txt
     #  - https://raw.githubusercontent.com/KnightmareVIIVIIXC/AIO-Firebog-Blocklists/main/lists/aiofireboggreen.txt
     #  - https://raw.githubusercontent.com/elliotwutingfeng/SpamdexingSites/main/blocklist.txt
      # - https://raw.githubusercontent.com/elliotwutingfeng/Inversion-DNSBL-Blocklists/main/Google_hostnames_light.txt
