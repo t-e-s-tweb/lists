@@ -58,7 +58,7 @@ upstreams:
     - https://anycast.uncensoreddns.org/dns-query
   # accepted: parallel_best, strict, random
   # default: parallel_best
-  strategy: parallel_best 
+  strategy: random 
   timeout: 2s
 
 startVerifyUpstream: false
@@ -87,7 +87,7 @@ blocking:
     default:
       - ads
   blockType: zeroIp
-  blockTTL: 5m
+  blockTTL: 15m
   loading:
     refreshPeriod: 24h
     downloads:
@@ -107,7 +107,7 @@ caching:
   prefetching: true
   prefetchExpires: 2h
   prefetchThreshold: 5
-  prefetchMaxItemsCount: 500
+  prefetchMaxItemsCount: 1000
   cacheTimeNegative: 30m
 
 # optional: Mininal TLS version that the DoH and DoT server will use
