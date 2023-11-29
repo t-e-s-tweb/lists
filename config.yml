@@ -81,6 +81,7 @@ blocking:
      ads:
       - https://raw.githubusercontent.com/iam-py-test/allowlist/main/allowlist.txt
       - https://raw.githubusercontent.com/rahilpathan/pihole-whitelist/main/1.LowWL.txt
+      - https://raw.githubusercontent.com/hagezi/dns-blocklists/main/whitelist.txt
       - https://raw.githubusercontent.com/dnswarden/blocklist-staging/main/whitelist/whitelistcommon.txt
       - https://raw.githubusercontent.com/dnswarden/blocklist-staging/main/whitelist/tinylist.txt
   clientGroupsBlock:
