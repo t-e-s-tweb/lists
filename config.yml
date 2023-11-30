@@ -58,7 +58,7 @@ upstreams:
     - https://anycast.uncensoreddns.org/dns-query
   # accepted: parallel_best, strict, random
   # default: parallel_best
-  strategy: random 
+  strategy: parallel_best 
   timeout: 2s
 
 startVerifyUpstream: false
