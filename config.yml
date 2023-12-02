@@ -84,6 +84,8 @@ blocking:
       - https://raw.githubusercontent.com/hagezi/dns-blocklists/main/whitelist.txt
       - https://raw.githubusercontent.com/dnswarden/blocklist-staging/main/whitelist/whitelistcommon.txt
       - https://raw.githubusercontent.com/dnswarden/blocklist-staging/main/whitelist/tinylist.txt
+      - |
+        *.koyeb.app
   clientGroupsBlock:
     default:
       - ads
