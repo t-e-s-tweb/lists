@@ -167,3 +167,8 @@ specialUseDomains:
   # optional: block recomended private TLDs
   # default: true
   rfc6762-appendixG: true
+ecs:
+   useAsClient: true
+   forward: true
+   ipv4Mask: 24
+   ipv6Mask: 56
