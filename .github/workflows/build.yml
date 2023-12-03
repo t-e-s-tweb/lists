@@ -11,8 +11,8 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4.1.0
       with:
-       repository: 'ThinkChaos/blocky'
-       ref: 'feat/faster-par-best-init'
+       repository: 'kwitsch/blocky-dev'
+       ref: 'issues/1288'
       
     - name: Set up Go
       uses: actions/setup-go@v4.1.0
