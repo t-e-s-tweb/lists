@@ -1,4 +1,9 @@
 upstreams:
+  init:
+    # Configure startup behavior.
+    # accepted: blocking, failOnError, fast
+    # default: blocking
+    strategy: fast
   groups:
     default:
     - https://ams01.dnscry.pt/dns-query
@@ -61,7 +66,6 @@ upstreams:
   strategy: parallel_best 
   timeout: 2s
 
-startVerifyUpstream: false
 
 # accepted: dual, v4, v6
 connectIPVersion: dual
