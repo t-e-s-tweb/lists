@@ -6,66 +6,43 @@ upstreams:
     strategy: fast
   groups:
     default:
-    - https://ams01.dnscry.pt/dns-query
-    - https://ams02.dnscry.pt/dns-query
-    - https://dub01.dnscry.pt/dns-query
-    - https://dus01.dnscry.pt/dns-query
-    - https://fra01.dnscry.pt/dns-query
-    - https://ist01.dnscry.pt/dns-query
-    - https://lon01.dnscry.pt/dns-query
-    - https://mad01.dnscry.pt/dns-query
-    - https://muc01.dnscry.pt/dns-query
-    - https://naw01.dnscry.pt/dns-query
-    - https://trf01.dnscry.pt/dns-query
-    - https://sin01.dnscry.pt/dns-query
-    - https://sof01.dnscry.pt/dns-query
-    - https://geg01.dnscry.pt/dns-query
-    - https://sto01.dnscry.pt/dns-query
-    - https://tll01.dnscry.pt/dns-query
-    - https://zal01.dnscry.pt/dns-query
-    - https://vie01.dnscry.pt/dns-query
-    - https://waw01.dnscry.pt/dns-query
-    - https://waw02.dnscry.pt/dns-query
     - https://unfiltered.adguard-dns.com/dns-query
-    - tcp-tls:wikimedia-dns.org
-    - https://wikimedia-dns.org/dns-query
     - tcp-tls:unfiltered.adguard-dns.com
-    - https://dns.nextdns.io/dns-query
-    - tcp-tls:dns.nextdns.io
+    - https://dns.bebasid.com/unfiltered
+    - tcp-tls:unfiltered.dns.bebasid.com
+    - https://doh.opendns.com/dns-query
+    - https://doh.cleanbrowsing.org/doh/security-filter/
+    - tcp-tls:security-filter-dns.cleanbrowsing.org
+    - https://dns.cloudflare.com/dns-query
+    - tcp-tls:1dot1dot1dot1.cloudflare-dns.com
+    - tcp-tls:dnsovertls.sinodun.com
+	- tcp-tls:dnsovertls1.sinodun.com
+    - tcp-tls:anycast.censurfridns.dk
+    - https://doh.dns.sb/dns-query
+    - https://dns.google/dns-query
+    - tcp-tls:dns.google
     - https://anycast.dns.nextdns.io
     - tcp-tls:anycast.dns.nextdns.io
-    - https://doh.seby.io/dns-query
-    - https://doh-2.seby.io/dns-query
-    - tcp-tls:dot.seby.io
-    - https://kaitain.restena.lu/dns-query
-    - https://doh.opendns.com/dns-query
-    - tcp-tls:8.8.8.8
-    - https://8.8.8.8/dns-query
-    - tcp-tls:9.9.9.10
-    - https://9.9.9.10/dns-query
-    - tcp-tls:1.1.1.1
-    - https://1.1.1.1/dns-query
+    - https://open.dns0.eu/
+    - tcp-tls:open.dns0.eu
+    - https://dns.quad9.net/dns-query
+    - tcp-tls:dns.quad9.net
+    - https://doh.applied-privacy.net/query
+    - tcp-tls:dot1.applied-privacy.net
     - https://dns.digitale-gesellschaft.ch/dns-query
-    - https://open.dns0.eu/dns-query
-    - https://doh.dns.sb/dns-query
-    - https://dns.dnshome.de/dns-query
-    - https://rdns.faelix.net/dns-query
-    - https://doh.ffmuc.net/dns-query
-    - https://8888.google/dns-query
-    - https://dns.hostux.net/dns-query
-    - tcp-tls:uncensored.freedns.controld.com
-    - https://freedns.controld.com/uncensored
-    - tcp-tls:uncensored.dns.dnswarden.com
-    - https://dns.dnswarden.com/uncensored
-    - tcp-tls:dns.digitalsize.net
-    - https://dns.digitalsize.net/dns-query
-    - tcp-tls:anycast.uncensoreddns.org
-    - https://anycast.uncensoreddns.org/dns-query
+    - tcp-tls:dns.digitale-gesellschaft.ch
+    - https://kaitain.restena.lu/dns-query
+    - tcp-tls:kaitain.restena.lu
+    - https://blitz.ahadns.com
+    - tcp-tls:p0.freedns.controld.com
+    - https://freedns.controld.com/p0
+	
   # accepted: parallel_best, strict, random
   # default: parallel_best
-  strategy: parallel_best 
+  strategy: random
   timeout: 2s
-
+  # optional: HTTP User Agent when connecting to upstreams. Default: none
+  #userAgent: "custom UA"
 
 # accepted: dual, v4, v6
 connectIPVersion: dual
@@ -75,14 +52,10 @@ blocking:
     ads:
       - https://raw.githubusercontent.com/hagezi/dns-blocklists/main/wildcard/pro.plus.txt
      # - https://raw.githubusercontent.com/hagezi/dns-blocklists/main/wildcard/tif.txt
-    #  - https://raw.githubusercontent.com/elliotwutingfeng/SpamdexingSites/main/blocklist.txt
-     # - https://raw.githubusercontent.com/elliotwutingfeng/Inversion-DNSBL-Blocklists/main/Google_hostnames_light.txt
-    #  - https://raw.githubusercontent.com/elliotwutingfeng/GlobalAntiScamOrg-blocklist/main/global-anti-scam-org-scam-urls.txt
-    #  - https://raw.githubusercontent.com/Zaczero/pihole-phishtank/main/hosts.txt
+
   whiteLists:
      ads:
       - https://raw.githubusercontent.com/iam-py-test/allowlist/main/allowlist.txt
-   #   - https://raw.githubusercontent.com/rahilpathan/pihole-whitelist/main/1.LowWL.txt
       - https://raw.githubusercontent.com/hagezi/dns-blocklists/main/whitelist.txt
    #   - https://raw.githubusercontent.com/dnswarden/blocklist-staging/main/whitelist/whitelistcommon.txt
    #   - https://raw.githubusercontent.com/dnswarden/blocklist-staging/main/whitelist/tinylist.txt
@@ -99,7 +72,7 @@ blocking:
       timeout: 600s
       attempts: 5
       cooldown: 10s
-    concurrency: 4
+    concurrency: 16
     # default: blocking failOnError fast
     strategy: fast
     # default: 5 -1 disable
@@ -108,11 +81,11 @@ blocking:
 caching:
   minTime: 10m
   maxTime: 72h
-  maxItemsCount: 10000
+  maxItemsCount: 0
   prefetching: true
   prefetchExpires: 2h
   prefetchThreshold: 5
-  prefetchMaxItemsCount: 1000
+  prefetchMaxItemsCount: 0
   cacheTimeNegative: 30m
 
 # optional: Mininal TLS version that the DoH and DoT server will use
