@@ -36,7 +36,6 @@ upstreams:
     - https://blitz.ahadns.com
     - tcp-tls:p0.freedns.controld.com
     - https://freedns.controld.com/p0
-	
   # accepted: parallel_best, strict, random
   # default: parallel_best
   strategy: random
