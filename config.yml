@@ -11,7 +11,7 @@ upstreams:
     - https://dns.bebasid.com/unfiltered
     - tcp-tls:unfiltered.dns.bebasid.com
     - https://doh.opendns.com/dns-query
-    - https://doh.cleanbrowsing.org/doh/security-filter/
+    - https://doh.cleanbrowsing.org/doh/security-filter
     - tcp-tls:security-filter-dns.cleanbrowsing.org
     - https://dns.cloudflare.com/dns-query
     - tcp-tls:1dot1dot1dot1.cloudflare-dns.com
@@ -23,7 +23,7 @@ upstreams:
     - tcp-tls:dns.google
     - https://anycast.dns.nextdns.io
     - tcp-tls:anycast.dns.nextdns.io
-    - https://open.dns0.eu/
+    - https://open.dns0.eu
     - tcp-tls:open.dns0.eu
     - https://dns.quad9.net/dns-query
     - tcp-tls:dns.quad9.net
