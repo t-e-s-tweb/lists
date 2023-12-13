@@ -8,16 +8,16 @@ upstreams:
     default:
     - https://unfiltered.adguard-dns.com/dns-query
     - tcp-tls:unfiltered.adguard-dns.com
-    - https://dns.bebasid.com/unfiltered
-    - tcp-tls:unfiltered.dns.bebasid.com
+   # - https://dns.bebasid.com/unfiltered
+  #  - tcp-tls:unfiltered.dns.bebasid.com
     - https://doh.opendns.com/dns-query
-    - https://doh.cleanbrowsing.org/doh/security-filter
-    - tcp-tls:security-filter-dns.cleanbrowsing.org
+  #  - https://doh.cleanbrowsing.org/doh/security-filter
+   # - tcp-tls:security-filter-dns.cleanbrowsing.org
     - https://dns.cloudflare.com/dns-query
     - tcp-tls:1dot1dot1dot1.cloudflare-dns.com
     - tcp-tls:dnsovertls.sinodun.com
     - tcp-tls:dnsovertls1.sinodun.com
-    - tcp-tls:anycast.censurfridns.dk
+   # - tcp-tls:anycast.censurfridns.dk
     - https://doh.dns.sb/dns-query
     - https://dns.google/dns-query
     - tcp-tls:dns.google
@@ -36,6 +36,8 @@ upstreams:
     - https://blitz.ahadns.com
     - tcp-tls:p0.freedns.controld.com
     - https://freedns.controld.com/p0
+    - https://dns.aquilenet.fr/dns-query
+
   # accepted: parallel_best, strict, random
   # default: parallel_best
   strategy: parallel_best
