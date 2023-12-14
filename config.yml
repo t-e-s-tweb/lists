@@ -142,7 +142,7 @@ ede:
 specialUseDomains:
   # optional: block recomended private TLDs
   # default: true
-  rfc6762-appendixG: true
+  rfc6762-appendixG: false
 ecs:
    useAsClient: true
    forward: true
