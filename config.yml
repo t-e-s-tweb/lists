@@ -3,7 +3,7 @@ upstreams:
     # Configure startup behavior.
     # accepted: blocking, failOnError, fast
     # default: blocking
-    strategy: blocking
+    strategy: fast
   groups:
     default:
     - https://unfiltered.adguard-dns.com/dns-query
@@ -40,13 +40,13 @@ upstreams:
 
   # accepted: parallel_best, strict, random
   # default: parallel_best
-  strategy: parallel_best
-  timeout: 3s
+  strategy: random
+  timeout: 2s
   # optional: HTTP User Agent when connecting to upstreams. Default: none
   #userAgent: "custom UA"
 
 # accepted: dual, v4, v6
-connectIPVersion: v4
+connectIPVersion: dual
 
 blocking:
   blackLists:
@@ -66,27 +66,27 @@ blocking:
     default:
       - ads
   blockType: zeroIp
-  blockTTL: 15m
+  blockTTL: 10m
   loading:
     refreshPeriod: 24h
     downloads:
       timeout: 600s
-      attempts: 5
-      cooldown: 10s
+      attempts: 3
+      cooldown: 30s
     concurrency: 16
     # default: blocking failOnError fast
-    strategy: blocking
+    strategy: fast
     # default: 5 -1 disable
     maxErrorsPerSource: -1
 
 caching:
   minTime: 10m
   maxTime: 72h
-  maxItemsCount: 10000
+  maxItemsCount: 5000
   prefetching: true
   prefetchExpires: 2h
   prefetchThreshold: 5
-  prefetchMaxItemsCount: 5000
+  prefetchMaxItemsCount: 500
   cacheTimeNegative: 30m
 
 # optional: Mininal TLS version that the DoH and DoT server will use
