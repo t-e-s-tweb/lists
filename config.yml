@@ -40,7 +40,7 @@ upstreams:
 
   # accepted: parallel_best, strict, random
   # default: parallel_best
-  strategy: random
+  strategy: parallel_best
   timeout: 2s
   # optional: HTTP User Agent when connecting to upstreams. Default: none
   #userAgent: "custom UA"
