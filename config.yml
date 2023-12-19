@@ -15,8 +15,8 @@ upstreams:
    # - tcp-tls:security-filter-dns.cleanbrowsing.org
     - https://dns.cloudflare.com/dns-query
     - tcp-tls:1dot1dot1dot1.cloudflare-dns.com
-    - tcp-tls:dnsovertls.sinodun.com
-    - tcp-tls:dnsovertls1.sinodun.com
+  #  - tcp-tls:dnsovertls.sinodun.com
+  #  - tcp-tls:dnsovertls1.sinodun.com
    # - tcp-tls:anycast.censurfridns.dk
     - https://doh.dns.sb/dns-query
     - https://dns.google/dns-query
