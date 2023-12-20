@@ -144,7 +144,7 @@ specialUseDomains:
   # default: true
   rfc6762-appendixG: false
 ecs:
-   useAsClient: true
-   forward: true
+   useAsClient: false
+   forward: false
    ipv4Mask: 24
    ipv6Mask: 56
