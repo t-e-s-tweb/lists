@@ -46,7 +46,7 @@ upstreams:
   #userAgent: "custom UA"
 
 # accepted: dual, v4, v6
-connectIPVersion: dual
+connectIPVersion: v4
 
 blocking:
   blackLists:
@@ -70,10 +70,10 @@ blocking:
   loading:
     refreshPeriod: 24h
     downloads:
-      timeout: 600s
-      attempts: 3
-      cooldown: 30s
-    concurrency: 16
+      timeout: 15s
+      attempts: 2
+      cooldown: 3s
+    concurrency: 4
     # default: blocking failOnError fast
     strategy: fast
     # default: 5 -1 disable
@@ -86,7 +86,7 @@ caching:
   prefetching: true
   prefetchExpires: 2h
   prefetchThreshold: 5
-  prefetchMaxItemsCount: 500
+  prefetchMaxItemsCount: 1000
   cacheTimeNegative: 30m
 
 # optional: Mininal TLS version that the DoH and DoT server will use
