@@ -12,7 +12,7 @@ jobs:
       uses: actions/checkout@v4.1.0
       with:
        repository: 'SagerNet/sing-box'
-       ref: 'stable-next'
+       ref: 'main-next'
       
     - name: Set up Go
       uses: actions/setup-go@v4.1.0
