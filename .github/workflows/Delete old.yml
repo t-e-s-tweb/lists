@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Delete releases and workflows runs
-        uses: ophub/delete-releases-workflows@main
+        uses: ophub/delete-releases-workflows@v0.1.0
         with:
          delete_releases: true
          releases_keep_latest: 20
