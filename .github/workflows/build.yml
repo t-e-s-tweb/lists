@@ -9,18 +9,18 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v4.1.0
+      uses: actions/checkout@v4.1.1
       with:
        repository: 'cloudflare/cloudflared'
        ref: 'master'
       
     - name: Set up Go
-      uses: actions/setup-go@v4.1.0
+      uses: actions/setup-go@v5.0.0
       with:
         go-version: '1.21.6'
         cache: false
         
-    - uses: actions/cache@v3
+    - uses: actions/cache@v4.0.0
       with:
        path: |
         ~/.cache/go-build
@@ -29,7 +29,7 @@ jobs:
        restore-keys: |
         ${{ runner.os }}-go-    
     - name: Setup Zig
-      uses: goto-bus-stop/setup-zig@v2.1.1
+      uses: goto-bus-stop/setup-zig@v2.2.0
     - name: Install dependencies
       run: |
           go get -u go.uber.org/automaxprocs
@@ -49,7 +49,7 @@ jobs:
       run: env CGO_ENABLED="0" GOOS=linux GOARCH=amd64 CC="zig cc -target x86_64-linux-musl" CXX="zig c++ -target x86_64-linux-musl" go build -mod=mod -o cloudy -trimpath -ldflags "-s -w -buildid=" ./cmd/cloudflared
 
     - name: Upload binaries to release
-      uses: svenstaro/upload-release-action@v2
+      uses: svenstaro/upload-release-action@2.7.0
       with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: ./cloudy*
