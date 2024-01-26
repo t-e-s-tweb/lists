@@ -41,12 +41,12 @@ upstreams:
   # accepted: parallel_best, strict, random
   # default: parallel_best
   strategy: parallel_best
-  timeout: 2s
+  timeout: 5s
   # optional: HTTP User Agent when connecting to upstreams. Default: none
   #userAgent: "custom UA"
 
 # accepted: dual, v4, v6
-connectIPVersion: v4
+connectIPVersion: dual
 
 blocking:
   blackLists:
@@ -73,21 +73,21 @@ blocking:
       timeout: 120s
       attempts: 2
       cooldown: 3s
-    concurrency: 4
+    concurrency: 6
     # default: blocking failOnError fast
     strategy: blocking
     # default: 5 -1 disable
     maxErrorsPerSource: -1
 
 caching:
-  minTime: 10m
+  minTime: 5m
   maxTime: 72h
-  maxItemsCount: 5000
+  maxItemsCount: 10000
   prefetching: true
   prefetchExpires: 2h
   prefetchThreshold: 5
   prefetchMaxItemsCount: 1000
-  cacheTimeNegative: 30m
+  cacheTimeNegative: 10m
 
 # optional: Mininal TLS version that the DoH and DoT server will use
 minTlsServeVersion: 1.2
@@ -98,10 +98,10 @@ minTlsServeVersion: 1.2
 
 # optional: use these DNS servers to resolve blacklist urls and upstream DNS servers. It is useful if no system DNS resolver is configured, and/or to encrypt the bootstrap queries.
 bootstrapDns:
-  - tcp+udp:1.1.1.1
+  - tcp+udp:1.0.0.1
   - https://1.1.1.1/dns-query
   - tcp+udp:9.9.9.10
-  - tcp+udp:8.8.8.8
+  - tcp+udp:8.8.4.4
   - tcp+udp:208.67.220.222
   - upstream: https://dns.quad9.net/dns-query
     ips:
@@ -115,7 +115,7 @@ bootstrapDns:
 # optional: return NXDOMAIN for queries that are not FQDNs.
 fqdnOnly:
   # default: false
-  enable: false
+  enable: true
 
 ports:
   dns: 3267
@@ -136,15 +136,15 @@ log:
 # optional: add EDE error codes to dns response
 ede:
   # enabled if true, Default: false
-  enable: false
+  enable: true
 
 # optional: configure optional Special Use Domain Names (SUDN)
 specialUseDomains:
   # optional: block recomended private TLDs
   # default: true
-  rfc6762-appendixG: false
+  rfc6762-appendixG: true
 ecs:
    useAsClient: false
-   forward: true
+   forward: false
    ipv4Mask: 24
    ipv6Mask: 56
