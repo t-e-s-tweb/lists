@@ -58,8 +58,8 @@ blocking:
      ads:
       - https://raw.githubusercontent.com/iam-py-test/allowlist/main/allowlist.txt
       - https://raw.githubusercontent.com/hagezi/dns-blocklists/main/whitelist.txt
-   #   - https://raw.githubusercontent.com/dnswarden/blocklist-staging/main/whitelist/whitelistcommon.txt
-   #   - https://raw.githubusercontent.com/dnswarden/blocklist-staging/main/whitelist/tinylist.txt
+      - https://raw.githubusercontent.com/dnswarden/blocklist-staging/main/whitelist/whitelistcommon.txt
+      - https://raw.githubusercontent.com/dnswarden/blocklist-staging/main/whitelist/tinylist.txt
       - |
         *.koyeb.app
   clientGroupsBlock:
@@ -136,7 +136,7 @@ log:
 # optional: add EDE error codes to dns response
 ede:
   # enabled if true, Default: false
-  enable: true
+  enable: false
 
 # optional: configure optional Special Use Domain Names (SUDN)
 specialUseDomains:
