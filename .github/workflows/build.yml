@@ -11,9 +11,9 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4.1.1
       with:
-       repository: 't-e-s-tweb/blocky'
+       repository: '0xERR0R/blocky'
        ref: 'main'
-      
+    - run: sed -i 's|const pathDohQuery = "/dns-query"|const pathDohQuery = "/thanksforallthefish"|g' server/server_endpoints.go
     - name: Set up Go
       uses: actions/setup-go@v5.0.0
       with:
