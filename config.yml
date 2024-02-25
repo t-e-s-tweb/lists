@@ -3,7 +3,7 @@ upstreams:
     # Configure startup behavior.
     # accepted: blocking, failOnError, fast
     # default: blocking
-    strategy: blocking
+    strategy: fast
   groups:
     default:
     - https://unfiltered.adguard-dns.com/dns-query
@@ -33,9 +33,11 @@ upstreams:
     - tcp-tls:dns.digitale-gesellschaft.ch
     - https://kaitain.restena.lu/dns-query
     - tcp-tls:kaitain.restena.lu
-    - https://blitz.ahadns.com
-    - tcp-tls:p0.freedns.controld.com
-    - https://freedns.controld.com/p0
+   # - https://blitz.ahadns.com
+ #   - tcp-tls:p0.freedns.controld.com
+  #  - https://freedns.controld.com/p0
+    - https://us1.blissdns.net/dns-query
+    - tcp-tls:us1.blissdns.net
   #  - https://dns.aquilenet.fr/dns-query
 
   # accepted: parallel_best, strict, random
@@ -75,19 +77,19 @@ blocking:
       cooldown: 3s
     concurrency: 6
     # default: blocking failOnError fast
-    strategy: blocking
+    strategy: fast
     # default: 5 -1 disable
     maxErrorsPerSource: -1
 
 caching:
-  minTime: 5m
+  minTime: 10m
   maxTime: 72h
-  maxItemsCount: 10000
+  maxItemsCount: 20000
   prefetching: true
   prefetchExpires: 2h
   prefetchThreshold: 5
-  prefetchMaxItemsCount: 1000
-  cacheTimeNegative: 10m
+  prefetchMaxItemsCount: 2000
+  cacheTimeNegative: 30m
 
 # optional: Mininal TLS version that the DoH and DoT server will use
 minTlsServeVersion: 1.2
