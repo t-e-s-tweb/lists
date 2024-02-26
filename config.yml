@@ -3,11 +3,11 @@ upstreams:
     # Configure startup behavior.
     # accepted: blocking, failOnError, fast
     # default: blocking
-    strategy: fast
+    strategy: blocking
   groups:
     default:
-    - https://unfiltered.adguard-dns.com/dns-query
-    - tcp-tls:unfiltered.adguard-dns.com
+  #  - https://unfiltered.adguard-dns.com/dns-query
+ #   - tcp-tls:unfiltered.adguard-dns.com
    # - https://dns.bebasid.com/unfiltered
   #  - tcp-tls:unfiltered.dns.bebasid.com
     - https://doh.opendns.com/dns-query
@@ -18,7 +18,7 @@ upstreams:
   #  - tcp-tls:dnsovertls.sinodun.com
   #  - tcp-tls:dnsovertls1.sinodun.com
    # - tcp-tls:anycast.censurfridns.dk
-    - https://doh.dns.sb/dns-query
+  #  - https://doh.dns.sb/dns-query
     - https://dns.google/dns-query
     - tcp-tls:dns.google
     - https://anycast.dns.nextdns.io
@@ -43,7 +43,7 @@ upstreams:
   # accepted: parallel_best, strict, random
   # default: parallel_best
   strategy: parallel_best
-  timeout: 5s
+  timeout: 1s
   # optional: HTTP User Agent when connecting to upstreams. Default: none
   #userAgent: "custom UA"
 
@@ -54,12 +54,12 @@ blocking:
   blackLists:
     ads:
       - https://raw.githubusercontent.com/hagezi/dns-blocklists/main/wildcard/pro.plus.txt
-     # - https://raw.githubusercontent.com/hagezi/dns-blocklists/main/wildcard/tif.txt
+      - https://raw.githubusercontent.com/hagezi/dns-blocklists/main/wildcard/tif.txt
 
   whiteLists:
      ads:
       - https://raw.githubusercontent.com/iam-py-test/allowlist/main/allowlist.txt
-      - https://raw.githubusercontent.com/hagezi/dns-blocklists/main/whitelist.txt
+      - https://raw.githubusercontent.com/hagezi/dns-blocklists/main/wildcard/whitelist-referral.txt
       - https://raw.githubusercontent.com/dnswarden/blocklist-staging/main/whitelist/whitelistcommon.txt
       - https://raw.githubusercontent.com/dnswarden/blocklist-staging/main/whitelist/tinylist.txt
       - |
@@ -84,11 +84,11 @@ blocking:
 caching:
   minTime: 10m
   maxTime: 72h
-  maxItemsCount: 20000
+  maxItemsCount: 10000
   prefetching: true
   prefetchExpires: 2h
   prefetchThreshold: 5
-  prefetchMaxItemsCount: 2000
+  prefetchMaxItemsCount: 1000
   cacheTimeNegative: 30m
 
 # optional: Mininal TLS version that the DoH and DoT server will use
@@ -147,6 +147,6 @@ specialUseDomains:
   rfc6762-appendixG: true
 ecs:
    useAsClient: false
-   forward: true
+   forward: false
    ipv4Mask: 24
    ipv6Mask: 56
