@@ -36,8 +36,8 @@ upstreams:
    # - https://blitz.ahadns.com
  #   - tcp-tls:p0.freedns.controld.com
   #  - https://freedns.controld.com/p0
-    - https://us1.blissdns.net/dns-query
-    - tcp-tls:us1.blissdns.net
+  #  - https://us1.blissdns.net/dns-query
+   # - tcp-tls:us1.blissdns.net
   #  - https://dns.aquilenet.fr/dns-query
 
   # accepted: parallel_best, strict, random
@@ -147,6 +147,6 @@ specialUseDomains:
   rfc6762-appendixG: true
 ecs:
    useAsClient: false
-   forward: false
+   forward: true
    ipv4Mask: 24
    ipv6Mask: 56
