@@ -3,7 +3,7 @@ upstreams:
     # Configure startup behavior.
     # accepted: blocking, failOnError, fast
     # default: blocking
-    strategy: blocking
+    strategy: fast
   groups:
     default:
   #  - https://unfiltered.adguard-dns.com/dns-query
@@ -100,11 +100,16 @@ minTlsServeVersion: 1.2
 
 # optional: use these DNS servers to resolve blacklist urls and upstream DNS servers. It is useful if no system DNS resolver is configured, and/or to encrypt the bootstrap queries.
 bootstrapDns:
-  - tcp+udp:1.0.0.1
-  - https://1.1.1.1/dns-query
+  - tcp+udp:209.244.0.4
+  - tcp+udp:76.76.2.0
+  - tcp+udp:2606:1a40:0000:0000:0000:0000:0000:0000
   - tcp+udp:9.9.9.10
   - tcp+udp:8.8.4.4
-  - tcp+udp:208.67.220.222
+  - tcp+udp:64.6.64.6
+  - tcp+udp:2a03:90c0:999d::1
+  - tcp+udp:2620:74:1b::1:1
+  - tcp+udp:208.67.222.222
+  - tcp+udp:95.85.95.85
   - upstream: https://dns.quad9.net/dns-query
     ips:
       - 9.9.9.9
@@ -147,6 +152,6 @@ specialUseDomains:
   rfc6762-appendixG: true
 ecs:
    useAsClient: false
-   forward: false
+   forward: true
    ipv4Mask: 24
    ipv6Mask: 56
