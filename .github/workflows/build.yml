@@ -17,7 +17,7 @@ jobs:
     - name: Set up Go
       uses: actions/setup-go@v5.0.0
       with:
-          go-version: '1.22'
+          go-version: '1.21.8'
           cache: true
     
     - name: Setup Zig
@@ -39,8 +39,8 @@ jobs:
             memlimit.SetGoMemLimitWithEnv();\
           }/
         }' main.go
-    - name: build for arm64
-      run: env CGO_ENABLED="0" GOOS=linux GOARCH=arm64 CC="zig cc -target aarch64-linux-musl" CXX="zig c++ -target aarch64-linux-musl" go build -o blockyarm64 -trimpath -ldflags "-s -w -buildid=" ./
+  #  - name: build for arm64
+  #    run: env CGO_ENABLED="0" GOOS=linux GOARCH=arm64 CC="zig cc -target aarch64-linux-musl" CXX="zig c++ -target aarch64-linux-musl" go build -o blockyarm64 -trimpath -ldflags "-s -w -buildid=" ./
     - name: build for amd64
       run: env CGO_ENABLED="0" GOOS=linux GOARCH=amd64 CC="zig cc -target x86_64-linux-musl" CXX="zig c++ -target x86_64-linux-musl" go build -o blocky -trimpath -ldflags "-s -w -buildid=" ./
  #   - name: build for freebsd
