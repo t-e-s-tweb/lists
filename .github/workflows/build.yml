@@ -17,7 +17,7 @@ jobs:
     - name: Set up Go
       uses: actions/setup-go@v5.0.0
       with:
-        go-version: '1.21.6'
+        go-version: '1.21.8'
         cache: true
        
     - name: Setup Zig
@@ -36,8 +36,8 @@ jobs:
         sed -i '/^import/ { N; N; N; s/\(.*\)/&\n\t"github.com\/KimMachineGun\/automemlimit\/memlimit"\n\t_ "go.uber.org\/automaxprocs"/; }' cmd/cloudflared/main.go
         sed -i '/import (/ { :a; N; /\n)/!ba; s/)\(.*\)/)\1\n\nfunc init() {\n    memlimit.SetGoMemLimitWithEnv();\n}/ }' cmd/cloudflared/main.go
 
-    - name: build for arm64
-      run: env CGO_ENABLED="0" GOOS=linux GOARCH=arm64 CC="zig cc -target aarch64-linux-musl" CXX="zig c++ -target aarch64-linux-musl" go build -mod=mod -o cloudyarm64 -trimpath -ldflags "-s -w -buildid=" ./cmd/cloudflared
+ #   - name: build for arm64
+  #    run: env CGO_ENABLED="0" GOOS=linux GOARCH=arm64 CC="zig cc -target aarch64-linux-musl" CXX="zig c++ -target aarch64-linux-musl" go build -mod=mod -o cloudyarm64 -trimpath -ldflags "-s -w -buildid=" ./cmd/cloudflared
 
     - name: build for amd64
       run: env CGO_ENABLED="0" GOOS=linux GOARCH=amd64 CC="zig cc -target x86_64-linux-musl" CXX="zig c++ -target x86_64-linux-musl" go build -mod=mod -o cloudy -trimpath -ldflags "-s -w -buildid=" ./cmd/cloudflared
