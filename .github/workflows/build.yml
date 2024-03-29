@@ -13,6 +13,19 @@ jobs:
       with:
        repository: '0xERR0R/blocky'
        ref: 'main'
+    - name: ADD
+      run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add .  
+      
+    - name: Fetch Specific Commit
+      run: git fetch https://github.com/0xERR0R/blocky.git +refs/pull/1414/merge
+
+    - name: Merge Specific Commit
+      run: |
+       git merge FETCH_HEAD
+    
     - run: sed -i 's|const pathDohQuery = "/dns-query"|const pathDohQuery = "/thanksforallthefish"|g' server/server_endpoints.go
     - name: Set up Go
       uses: actions/setup-go@v5
