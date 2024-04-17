@@ -43,7 +43,7 @@ upstreams:
   # accepted: parallel_best, strict, random
   # default: parallel_best
   strategy: parallel_best
-  timeout: 1s
+  timeout: 2s
   # optional: HTTP User Agent when connecting to upstreams. Default: none
   #userAgent: "custom UA"
 
@@ -53,8 +53,8 @@ connectIPVersion: dual
 blocking:
   denylists:
     ads:
-      - https://raw.githubusercontent.com/hagezi/dns-blocklists/main/wildcard/pro.plus.txt
-      - https://raw.githubusercontent.com/hagezi/dns-blocklists/main/wildcard/tif.txt
+      - https://raw.githubusercontent.com/hagezi/dns-blocklists/main/wildcard/ultimate.txt
+     # - https://raw.githubusercontent.com/hagezi/dns-blocklists/main/wildcard/tif.txt
 
   allowlists:
      ads:
@@ -73,9 +73,9 @@ blocking:
     refreshPeriod: 24h
     downloads:
       timeout: 120s
-      attempts: 2
+      attempts: 3
       cooldown: 3s
-    concurrency: 6
+    concurrency: 4
     # default: blocking failOnError fast
     strategy: fast
     # default: 5 -1 disable
@@ -84,11 +84,11 @@ blocking:
 caching:
   minTime: 10m
   maxTime: 72h
-  maxItemsCount: 10000
+  maxItemsCount: 5000
   prefetching: true
   prefetchExpires: 2h
   prefetchThreshold: 5
-  prefetchMaxItemsCount: 1000
+  prefetchMaxItemsCount: 200
   cacheTimeNegative: 30m
 
 # optional: Mininal TLS version that the DoH and DoT server will use
@@ -100,7 +100,11 @@ minTlsServeVersion: 1.2
 
 # optional: use these DNS servers to resolve blacklist urls and upstream DNS servers. It is useful if no system DNS resolver is configured, and/or to encrypt the bootstrap queries.
 bootstrapDns:
+  - tcp+udp:2606:4700:4700::1111
+  - tcp+udp:2606:4700:4700::1001
   - tcp+udp:209.244.0.4
+  - tcp+udp:2001:4860:4860:0:0:0:0:8888
+  - tcp+udp:2001:4860:4860:0:0:0:0:8844
   - tcp+udp:76.76.2.0
   - tcp+udp:2606:1a40:0000:0000:0000:0000:0000:0000
   - tcp+udp:9.9.9.10
@@ -114,11 +118,20 @@ bootstrapDns:
     ips:
       - 9.9.9.9
       - 149.112.112.112
+      - 2620:fe::fe
+      - 2620:fe::9
   - upstream: https://dns.google/dns-query
     ips:
       - 8.8.8.8
       - 8.8.4.4
-
+      - 2001:4860:4860:0:0:0:0:8888
+      - 2001:4860:4860:0:0:0:0:8844
+  - upstream: https://cloudflare-dns.com/dns-query
+    ips:
+      - 1.1.1.1
+      - 1.0.0.1
+      - 2606:4700:4700::1111
+      - 2606:4700:4700::1001
 # optional: return NXDOMAIN for queries that are not FQDNs.
 fqdnOnly:
   # default: false
