@@ -14,7 +14,8 @@ jobs:
           apt update
           apt install -y ca-certificates git curl wget xz-utils
           
-          
+      - name: Set up Go
+        uses: actions/setup-go@v5    
       - name: build
         run: |
           curl -LJo ./get.sh https://raw.githubusercontent.com/t-e-s-tweb/lists/xx/get.sh
