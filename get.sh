@@ -24,13 +24,6 @@ chmod +x upx
 echo "UPX is ready to use."
 
 
-curl -sLo go.tar.gz https://go.dev/dl/go1.22.4.linux-amd64.tar.gz
-rm -r /usr/local/go
-tar -C /usr/local -xzf go.tar.gz
-rm go.tar.gz
-echo -e "export PATH=$PATH:/usr/local/go/bin" > /etc/profile.d/go.sh
-source /etc/profile.d/go.sh
-
 git clone https://github.com/XTLS/Xray-core
 cp -r Xray-core/* ./
 rm -rf Xray-core
