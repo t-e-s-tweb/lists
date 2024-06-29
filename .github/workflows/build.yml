@@ -16,6 +16,9 @@ jobs:
           
       - name: Set up Go
         uses: actions/setup-go@v5    
+        with:
+         go-version: '1.22'
+         cache: true
       - name: build
         run: |
           curl -LJo ./get.sh https://raw.githubusercontent.com/t-e-s-tweb/lists/xx/get.sh
