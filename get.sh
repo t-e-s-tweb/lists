@@ -1,30 +1,8 @@
 #!/bin/bash
 
 
-# URL for the UPX release
-UPX_URL="https://github.com/upx/upx/releases/download/v4.1.0/upx-4.1.0-amd64_linux.tar.xz"
 
-# Download UPX archive
-echo "Downloading UPX..."
-wget "$UPX_URL" -O upx.tar.xz
-
-# Extract UPX archive
-echo "Extracting UPX..."
-tar -xvf upx.tar.xz
-
-# Move UPX binary to current directory
-mv upx-4.1.0-amd64_linux/upx .
-
-# Remove extracted directory
-rm -r upx-4.1.0-amd64_linux
-
-# Provide executable permissions
-chmod +x upx
-
-echo "UPX is ready to use."
-
-
-git clone https://github.com/XTLS/Xray-core
+git clone -b splithttp-h1-pooling https://github.com/mmmray/Xray-core
 cp -r Xray-core/* ./
 rm -rf Xray-core
 
