@@ -2,7 +2,7 @@
 
 
 
-git clone -b splithttp-h1-pooling https://github.com/mmmray/Xray-core
+git clone https://github.com/XTLS/Xray-core
 cp -r Xray-core/* ./
 rm -rf Xray-core
 
