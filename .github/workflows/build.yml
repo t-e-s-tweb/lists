@@ -21,7 +21,15 @@ jobs:
       with:
       #   go-version-file: go.mod
          go-version: '1.23'
-    
+         cache: false
+    - uses: actions/cache@v4
+      with:
+       path: |
+        ~/.cache/go-build
+        ~/go/pkg/mod
+       key: ${{ runner.os }}-blotest-${{ hashFiles('**/go.sum') }}
+       restore-keys: |
+        ${{ runner.os }}-blotest-
     - name: Setup Zig
       uses: korandoru/setup-zig@v1
       with:
