@@ -15,7 +15,9 @@ jobs:
        ref: 'refactor/services'
 
     
-    - run: sed -i 's|const pathDohQuery = "/dns-query"|const pathDohQuery = "/thanksforallthefish"|g' server/server_endpoints.go
+    - run: sed -i 's/yaml:"-"/yaml:"services"/' config/config.go
+    - run: sed -i 's|s.Router().Route("/dns-query", func(mux chi.Router) {|s.Router().Route("/thanksforallthefish", func(mux chi.Router) {|' server/doh.go
+
     - name: Set up Go
       uses: actions/setup-go@v5
       with:
