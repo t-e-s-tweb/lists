@@ -71,12 +71,11 @@ upstreams:
     - https://resolver1.absolight.net/dns-query
     - https://resolver2.absolight.net/dns-query
     - https://resolver3.absolight.net/dns-query
-    - 
 
   # accepted: parallel_best, strict, random
   # default: parallel_best
-  strategy: random
-  timeout: 4s
+  strategy: parallel_best
+  timeout: 2s
   # optional: HTTP User Agent when connecting to upstreams. Default: none
   #userAgent: "custom UA"
 
