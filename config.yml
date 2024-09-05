@@ -3,11 +3,11 @@ upstreams:
     # Configure startup behavior.
     # accepted: blocking, failOnError, fast
     # default: blocking
-    strategy: fast
+    strategy: blocking
   groups:
     default:
-  #  - https://unfiltered.adguard-dns.com/dns-query
- #   - tcp-tls:unfiltered.adguard-dns.com
+    - https://unfiltered.adguard-dns.com/dns-query
+  #  - tcp-tls:unfiltered.adguard-dns.com
    # - https://dns.bebasid.com/unfiltered
   #  - tcp-tls:unfiltered.dns.bebasid.com
     - https://doh.opendns.com/dns-query
@@ -18,11 +18,11 @@ upstreams:
   #  - tcp-tls:dnsovertls.sinodun.com
   #  - tcp-tls:dnsovertls1.sinodun.com
    # - tcp-tls:anycast.censurfridns.dk
-  #  - https://doh.dns.sb/dns-query
+    - https://doh.dns.sb/dns-query
     - https://dns.google/dns-query
     - tcp-tls:dns.google
     - https://anycast.dns.nextdns.io
-    - tcp-tls:anycast.dns.nextdns.io
+#    - tcp-tls:anycast.dns.nextdns.io
     - https://open.dns0.eu
     - tcp-tls:open.dns0.eu
     - https://dns.quad9.net/dns-query
@@ -33,22 +33,55 @@ upstreams:
     - tcp-tls:dns.digitale-gesellschaft.ch
     - https://kaitain.restena.lu/dns-query
     - tcp-tls:kaitain.restena.lu
-   # - https://blitz.ahadns.com
+    - https://blitz.ahadns.com
+    - https://dns.artikel10.org/dns-query
+    - https://dns.digitalsize.net/dns-query
+    - https://doh.dns4all.eu/dns-query
+    - https://ams01.dnscry.pt/dns-query
+    - https://cvt01.dnscry.pt/dns-query
+    - https://dub01.dnscry.pt/dns-query
+    - https://dus01.dnscry.pt/dns-query
+    - https://eyg01.dnscry.pt/dns-query
+    - https://fra01.dnscry.pt/dns-query
+    - https://gva01.dnscry.pt/dns-query
+    - https://hel01.dnscry.pt/dns-query
+    - https://ist01.dnscry.pt/dns-query
+    - https://lon01.dnscry.pt/dns-query
+    - https://mad01.dnscry.pt/dns-query
+    - https://mil01.dnscry.pt/dns-query
+    - https://muc01.dnscry.pt/dns-query
+    - https://nue01.dnscry.pt/dns-query
+    - https://omr01.dnscry.pt/dns-query
+    - https://par01.dnscry.pt/dns-query
+    - https://sof01.dnscry.pt/dns-query
+    - https://sto01.dnscry.pt/dns-query
+    - https://dns.dnswarden.com/uncensored
+    - https://ns0.fdn.fr/dns-query
+    - https://ns1.fdn.fr/dns-query
+    - https://doh.ffmuc.net/dns-query
+    - https://doh.lacontrevoie.fr/dns-query
+    - https://doh.libredns.gr/dns-query
+    - https://dns.mullvad.net/dns-query
+    - https://dns11.quad9.net/dns-query
  #   - tcp-tls:p0.freedns.controld.com
-  #  - https://freedns.controld.com/p0
-  #  - https://us1.blissdns.net/dns-query
-   # - tcp-tls:us1.blissdns.net
+    - https://freedns.controld.com/p0
+ #   - https://us1.blissdns.net/dns-query
+#    - tcp-tls:us1.blissdns.net
   #  - https://dns.aquilenet.fr/dns-query
+    - https://resolver1.absolight.net/dns-query
+    - https://resolver2.absolight.net/dns-query
+    - https://resolver3.absolight.net/dns-query
+    - 
 
   # accepted: parallel_best, strict, random
   # default: parallel_best
-  strategy: parallel_best
-  timeout: 2s
+  strategy: random
+  timeout: 4s
   # optional: HTTP User Agent when connecting to upstreams. Default: none
   #userAgent: "custom UA"
 
 # accepted: dual, v4, v6
-connectIPVersion: dual
+connectIPVersion: v6
 
 blocking:
   denylists:
@@ -70,21 +103,21 @@ blocking:
   blockType: zeroIp
   blockTTL: 10m
   loading:
-    refreshPeriod: 24h
+    refreshPeriod: 12h
     downloads:
-      timeout: 120s
-      attempts: 3
+      timeout: 600s
+      attempts: 5
       cooldown: 3s
     concurrency: 4
     # default: blocking failOnError fast
-    strategy: fast
+    strategy: blocking
     # default: 5 -1 disable
     maxErrorsPerSource: -1
 
 caching:
-  minTime: 10m
+  minTime: 15m
   maxTime: 72h
-  maxItemsCount: 5000
+  maxItemsCount: 10000
   prefetching: true
   prefetchExpires: 2h
   prefetchThreshold: 5
@@ -165,6 +198,6 @@ specialUseDomains:
   rfc6762-appendixG: true
 ecs:
    useAsClient: false
-   forward: true
+   forward: false
    ipv4Mask: 24
    ipv6Mask: 56
