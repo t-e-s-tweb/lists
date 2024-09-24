@@ -2,10 +2,10 @@
 
 
 
-git clone -b TransportConfig https://github.com/XTLS/Xray-core
+git clone https://github.com/XTLS/Xray-core
 cp -r Xray-core/* ./
 rm -rf Xray-core
-
+git checkout acbf36e
 
 # Define the text to replace
 old_text="Show current version of Xray"
