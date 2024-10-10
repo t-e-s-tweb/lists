@@ -75,7 +75,7 @@ upstreams:
   # accepted: parallel_best, strict, random
   # default: parallel_best
   strategy: random
-  timeout: 2s
+  timeout: 3s
   # optional: HTTP User Agent when connecting to upstreams. Default: none
   #userAgent: "custom UA"
 
@@ -99,8 +99,8 @@ blocking:
   clientGroupsBlock:
     default:
       - ads
-  blockType: zeroIp
-  blockTTL: 15m
+  blockType: nxDomain
+  blockTTL: 6h
   loading:
     refreshPeriod: 12h
     downloads:
@@ -197,6 +197,6 @@ specialUseDomains:
   rfc6762-appendixG: true
 ecs:
    useAsClient: false
-   forward: true
-   ipv4Mask: 24
-   ipv6Mask: 48
+   forward: false
+   ipv4Mask: 0
+   ipv6Mask: 0
