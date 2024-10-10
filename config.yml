@@ -3,26 +3,26 @@ upstreams:
     # Configure startup behavior.
     # accepted: blocking, failOnError, fast
     # default: blocking
-    strategy: blocking
+    strategy: fast
   groups:
     default:
     - https://unfiltered.adguard-dns.com/dns-query
-  #  - tcp-tls:unfiltered.adguard-dns.com
-   # - https://dns.bebasid.com/unfiltered
-  #  - tcp-tls:unfiltered.dns.bebasid.com
+    - tcp-tls:unfiltered.adguard-dns.com
+    - https://dns.bebasid.com/unfiltered
+    - tcp-tls:unfiltered.dns.bebasid.com
     - https://doh.opendns.com/dns-query
-  #  - https://doh.cleanbrowsing.org/doh/security-filter
-   # - tcp-tls:security-filter-dns.cleanbrowsing.org
+    - https://doh.cleanbrowsing.org/doh/security-filter
+    - tcp-tls:security-filter-dns.cleanbrowsing.org
     - https://dns.cloudflare.com/dns-query
     - tcp-tls:1dot1dot1dot1.cloudflare-dns.com
-  #  - tcp-tls:dnsovertls.sinodun.com
-  #  - tcp-tls:dnsovertls1.sinodun.com
-   # - tcp-tls:anycast.censurfridns.dk
+    - tcp-tls:dnsovertls.sinodun.com
+    - tcp-tls:dnsovertls1.sinodun.com
+    - tcp-tls:anycast.censurfridns.dk
     - https://doh.dns.sb/dns-query
     - https://dns.google/dns-query
     - tcp-tls:dns.google
     - https://anycast.dns.nextdns.io
-#    - tcp-tls:anycast.dns.nextdns.io
+    - tcp-tls:anycast.dns.nextdns.io
     - https://open.dns0.eu
     - tcp-tls:open.dns0.eu
     - https://dns.quad9.net/dns-query
@@ -63,30 +63,30 @@ upstreams:
     - https://doh.libredns.gr/dns-query
     - https://dns.mullvad.net/dns-query
     - https://dns11.quad9.net/dns-query
- #   - tcp-tls:p0.freedns.controld.com
+    - tcp-tls:p0.freedns.controld.com
     - https://freedns.controld.com/p0
- #   - https://us1.blissdns.net/dns-query
-#    - tcp-tls:us1.blissdns.net
-  #  - https://dns.aquilenet.fr/dns-query
+    - https://us1.blissdns.net/dns-query
+    - tcp-tls:us1.blissdns.net
+    - https://dns.aquilenet.fr/dns-query
     - https://resolver1.absolight.net/dns-query
     - https://resolver2.absolight.net/dns-query
     - https://resolver3.absolight.net/dns-query
 
   # accepted: parallel_best, strict, random
   # default: parallel_best
-  strategy: parallel_best
+  strategy: random
   timeout: 2s
   # optional: HTTP User Agent when connecting to upstreams. Default: none
   #userAgent: "custom UA"
 
 # accepted: dual, v4, v6
-connectIPVersion: v6
+connectIPVersion: dual
 
 blocking:
   denylists:
     ads:
       - https://raw.githubusercontent.com/hagezi/dns-blocklists/main/wildcard/ultimate.txt
-     # - https://raw.githubusercontent.com/hagezi/dns-blocklists/main/wildcard/tif.txt
+      - https://raw.githubusercontent.com/hagezi/dns-blocklists/main/wildcard/tif.txt
 
   allowlists:
      ads:
@@ -100,7 +100,7 @@ blocking:
     default:
       - ads
   blockType: zeroIp
-  blockTTL: 10m
+  blockTTL: 15m
   loading:
     refreshPeriod: 12h
     downloads:
@@ -114,13 +114,13 @@ blocking:
     maxErrorsPerSource: -1
 
 caching:
-  minTime: 15m
+  minTime: 10m
   maxTime: 72h
-  maxItemsCount: 10000
+  maxItemsCount: 0
   prefetching: true
-  prefetchExpires: 2h
-  prefetchThreshold: 5
-  prefetchMaxItemsCount: 200
+  prefetchExpires: 24h
+  prefetchThreshold: 2
+  prefetchMaxItemsCount: 0
   cacheTimeNegative: 30m
 
 # optional: Mininal TLS version that the DoH and DoT server will use
@@ -197,6 +197,6 @@ specialUseDomains:
   rfc6762-appendixG: true
 ecs:
    useAsClient: false
-   forward: false
+   forward: true
    ipv4Mask: 24
    ipv6Mask: 56
