@@ -3,7 +3,7 @@ upstreams:
     # Configure startup behavior.
     # accepted: blocking, failOnError, fast
     # default: blocking
-    strategy: fast
+    strategy: blocking
   groups:
     default:
     - https://unfiltered.adguard-dns.com/dns-query
