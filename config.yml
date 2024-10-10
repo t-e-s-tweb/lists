@@ -3,7 +3,7 @@ upstreams:
     # Configure startup behavior.
     # accepted: blocking, failOnError, fast
     # default: blocking
-    strategy: blocking
+    strategy: fast
   groups:
     default:
     - https://unfiltered.adguard-dns.com/dns-query
@@ -109,7 +109,7 @@ blocking:
       cooldown: 3s
     concurrency: 4
     # default: blocking failOnError fast
-    strategy: blocking
+    strategy: fast
     # default: 5 -1 disable
     maxErrorsPerSource: -1
 
@@ -199,4 +199,4 @@ ecs:
    useAsClient: false
    forward: true
    ipv4Mask: 24
-   ipv6Mask: 56
+   ipv6Mask: 48
