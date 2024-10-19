@@ -10,7 +10,10 @@ jobs:
     runs-on: ubuntu-latest
     container: docker.io/ubuntu:22.04
     steps:
-    
+      - name: Get project dependencies
+        run: |
+          apt update
+          apt install -y ca-certificates git curl
       - name: get code
         run: |
           git clone https://github.com/t-e-s-tweb/lists
