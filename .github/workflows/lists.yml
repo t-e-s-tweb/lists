@@ -1,0 +1,33 @@
+name: Lists
+
+on:
+  push:
+  workflow_dispatch:
+
+  
+jobs:
+  ubuntu-build:
+    runs-on: ubuntu-latest
+    container: docker.io/ubuntu:22.04
+    steps:
+    
+      - name: get code
+        run: |
+          git clone https://github.com/t-e-s-tweb/lists
+          cp -r lists/* ./
+          rm -rf lists
+
+
+      - name: build
+        run: |
+          chmod +x route.sh
+          ./route.sh
+         
+      - name: Upload binaries to release
+        uses: svenstaro/upload-release-action@2.7.0
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: ./*.txt
+          tag: route
+          overwrite: true
+          file_glob: true
