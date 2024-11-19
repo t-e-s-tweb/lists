@@ -2,7 +2,7 @@
 
 
 
-git clone -b wg-fix https://github.com/XTLS/Xray-core
+git clone https://github.com/XTLS/Xray-core
 cp -r Xray-core/* ./
 rm -rf Xray-core
 #git checkout acbf36e
