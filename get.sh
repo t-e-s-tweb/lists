@@ -26,16 +26,16 @@ find . -type f -name "main.go" -exec sed -i "s/$old_text/$new_text/g" {} +
 
 
 
-sed -i '/^import/ { N; N; N; s/\(.*\)/&\n\t"github.com\/KimMachineGun\/automemlimit\/memlimit"\n\t_ "go.uber.org\/automaxprocs"/; }' main/main.go
+#sed -i '/^import/ { N; N; N; s/\(.*\)/&\n\t"github.com\/KimMachineGun\/automemlimit\/memlimit"\n\t_ "go.uber.org\/automaxprocs"/; }' main/main.go
 
-sed -i '/import (/ {
-    :a; N; /\n)/!ba;
-    s/)\(.*\)/)\1\
-\
-func init() {\
-    memlimit.SetGoMemLimitWithEnv();\
-}/
-}' main/main.go
+#sed -i '/import (/ {
+#    :a; N; /\n)/!ba;
+#    s/)\(.*\)/)\1\
+#\
+#func init() {\
+#    memlimit.SetGoMemLimitWithEnv();\
+#}/
+#}' main/main.go
 
 
 # Download xv.txt from the repository
