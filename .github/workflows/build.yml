@@ -13,7 +13,8 @@ jobs:
       with:
        repository: 'XTLS/Xray-core'
        ref: 'main'
-      
+    - name: commit
+      run: git checkout 98a72b6
     - name: Set up Go
       uses: actions/setup-go@v5.0.0
       with:
