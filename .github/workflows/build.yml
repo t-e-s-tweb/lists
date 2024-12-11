@@ -219,7 +219,6 @@ jobs:
           cp ${GITHUB_WORKSPACE}/LICENSE ./build_assets/LICENSE
 
       - name: Create ZIP archive
-        if: github.event_name == 'release'
         shell: bash
         run: |
           pushd build_assets || exit 1
@@ -246,9 +245,8 @@ jobs:
 
       - name: Upload binaries to release
         uses: svenstaro/upload-release-action@v2
-        if: github.event_name == 'release'
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: ./Xray-${{ env.ASSET_NAME }}.zip*
+          file: ./xadm64-${{ env.ASSET_NAME }}.zip*
           tag: ${{ github.ref }}
           file_glob: true
