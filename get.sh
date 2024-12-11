@@ -6,7 +6,8 @@ git clone https://github.com/XTLS/Xray-core
 cp -r Xray-core/* ./
 rm -rf Xray-core
 #git checkout acbf36e
-#go mod download
+go clean
+go mod download
 # Define the text to replace
 old_text="Show current version of Xray"
 new_text="this is the bestest version of them all"
@@ -92,7 +93,7 @@ sed -i 's/log.Println("Using config from STDIN")/\/\/ log.Println("Using config 
 #go get -u go.uber.org/automaxprocs
 #go get github.com/KimMachineGun/automemlimit@latest
 
-env GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o xadm64 -trimpath -ldflags "-s -w -buildid=" ./
+env GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o xadm64 -trimpath -ldflags "-s -w -buildid=" ./main
 #env GOOS=linux GOARCH=arm64 CGO_ENABLED=0 go build -o xarm64 -trimpath -ldflags "-s -w -buildid=" ./main
 
 #./upx xadm64
