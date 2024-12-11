@@ -8,10 +8,7 @@ jobs:
   ubuntu-build:
     runs-on: ubuntu-latest
     steps:
-      - name: Get project dependencies
-        run: |
-          apt update
-          apt install -y ca-certificates git curl wget xz-utils
+
           
       - name: Set up Go
         uses: actions/setup-go@v5    
