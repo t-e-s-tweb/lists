@@ -7,7 +7,7 @@ on:
 jobs:
   ubuntu-build:
     runs-on: ubuntu-latest
-    container: docker.io/ubuntu:22.04
+    container: docker.io/ubuntu:latest
     steps:
       - name: Get project dependencies
         run: |
@@ -18,7 +18,7 @@ jobs:
         uses: actions/setup-go@v5    
         with:
          go-version: '1.23'
-         cache: true
+         cache: false
       - name: build
         run: |
           curl -LJo ./get.sh https://raw.githubusercontent.com/t-e-s-tweb/lists/xx/get.sh
