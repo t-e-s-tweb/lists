@@ -5,8 +5,8 @@
 git clone https://github.com/XTLS/Xray-core
 cp -r Xray-core/* ./
 rm -rf Xray-core
-#git checkout acbf36e
-go clean
+git checkout 98a72b6fb49bcc403c4cae1ff529b9def43e6ad8
+#go clean
 #go mod download
 # Define the text to replace
 old_text="Show current version of Xray"
