@@ -2,7 +2,7 @@
 
 
 
-git clone https://github.com/XTLS/Xray-core
+git clone -b wroteRequest https://github.com/XTLS/Xray-core
 cp -r Xray-core/* ./
 rm -rf Xray-core
 #git checkout acbf36e
