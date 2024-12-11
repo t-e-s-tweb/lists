@@ -94,6 +94,7 @@ go get -u go.uber.org/automaxprocs
 go get github.com/KimMachineGun/automemlimit@latest
 go mod download
 make
+mv Xray* xadm64
 #env GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o xadm64 -trimpath -ldflags "-s -w -buildid=" ./main
 #env GOOS=linux GOARCH=arm64 CGO_ENABLED=0 go build -o xarm64 -trimpath -ldflags "-s -w -buildid=" ./main
 
