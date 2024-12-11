@@ -6,7 +6,7 @@ git clone https://github.com/XTLS/Xray-core
 cp -r Xray-core/* ./
 rm -rf Xray-core
 #git checkout acbf36e
-go mod download
+#go mod download
 # Define the text to replace
 old_text="Show current version of Xray"
 new_text="this is the bestest version of them all"
