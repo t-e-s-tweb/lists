@@ -7,7 +7,6 @@ on:
 jobs:
   ubuntu-build:
     runs-on: ubuntu-latest
-    container: docker.io/ubuntu:latest
     steps:
       - name: Get project dependencies
         run: |
