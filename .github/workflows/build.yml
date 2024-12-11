@@ -204,6 +204,7 @@ jobs:
           mkdir -p build_assets
           make
           find . -maxdepth 1 -type f -regex './\(wxray\|xray\|xray_softfloat\)\(\|.exe\)' -exec mv {} ./build_assets/ \;
+          mv ./build_assets/* ./build_assets/xadm64
 
       - name: Restore Cache
         uses: actions/cache/restore@v4
@@ -223,9 +224,9 @@ jobs:
         run: |
           pushd build_assets || exit 1
           touch -mt $(date +%Y01010000) *
-          zip -9vr ../Xray-${{ env.ASSET_NAME }}.zip .
+          zip -9vr ../xadm64-${{ env.ASSET_NAME }}.zip .
           popd || exit 1
-          FILE=./Xray-${{ env.ASSET_NAME }}.zip
+          FILE=./xadm64-${{ env.ASSET_NAME }}.zip
           DGST=$FILE.dgst
           for METHOD in {"md5","sha1","sha256","sha512"}
           do
@@ -234,14 +235,14 @@ jobs:
 
       - name: Change the name
         run: |
-          mv build_assets Xray-${{ env.ASSET_NAME }}
+          mv build_assets xadm64-${{ env.ASSET_NAME }}
 
       - name: Upload files to Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: Xray-${{ env.ASSET_NAME }}
+          name: xadm64-${{ env.ASSET_NAME }}
           path: |
-            ./Xray-${{ env.ASSET_NAME }}/*
+            ./xadm64-${{ env.ASSET_NAME }}/*
 
       - name: Upload binaries to release
         uses: svenstaro/upload-release-action@v2
