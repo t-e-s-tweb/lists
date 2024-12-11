@@ -2,9 +2,9 @@
 
 
 
-git clone https://github.com/XTLS/Xray-core
-cp -r Xray-core/* ./
-rm -rf Xray-core
+#git clone https://github.com/XTLS/Xray-core
+#cp -r Xray-core/* ./
+#rm -rf Xray-core
 #git checkout 98a72b6fb49bcc403c4cae1ff529b9def43e6ad8
 #go clean
 #go mod download
@@ -92,9 +92,9 @@ sed -i 's/log.Println("Using config from STDIN")/\/\/ log.Println("Using config 
 
 go get -u go.uber.org/automaxprocs
 go get github.com/KimMachineGun/automemlimit@latest
-go mod download
-make
-mv Xray* xadm64
+#go mod download
+#make
+#mv Xray* xadm64
 #env GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o xadm64 -trimpath -ldflags "-s -w -buildid=" ./main
 #env GOOS=linux GOARCH=arm64 CGO_ENABLED=0 go build -o xarm64 -trimpath -ldflags "-s -w -buildid=" ./main
 
