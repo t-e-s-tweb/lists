@@ -176,7 +176,9 @@ jobs:
     steps:
       - name: Checkout codebase
         uses: actions/checkout@v4
-
+        with:
+          repository: 'XTLS/Xray-core'
+          ref: 'main'
       - name: Show workflow information
         run: |
           _NAME=${{ matrix.patch-assetname }}
