@@ -1,20 +1,21 @@
-name: Delete workflow runs
-
+name: Delete old workflow runs
 on:
-  schedule:
-    - cron: '0 0 * * *'
   workflow_dispatch:
+  schedule:
+    - cron: '0 0 1 * *'
+# Run monthly, at 00:00 on the 1st day of month.
 
 jobs:
   del_runs:
-    name: Delete workflow runs
     runs-on: ubuntu-latest
+    permissions:
+      actions: write
+      contents: read
     steps:
-      - name: Delete releases and workflows runs
-        uses: ophub/delete-releases-workflows@v0.1.0
+      - name: Delete workflow runs
+        uses: Mattraks/delete-workflow-runs@v2
         with:
-         delete_releases: true
-         releases_keep_latest: 20
-         delete_workflows: true
-         workflows_keep_day: 1
-         gh_token: ${{ secrets.GH_TOKEN }}
+          token: ${{ github.token }}
+          repository: ${{ github.repository }}
+          retain_days: 1
+          keep_minimum_runs: 1
