@@ -21,6 +21,7 @@ jobs:
       with:
       #   go-version-file: go.mod
          go-version: '1.23'
+         check-latest: true
     
     - name: Setup Zig
       uses: korandoru/setup-zig@v1
