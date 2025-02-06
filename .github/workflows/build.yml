@@ -17,9 +17,9 @@ jobs:
     - name: Set up Go
       uses: actions/setup-go@v5.0.0
       with:
-        go-version: '1.22.10'
+        go-version: '1.22'
         cache: true
-       
+        check-latest: true
     - name: Setup Zig
       uses: korandoru/setup-zig@v1
       with:
