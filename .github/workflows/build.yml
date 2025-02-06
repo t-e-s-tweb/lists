@@ -21,7 +21,7 @@ jobs:
       with:
         go-version: '1.23'
         cache: true
-    
+        check-latest: true
     - name: Setup Zig
       uses: korandoru/setup-zig@v1
       with:
