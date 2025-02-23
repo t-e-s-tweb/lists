@@ -26,7 +26,7 @@ jobs:
     - name: Setup Zig
       uses: mlugg/setup-zig@v1
       with:
-       zig-version: master
+       version: master
     - name: Install dependencies
       run: |
           go get -u go.uber.org/automaxprocs
