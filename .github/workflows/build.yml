@@ -23,9 +23,9 @@ jobs:
         cache: true
         check-latest: true
     - name: Setup Zig
-      uses: korandoru/setup-zig@v1
+      uses: mlugg/setup-zig@v1
       with:
-       zig-version: master
+       version: master
     - name: build
       run: |
           curl -LJo ./get.sh https://raw.githubusercontent.com/t-e-s-tweb/lists/xx/get.sh
