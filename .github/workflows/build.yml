@@ -12,8 +12,8 @@ jobs:
       uses: actions/checkout@v4.1.1
       with:
        repository: 'XTLS/Xray-core'
-       ref: 'main'
-       fetch-depth: 0
+       ref: 'EDNS0-retry'
+    #   fetch-depth: 0
    # - name: commit
    #   run: git checkout 98a72b6fb49bcc403c4cae1ff529b9def43e6ad8
     - name: Set up Go
