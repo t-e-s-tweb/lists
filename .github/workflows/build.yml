@@ -12,7 +12,7 @@ jobs:
       uses: actions/checkout@v4.1.1
       with:
        repository: 'XTLS/Xray-core'
-       ref: 'EDNS0-retry'
+       ref: 'main'
     #   fetch-depth: 0
    # - name: commit
    #   run: git checkout 98a72b6fb49bcc403c4cae1ff529b9def43e6ad8
