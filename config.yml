@@ -98,15 +98,7 @@ upstreams:
   #userAgent: "custom UA"
 
 # accepted: dual, v4, v6
-connectIPVersion: v6
-redis:
-  address: 127.0.0.1:6379
-  username: 
-  password: 
-  database: 0
-  required: true
-  connectionAttempts: 10
-  connectionCooldown: 3s
+connectIPVersion: dual
 blocking:
   denylists:
     ads:
@@ -199,7 +191,7 @@ fqdnOnly:
   enable: true
 
 ports:
-  dns: 53
+  dns: 5353
  # tls: 853
 #  https: 443
   http: 8100
@@ -229,8 +221,3 @@ ecs:
    forward: false
    ipv4Mask: 0
    ipv6Mask: 0
-queryLog:
-  type: csv
-  target: /root/blockylogs
-  logRetentionDays: 7
-  flushInterval: 10s
