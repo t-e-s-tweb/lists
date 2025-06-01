@@ -23,7 +23,7 @@ jobs:
         cache: true
         check-latest: true
     - name: Setup Zig
-      uses: mlugg/setup-zig@v1
+      uses: mlugg/setup-zig@v2
       with:
        version: master
     - name: build
