@@ -3,7 +3,7 @@ upstreams:
     # Configure startup behavior.
     # accepted: blocking, failOnError, fast
     # default: blocking
-    strategy: fast
+    strategy: blocking
   groups:
     default:
     - https://resolver1.absolight.net/dns-query
@@ -93,7 +93,7 @@ upstreams:
   # accepted: parallel_best, strict, random
   # default: parallel_best
   strategy: parallel_best
-  timeout: 2s
+  timeout: 5s
   # optional: HTTP User Agent when connecting to upstreams. Default: none
   #userAgent: "custom UA"
 
@@ -121,10 +121,10 @@ blocking:
   clientGroupsBlock:
     default:
       - ads
-  blockType: zeroIP
-  blockTTL: 3h
+  blockType: nxDomain
+  blockTTL: 10s
   loading:
-    refreshPeriod: 12h
+    refreshPeriod: 8h
     downloads:
       timeout: 600s
       attempts: 3
@@ -136,11 +136,11 @@ blocking:
 
 caching:
   minTime: 10m
-  maxTime: 24h
-  maxItemsCount: 20000
+  maxTime: 72h
+  maxItemsCount: 10000
   prefetching: true
-  prefetchExpires: 6h
-  prefetchThreshold: 3
+  prefetchExpires: 2h
+  prefetchThreshold: 5
   prefetchMaxItemsCount: 1000
   cacheTimeNegative: 30m
 
@@ -198,7 +198,7 @@ ports:
 
 log:
   # optional: Log level (one from debug, info, warn, error). Default: info
-  level: info
+  level: error
   # optional: Log format (text or json). Default: text
   format: text
   # optional: log timestamps. Default: true
