@@ -3,7 +3,7 @@ upstreams:
     # Configure startup behavior.
     # accepted: blocking, failOnError, fast
     # default: blocking
-    strategy: blocking
+    strategy: fast
   groups:
     default:
     - https://resolver1.absolight.net/dns-query
@@ -106,14 +106,15 @@ blocking:
       - https://cdn.jsdelivr.net/gh/hagezi/dns-blocklists@latest/wildcard/popupads.txt
       - https://cdn.jsdelivr.net/gh/hagezi/dns-blocklists@latest/wildcard/tif.txt
       - https://cdn.jsdelivr.net/gh/hagezi/dns-blocklists@latest/wildcard/hoster.txt
+      - http://sbc.io/hosts/hosts
   allowlists:
      ads:
-      - https://raw.githubusercontent.com/m0zgen/dns-hole/refs/heads/master/whitelist.txt
-      - https://raw.githubusercontent.com/iam-py-test/allowlist/main/allowlist.txt
-      - https://raw.githubusercontent.com/hagezi/dns-blocklists/main/wildcard/whitelist-referral.txt
-      - https://raw.githubusercontent.com/dnswarden/blocklist-staging/main/whitelist/whitelistcommon.txt
-      - https://raw.githubusercontent.com/dnswarden/blocklist-staging/main/whitelist/tinylist.txt
-      - https://raw.githubusercontent.com/m0zgen/dns-hole/refs/heads/master/regex/common-wl.txt
+    #  - https://raw.githubusercontent.com/m0zgen/dns-hole/refs/heads/master/whitelist.txt
+    #  - https://raw.githubusercontent.com/iam-py-test/allowlist/main/allowlist.txt
+     # - https://raw.githubusercontent.com/hagezi/dns-blocklists/main/wildcard/whitelist-referral.txt
+    #  - https://raw.githubusercontent.com/dnswarden/blocklist-staging/main/whitelist/whitelistcommon.txt
+    #  - https://raw.githubusercontent.com/dnswarden/blocklist-staging/main/whitelist/tinylist.txt
+    #  - https://raw.githubusercontent.com/m0zgen/dns-hole/refs/heads/master/regex/common-wl.txt
       - |
         *.koyeb.app
         *.debugbear.com
@@ -121,12 +122,15 @@ blocking:
   clientGroupsBlock:
     default:
       - ads
-  blockType: nxDomain
+  blockType: zeroIp
   blockTTL: 10s
   loading:
     refreshPeriod: 8h
     downloads:
       timeout: 600s
+      writeTimeout: 60s
+      readTimeout: 60s
+      readHeaderTimeout: 60s
       attempts: 3
       cooldown: 10s
     concurrency: 8
@@ -135,7 +139,7 @@ blocking:
     maxErrorsPerSource: -1
 
 caching:
-  minTime: 10m
+  minTime: 15m
   maxTime: 72h
   maxItemsCount: 10000
   prefetching: true
