@@ -36,12 +36,22 @@ jobs:
 
     - name: build for amd64
       run: env CGO_ENABLED="0" GOOS=linux GOARCH=amd64 CC="zig cc -target x86_64-linux-musl" CXX="zig c++ -target x86_64-linux-musl" go build -o xadm64 -trimpath -ldflags "-s -w -buildid="  ./main
-
+    - name: build for android arm64
+      run: env CGO_ENABLED="0" GOOS=android GOARCH=arm64 CC="zig cc -target aarch64-linux-android" CXX="zig c++ -target aarch64-linux-android" go build -o xandroid64 -trimpath -ldflags "-s -w -buildid=" ./main
     - name: Upload binaries to release
       uses: svenstaro/upload-release-action@2.7.0
       with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: ./xadm64*
+          tag: ${{ github.ref }}
+          overwrite: true
+          file_glob: true
+ 
+    - name: Upload binaries to release
+      uses: svenstaro/upload-release-action@2.7.0
+      with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: ./xandroid*
           tag: ${{ github.ref }}
           overwrite: true
           file_glob: true
