@@ -37,6 +37,9 @@ jobs:
           ./get.sh
   #  - name: build for arm64
   #   run: env CGO_ENABLED="0" GOOS=linux GOARCH=arm64 CC="zig cc -target aarch64-linux-musl" CXX="zig c++ -target aarch64-linux-musl" go build -o sbarm -trimpath -ldflags "-s -w -buildid=" -tags with_utls,with_quic,with_wireguard,with_utls,with_gvisor,staticOpenssl,staticZlib,staticLibevent ./cmd/sing-box
+    - name: build for winamd64
+      run: env CGO_ENABLED="0" GOOS=windows GOARCH=amd64 CC="zig cc -target x86_64-windows-gnu" CXX="zig c++ -target x86_64-windows-gnu" go build -o xadmwin64.exe -trimpath -ldflags "-s -w -buildid="  ./main
+    
 
     - name: build for amd64
       run: env CGO_ENABLED="0" GOOS=linux GOARCH=amd64 CC="zig cc -target x86_64-linux-musl" CXX="zig c++ -target x86_64-linux-musl" go build -o xadm64 -trimpath -ldflags "-s -w -buildid="  ./main
@@ -55,6 +58,14 @@ jobs:
       with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: ./xandroid*
+          tag: ${{ github.ref }}
+          overwrite: true
+          file_glob: true
+    - name: Upload binaries to release
+      uses: svenstaro/upload-release-action@2.7.0
+      with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: ./xadmwin*
           tag: ${{ github.ref }}
           overwrite: true
           file_glob: true
