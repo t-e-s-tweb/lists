@@ -26,11 +26,14 @@ jobs:
       uses: mlugg/setup-zig@v2
       with:
        version: 0.14.1
-  
+       
+    - name: Get project dependencies
+      run: go mod download
+        
     - name: build for android arm64
-      run: env CGO_ENABLED="0" GOOS=android GOARCH=arm64 CC="zig cc -target aarch64-linux-android" CXX="zig c++ -target aarch64-linux-android" go build -o xandroid64 -trimpath -ldflags "-s -w -buildid=" ./main
+      run: env CGO_ENABLED="1" GOOS=android GOARCH=arm64 CC="zig cc -target aarch64-linux-android" CXX="zig c++ -target aarch64-linux-android" go build -o xandroid64 -trimpath -buildvcs=false -ldflags "-s -w -buildid=" ./main
     - name: build for winamd64
-      run: env CGO_ENABLED="0" GOOS=windows GOARCH=amd64 CC="zig cc -target x86_64-windows-gnu" CXX="zig c++ -target x86_64-windows-gnu" go build -o xadmwin64.exe -trimpath -ldflags "-s -w -buildid="  ./main
+      run: env CGO_ENABLED="0" GOOS=windows GOARCH=amd64 CC="zig cc -target x86_64-windows-gnu" CXX="zig c++ -target x86_64-windows-gnu" go build -o xadmwin64.exe -trimpath -buildvcs=false -ldflags "-s -w -buildid="  ./main
     
     - name: build
       run: |
