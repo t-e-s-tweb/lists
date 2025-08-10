@@ -25,18 +25,13 @@ jobs:
        echo "Fetching PR #5006..."
        git fetch origin pull/5006/head:pr-5006
 
-       echo "Fetching PR #5011..."
-       git fetch origin pull/5011/head:pr-5011
-
+    
        echo "Merging PR #5006 into main..."
        git merge --no-edit pr-5006
        echo "Changes from PR #5006:"
        git log HEAD~1..HEAD --stat
        
-       echo "Merging PR #5011 into main..."
-       git merge --no-edit pr-5011
-       echo "Changes from PR #5011:"
-       git log HEAD~1..HEAD --stat
+  
 
        
 
