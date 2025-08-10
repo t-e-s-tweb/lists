@@ -9,13 +9,38 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v4.1.1
+    - uses: actions/checkout@v4.1.1
       with:
        repository: 'XTLS/Xray-core'
        ref: 'main'
-    #   fetch-depth: 0
-   # - name: commit
-   #   run: git checkout 98a72b6fb49bcc403c4cae1ff529b9def43e6ad8
+       fetch-depth: 0   # Full history needed for merging and diff
+
+    - name: Merge PR #5011 and #5006
+      run: |
+       set -e  # Stop on error
+
+       git config --global user.name "github-actions[bot]"
+       git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+       echo "Fetching PR #5011..."
+       git fetch origin pull/5011/head:pr-5011
+
+       echo "Fetching PR #5006..."
+       git fetch origin pull/5006/head:pr-5006
+
+       echo "Merging PR #5011 into main..."
+       git merge --no-edit pr-5011
+       echo "Changes from PR #5011:"
+       git log HEAD~1..HEAD --stat
+
+       echo "Merging PR #5006 into main..."
+       git merge --no-edit pr-5006
+       echo "Changes from PR #5006:"
+       git log HEAD~1..HEAD --stat
+
+
+    
+    
     - name: Set up Go
       uses: actions/setup-go@v5.5.0
       with:
