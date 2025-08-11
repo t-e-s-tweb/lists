@@ -23,11 +23,11 @@ jobs:
        git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
        echo "Fetching PR #5006..."
-       git fetch origin pull/5006/head:pr-5006
+       git fetch origin pull/5015/head:pr-5015
 
     
        echo "Merging PR #5006 into main..."
-       git merge --no-edit pr-5006
+       git merge --no-edit pr-5015
        echo "Changes from PR #5006:"
        git log HEAD~1..HEAD --stat
        
@@ -42,7 +42,7 @@ jobs:
       uses: actions/setup-go@v5.5.0
       with:
         go-version: '1.24'
-        cache: true
+        cache: false
         check-latest: true
     - name: Setup Zig
       uses: mlugg/setup-zig@v2
