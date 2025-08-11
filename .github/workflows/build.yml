@@ -22,16 +22,19 @@ jobs:
        git config --global user.name "github-actions[bot]"
        git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
-       echo "Fetching PR #5006..."
+       echo "Fetching PR #5015..."
+       git fetch origin pull/5006/head:pr-5006
        git fetch origin pull/5015/head:pr-5015
-
-    
        echo "Merging PR #5006 into main..."
-       git merge --no-edit pr-5015
+       git merge --no-edit pr-5006
        echo "Changes from PR #5006:"
        git log HEAD~1..HEAD --stat
+       echo "Merging PR #5015 into main..."
+       git merge --no-edit pr-5015
+       echo "Changes from PR #5015:"
+       git log HEAD~1..HEAD --stat
        
-  
+        
 
        
 
