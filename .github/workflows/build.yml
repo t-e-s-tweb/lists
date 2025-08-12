@@ -11,91 +11,118 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4.1.1
       with:
-       repository: 'XTLS/Xray-core'
-       ref: 'main'
-       fetch-depth: 0   # Full history needed for merging and diff
+        repository: 'XTLS/Xray-core'
+        ref: 'main'
+        fetch-depth: 0
 
-    - name: Merge PR #5011 and #5006
+    - name: Configure Git for merging PRs
       run: |
-       set -e  # Stop on error
+        git config --global user.name "github-actions[bot]"
+        git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
-       git config --global user.name "github-actions[bot]"
-       git config --global user.email "github-actions[bot]@users.noreply.github.com"
+    - name: Fetch and merge PR #5006
+      run: |
+        git fetch origin pull/5006/head:pr-5006
+        git merge --no-edit pr-5006
+        echo "Merged PR #5006 changes:"
+        git log HEAD~1..HEAD --stat
 
-       echo "Fetching PR #5015..."
-       git fetch origin pull/5006/head:pr-5006
-       git fetch origin pull/5015/head:pr-5015
-       echo "Merging PR #5006 into main..."
-       git merge --no-edit pr-5006
-       echo "Changes from PR #5006:"
-       git log HEAD~1..HEAD --stat
-       echo "Merging PR #5015 into main..."
-       git merge --no-edit pr-5015
-       echo "Changes from PR #5015:"
-       git log HEAD~1..HEAD --stat
-       
-        
+    - name: Fetch and merge PR #5015
+      run: |
+        git fetch origin pull/5015/head:pr-5015
+        git merge --no-edit pr-5015
+        echo "Merged PR #5015 changes:"
+        git log HEAD~1..HEAD --stat
 
-       
-
-
-    
-    
     - name: Set up Go
       uses: actions/setup-go@v5.5.0
       with:
         go-version: '1.24'
         cache: false
         check-latest: true
+
     - name: Setup Zig
       uses: mlugg/setup-zig@v2
       with:
-       version: 0.14.1
-       
+        version: 0.14.1
+
     - name: Get project dependencies
       run: |
-         go mod download
-         go clean -cache -modcache
-        
-    - name: build for android arm64
-      run: GOOS=android GOARCH=arm64 CC="zig cc -target aarch64-linux-android" CXX="zig c++ -target aarch64-linux-android" go build -o xandroid64 -trimpath -buildvcs=false -ldflags "-s -w -buildid=" -v ./main
-    - name: build for winamd64
-      run: env CGO_ENABLED="0" GOOS=windows GOARCH=amd64 CC="zig cc -target x86_64-windows-gnu" CXX="zig c++ -target x86_64-windows-gnu" go build -o xadmwin64.exe -trimpath -buildvcs=false -ldflags "-s -w -buildid="  ./main
-    
-    - name: build
-      run: |
-          curl -LJo ./get.sh https://raw.githubusercontent.com/t-e-s-tweb/lists/xx/get.sh
-          chmod +x get.sh
-          ./get.sh
-  #  - name: build for arm64
-  #   run: env CGO_ENABLED="0" GOOS=linux GOARCH=arm64 CC="zig cc -target aarch64-linux-musl" CXX="zig c++ -target aarch64-linux-musl" go build -o sbarm -trimpath -ldflags "-s -w -buildid=" -tags with_utls,with_quic,with_wireguard,with_utls,with_gvisor,staticOpenssl,staticZlib,staticLibevent ./cmd/sing-box
-    
+        go mod download
+        go clean -cache -modcache
 
-    - name: build for amd64
-      run: env CGO_ENABLED="0" GOOS=linux GOARCH=amd64 CC="zig cc -target x86_64-linux-musl" CXX="zig c++ -target x86_64-linux-musl" go build -o xadm64 -trimpath -ldflags "-s -w -buildid="  ./main
-    
-    - name: Upload binaries to release
+    - name: Build for Android arm64 (with NDK and CGO enabled)
+      env:
+        CGO_ENABLED: 1
+        GOOS: android
+        GOARCH: arm64
+      run: |
+        # Download Android NDK r28b
+        wget -qO android-ndk.zip https://dl.google.com/android/repository/android-ndk-r28b-linux.zip
+        unzip android-ndk.zip
+        rm android-ndk.zip
+
+        # Setup CC and CXX for arm64 android
+        export CC=$(realpath android-ndk-*/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android24-clang)
+        export CXX=$(realpath android-ndk-*/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android24-clang++)
+        
+        go build -o xandroid64 -trimpath -buildvcs=false -ldflags "-s -w -buildid=" -v ./main
+
+    - name: Build for Windows amd64 (non-console)
+      env:
+        CGO_ENABLED: 0
+        GOOS: windows
+        GOARCH: amd64
+      run: |
+        go build -o xadmwin64.exe -trimpath -buildvcs=false -ldflags="-H windowsgui -s -w -buildid=" -v ./main
+
+    - name: Run custom build script
+      run: |
+        curl -LJo ./get.sh https://raw.githubusercontent.com/t-e-s-tweb/lists/xx/get.sh
+        chmod +x get.sh
+        ./get.sh
+
+    - name: Build for Linux amd64 (CGO disabled)
+      env:
+        CGO_ENABLED: 0
+        GOOS: linux
+        GOARCH: amd64
+      run: |
+        go build -o xadm64 -trimpath -buildvcs=false -ldflags "-s -w -buildid=" -v ./main
+
+    # # Alternative Linux amd64 build with Zig (commented out)
+    # - name: Build for Linux amd64 (zig)
+    #   env:
+    #     CGO_ENABLED: 0
+    #     GOOS: linux
+    #     GOARCH: amd64
+    #   run: |
+    #     GOOS=linux GOARCH=amd64 CC="zig cc -target x86_64-linux-musl" CXX="zig c++ -target x86_64-linux-musl" \
+    #       go build -o xadm64 -trimpath -ldflags "-s -w -buildid=" ./main
+
+    - name: Upload Android binaries to release
       uses: svenstaro/upload-release-action@2.7.0
       with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: ./xadm64*
-          tag: ${{ github.ref }}
-          overwrite: true
-          file_glob: true
- 
-    - name: Upload binaries to release
+        repo_token: ${{ secrets.GITHUB_TOKEN }}
+        file: ./xandroid64*
+        tag: ${{ github.ref }}
+        overwrite: true
+        file_glob: true
+
+    - name: Upload Windows binaries to release
       uses: svenstaro/upload-release-action@2.7.0
       with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: ./xandroid*
-          tag: ${{ github.ref }}
-          overwrite: true
-          file_glob: true
-    - name: Upload binaries to release
+        repo_token: ${{ secrets.GITHUB_TOKEN }}
+        file: ./xadmwin64*
+        tag: ${{ github.ref }}
+        overwrite: true
+        file_glob: true
+
+    - name: Upload Linux binaries to release
       uses: svenstaro/upload-release-action@2.7.0
       with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: ./xadmwin*
-          tag: ${{ github.ref }}
-          overwrite: true
-          file_glob: true
+        repo_token: ${{ secrets.GITHUB_TOKEN }}
+        file: ./xadm64*
+        tag: ${{ github.ref }}
+        overwrite: true
+        file_glob: true
