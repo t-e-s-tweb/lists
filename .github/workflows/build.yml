@@ -51,8 +51,8 @@ jobs:
         ref: 'main'
         fetch-depth: 0
 
-      - name: Merge PRs based on input
-        run: |
+    - name: Merge PRs based on input
+      run: |
           set -e
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
@@ -80,9 +80,9 @@ jobs:
             git merge --no-edit pr4
           fi
 
-      - name: Fetch & merge external branch if requested
-        if: ${{ inputs.fetch_branch_from_other != '0' && inputs.fetch_branch_from_other != '' }}
-        run: |
+    - name: Fetch & merge external branch if requested
+      if: ${{ inputs.fetch_branch_from_other != '0' && inputs.fetch_branch_from_other != '' }}
+      run: |
           set -e
           REPO_BRANCH="${{ inputs.fetch_branch_from_other }}"
           REPO=$(echo "$REPO_BRANCH" | awk '{print $1}')
