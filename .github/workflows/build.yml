@@ -53,11 +53,10 @@ jobs:
 
     - name: Merge PRs based on input
       run: |
-          set -e
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-
-          COUNT=${{ github.event.inputs.pr_count }}
+       set -e
+       git config --global user.name "github-actions[bot]"
+       git config --global user.email "github-actions[bot]@users.noreply.github.com"
+       COUNT=${{ github.event.inputs.pr_count }}
 
           if [ "$COUNT" -ge 1 ] && [ -n "${{ github.event.inputs.pr1 }}" ]; then
             echo "Merging PR #${{ github.event.inputs.pr1 }}"
