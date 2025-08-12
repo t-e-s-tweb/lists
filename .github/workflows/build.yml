@@ -58,38 +58,38 @@ jobs:
        git config --global user.email "github-actions[bot]@users.noreply.github.com"
        COUNT=${{ github.event.inputs.pr_count }}
 
-          if [ "$COUNT" -ge 1 ] && [ -n "${{ github.event.inputs.pr1 }}" ]; then
-            echo "Merging PR #${{ github.event.inputs.pr1 }}"
-            git fetch origin pull/${{ github.event.inputs.pr1 }}/head:pr1
-            git merge --no-edit pr1
-          fi
-          if [ "$COUNT" -ge 2 ] && [ -n "${{ github.event.inputs.pr2 }}" ]; then
-            echo "Merging PR #${{ github.event.inputs.pr2 }}"
-            git fetch origin pull/${{ github.event.inputs.pr2 }}/head:pr2
-            git merge --no-edit pr2
-          fi
-          if [ "$COUNT" -ge 3 ] && [ -n "${{ github.event.inputs.pr3 }}" ]; then
-            echo "Merging PR #${{ github.event.inputs.pr3 }}"
-            git fetch origin pull/${{ github.event.inputs.pr3 }}/head:pr3
-            git merge --no-edit pr3
-          fi
-          if [ "$COUNT" -ge 4 ] && [ -n "${{ github.event.inputs.pr4 }}" ]; then
-            echo "Merging PR #${{ github.event.inputs.pr4 }}"
-            git fetch origin pull/${{ github.event.inputs.pr4 }}/head:pr4
-            git merge --no-edit pr4
-          fi
+       if [ "$COUNT" -ge 1 ] && [ -n "${{ github.event.inputs.pr1 }}" ]; then
+        echo "Merging PR #${{ github.event.inputs.pr1 }}"
+        git fetch origin pull/${{ github.event.inputs.pr1 }}/head:pr1
+        git merge --no-edit pr1
+       fi
+       if [ "$COUNT" -ge 2 ] && [ -n "${{ github.event.inputs.pr2 }}" ]; then
+        echo "Merging PR #${{ github.event.inputs.pr2 }}"
+        git fetch origin pull/${{ github.event.inputs.pr2 }}/head:pr2
+        git merge --no-edit pr2
+       fi
+       if [ "$COUNT" -ge 3 ] && [ -n "${{ github.event.inputs.pr3 }}" ]; then
+        echo "Merging PR #${{ github.event.inputs.pr3 }}"
+        git fetch origin pull/${{ github.event.inputs.pr3 }}/head:pr3
+        git merge --no-edit pr3
+       fi
+       if [ "$COUNT" -ge 4 ] && [ -n "${{ github.event.inputs.pr4 }}" ]; then
+        echo "Merging PR #${{ github.event.inputs.pr4 }}"
+        git fetch origin pull/${{ github.event.inputs.pr4 }}/head:pr4
+        git merge --no-edit pr4
+       fi
 
     - name: Fetch & merge external branch if requested
       if: ${{ inputs.fetch_branch_from_other != '0' && inputs.fetch_branch_from_other != '' }}
       run: |
-          set -e
-          REPO_BRANCH="${{ inputs.fetch_branch_from_other }}"
-          REPO=$(echo "$REPO_BRANCH" | awk '{print $1}')
-          BRANCH=$(echo "$REPO_BRANCH" | awk '{print $2}')
-          echo "Fetching branch '$BRANCH' from repo '$REPO'..."
-          git remote add external https://github.com/$REPO.git
-          git fetch external $BRANCH
-          git merge --no-edit external/$BRANCH
+        set -e
+        REPO_BRANCH="${{ inputs.fetch_branch_from_other }}"
+        REPO=$(echo "$REPO_BRANCH" | awk '{print $1}')
+        BRANCH=$(echo "$REPO_BRANCH" | awk '{print $2}')
+        echo "Fetching branch '$BRANCH' from repo '$REPO'..."
+        git remote add external https://github.com/$REPO.git
+        git fetch external $BRANCH
+        git merge --no-edit external/$BRANCH
           
 
 
