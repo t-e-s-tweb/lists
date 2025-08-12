@@ -2,7 +2,43 @@ name: Build and Release
 
 on:
   workflow_dispatch:
+    inputs:
+      pr_count:
+        description: 'Number of PRs to merge (0–4)'
+        required: true
+        default: '0'
+        type: choice
+        options:
+          - '0'
+          - '1'
+          - '2'
+          - '3'
+          - '4'
 
+      pr1:
+        description: 'PR #1 to merge (if any)'
+        required: false
+        default: ''
+
+      pr2:
+        description: 'PR #2 to merge (if any)'
+        required: false
+        default: ''
+
+      pr3:
+        description: 'PR #3 to merge (if any)'
+        required: false
+        default: ''
+
+      pr4:
+        description: 'PR #4 to merge (if any)'
+        required: false
+        default: ''
+
+      fetch_branch_from_other:
+        description: 'Enter "username/repo branch" to fetch & merge, or 0 for none'
+        required: false
+        default: '0'
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -15,24 +51,48 @@ jobs:
         ref: 'main'
         fetch-depth: 0
 
-    - name: Configure Git for merging PRs
-      run: |
-        git config --global user.name "github-actions[bot]"
-        git config --global user.email "github-actions[bot]@users.noreply.github.com"
+      - name: Merge PRs based on input
+        run: |
+          set -e
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
-    - name: Fetch and merge PR #5006
-      run: |
-        git fetch origin pull/5006/head:pr-5006
-        git merge --no-edit pr-5006
-        echo "Merged PR #5006 changes:"
-        git log HEAD~1..HEAD --stat
+          COUNT=${{ github.event.inputs.pr_count }}
 
-    - name: Fetch and merge PR #5015
-      run: |
-        git fetch origin pull/5015/head:pr-5015
-        git merge --no-edit pr-5015
-        echo "Merged PR #5015 changes:"
-        git log HEAD~1..HEAD --stat
+          if [ "$COUNT" -ge 1 ] && [ -n "${{ github.event.inputs.pr1 }}" ]; then
+            echo "Merging PR #${{ github.event.inputs.pr1 }}"
+            git fetch origin pull/${{ github.event.inputs.pr1 }}/head:pr1
+            git merge --no-edit pr1
+          fi
+          if [ "$COUNT" -ge 2 ] && [ -n "${{ github.event.inputs.pr2 }}" ]; then
+            echo "Merging PR #${{ github.event.inputs.pr2 }}"
+            git fetch origin pull/${{ github.event.inputs.pr2 }}/head:pr2
+            git merge --no-edit pr2
+          fi
+          if [ "$COUNT" -ge 3 ] && [ -n "${{ github.event.inputs.pr3 }}" ]; then
+            echo "Merging PR #${{ github.event.inputs.pr3 }}"
+            git fetch origin pull/${{ github.event.inputs.pr3 }}/head:pr3
+            git merge --no-edit pr3
+          fi
+          if [ "$COUNT" -ge 4 ] && [ -n "${{ github.event.inputs.pr4 }}" ]; then
+            echo "Merging PR #${{ github.event.inputs.pr4 }}"
+            git fetch origin pull/${{ github.event.inputs.pr4 }}/head:pr4
+            git merge --no-edit pr4
+          fi
+
+      - name: Fetch & merge external branch if requested
+        if: ${{ inputs.fetch_branch_from_other != '0' && inputs.fetch_branch_from_other != '' }}
+        run: |
+          set -e
+          REPO_BRANCH="${{ inputs.fetch_branch_from_other }}"
+          REPO=$(echo "$REPO_BRANCH" | awk '{print $1}')
+          BRANCH=$(echo "$REPO_BRANCH" | awk '{print $2}')
+          echo "Fetching branch '$BRANCH' from repo '$REPO'..."
+          git remote add external https://github.com/$REPO.git
+          git fetch external $BRANCH
+          git merge --no-edit external/$BRANCH
+          
+
 
     - name: Set up Go
       uses: actions/setup-go@v5.5.0
