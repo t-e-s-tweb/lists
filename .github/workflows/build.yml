@@ -19,7 +19,7 @@ jobs:
     - name: Set up Go
       uses: actions/setup-go@v5.5.0
       with:
-        go-version: '1.24'
+        go-version: '1.25'
         cache: true
         check-latest: true
     
@@ -29,11 +29,10 @@ jobs:
        version: master
     - name: Install dependencies
       run: |
-          go get -u go.uber.org/automaxprocs
           go get github.com/KimMachineGun/automemlimit@latest
     - name: Add imports to main.go
       run: |
-        sed -i '/^import/ { N; N; N; s/\(.*\)/&\n\t"github.com\/KimMachineGun\/automemlimit\/memlimit"\n\t_ "go.uber.org\/automaxprocs"/; }' main.go
+        sed -i '/^import/ { N; N; N; s/\(.*\)/&\n\t"github.com\/KimMachineGun\/automemlimit\/memlimit"/; }' main.go
         sed -i '/import (/ {
           :a; N; /\n)/!ba;
           s/)\(.*\)/)\1\
@@ -47,7 +46,7 @@ jobs:
     - name: Go mod
       run: go mod download
     - name: build for amd64
-      run: env CGO_ENABLED="0" GOOS=linux GOARCH=amd64 CC="zig cc -target x86_64-linux-musl" CXX="zig c++ -target x86_64-linux-musl" go build -o blocky -trimpath -ldflags "-s -w -buildid=" ./
+      run: env CGO_ENABLED="0" GOOS=linux GOARCH=amd64 CC="zig cc -target x86_64-linux-musl" CXX="zig c++ -target x86_64-linux-musl" GOEXPERIMENT=greenteagc go build -o blocky -trimpath -ldflags "-s -w -buildid=" ./
  #   - name: build for freebsd
     #  run: env CGO_ENABLED="0" GOOS=freebsd GOARCH=amd64 CC="zig cc -target aarch64-linux-musl" CXX="zig c++ -target aarch64-linux-musl" go build -o blockyfreebsd -trimpath -ldflags "-s -w -buildid=" ./
  
