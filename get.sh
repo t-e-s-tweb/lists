@@ -27,8 +27,8 @@ find . -type f -name "main.go" -exec sed -i "s/$old_text/$new_text/g" {} +
 
 
 
-sed -i '/^import/ { N; N; N; s/\(.*\)/&\n\t"github.com\/KimMachineGun\/automemlimit\/memlimit"\n\t_ "go.uber.org\/automaxprocs"/; }' main/main.go
-
+#sed -i '/^import/ { N; N; N; s/\(.*\)/&\n\t"github.com\/KimMachineGun\/automemlimit\/memlimit"\n\t_ "go.uber.org\/automaxprocs"/; }' main/main.go
+sed -i '/^import/ { N; N; N; s/\(.*\)/&\n\t"github.com\/KimMachineGun\/automemlimit\/memlimit"/; }' main/main.go
 sed -i '/import (/ {
     :a; N; /\n)/!ba;
     s/)\(.*\)/)\1\
@@ -90,7 +90,7 @@ sed -i 's/log.Println("Using config from STDIN")/\/\/ log.Println("Using config 
 
 
 
-go get -u go.uber.org/automaxprocs
+#go get -u go.uber.org/automaxprocs
 go get github.com/KimMachineGun/automemlimit@latest
 #go mod download
 #make
