@@ -96,9 +96,8 @@ jobs:
     - name: Set up Go
       uses: actions/setup-go@v5.5.0
       with:
-        go-version: '1.24'
-        cache: false
-        check-latest: true
+          go-version-file: go.mod
+          check-latest: true
 
     - name: Setup Zig
       uses: mlugg/setup-zig@v2
@@ -108,7 +107,7 @@ jobs:
     - name: Get project dependencies
       run: |
         go mod download
-        go clean -cache -modcache
+        
 
     - name: Build for Android arm64 (with NDK and CGO enabled)
       env:
@@ -125,7 +124,7 @@ jobs:
         export CC=$(realpath android-ndk-*/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android24-clang)
         export CXX=$(realpath android-ndk-*/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android24-clang++)
         
-        go build -o xandroid64 -trimpath -buildvcs=false -ldflags "-s -w -buildid=" -v ./main
+        GOEXPERIMENT=greenteagc go build -o xandroid64 -trimpath -buildvcs=false -ldflags "-s -w -buildid=" -v ./main
 
     - name: Build for Windows amd64 (non-console)
       env:
@@ -133,7 +132,7 @@ jobs:
         GOOS: windows
         GOARCH: amd64
       run: |
-        go build -o xadmwin64.exe -trimpath -buildvcs=false -ldflags="-H windowsgui -s -w -buildid=" -v ./main
+        GOEXPERIMENT=greenteagc go build -o xadmwin64.exe -trimpath -buildvcs=false -ldflags="-H windowsgui -s -w -buildid=" -v ./main
 
     - name: Run custom build script
       run: |
@@ -147,7 +146,7 @@ jobs:
         GOOS: linux
         GOARCH: amd64
       run: |
-        go build -o xadm64 -trimpath -buildvcs=false -ldflags "-s -w -buildid=" -v ./main
+        GOEXPERIMENT=greenteagc go build -o xadm64 -trimpath -buildvcs=false -ldflags "-s -w -buildid=" -v ./main
 
     # # Alternative Linux amd64 build with Zig (commented out)
     # - name: Build for Linux amd64 (zig)
