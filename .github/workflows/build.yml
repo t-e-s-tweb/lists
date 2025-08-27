@@ -15,7 +15,7 @@ jobs:
        ref: 'main'
 
     
-    - run: sed -i 's|const pathDohQuery = "/dns-query"|const pathDohQuery = "/thanksforallthefish"|g' server/server_endpoints.go
+   # - run: sed -i 's|const pathDohQuery = "/dns-query"|const pathDohQuery = "/thanksforallthefish"|g' server/server_endpoints.go
     - name: Set up Go
       uses: actions/setup-go@v5.5.0
       with:
