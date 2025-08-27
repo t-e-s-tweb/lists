@@ -199,6 +199,7 @@ ports:
  # tls: 853
 #  https: 443
   http: 8100
+  dohPath: /thanksforallthefish
 
 log:
   # optional: Log level (one from debug, info, warn, error). Default: info
