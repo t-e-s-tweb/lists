@@ -124,7 +124,7 @@ jobs:
         export CC=$(realpath android-ndk-*/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android24-clang)
         export CXX=$(realpath android-ndk-*/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android24-clang++)
         
-        GOEXPERIMENT=greenteagc go build -o xandroid64 -trimpath -gcflags="all=-l=4" -buildvcs=false -ldflags "-s -w -buildid=" -v ./main
+        go build -o xandroid64 -trimpath -gcflags="all=-l=4" -buildvcs=false -ldflags "-s -w -buildid=" -v ./main
 
     - name: Build for Windows amd64 (non-console)
       env:
@@ -132,7 +132,7 @@ jobs:
         GOOS: windows
         GOARCH: amd64
       run: |
-        GOEXPERIMENT=greenteagc go build -o xadmwin64.exe -trimpath -gcflags="all=-l=4" -buildvcs=false -ldflags="-H windowsgui -s -w -buildid=" -v ./main
+        go build -o xadmwin64.exe -trimpath -gcflags="all=-l=4" -buildvcs=false -ldflags="-H windowsgui -s -w -buildid=" -v ./main
 
     - name: Run custom build script
       run: |
@@ -146,7 +146,7 @@ jobs:
         GOOS: linux
         GOARCH: amd64
       run: |
-        GOEXPERIMENT=greenteagc go build -o xadm64 -trimpath -gcflags="all=-l=4" -buildvcs=false -ldflags "-s -w -buildid=" -v ./main
+        go build -o xadm64 -trimpath -gcflags="all=-l=4" -buildvcs=false -ldflags "-s -w -buildid=" -v ./main
 
     # # Alternative Linux amd64 build with Zig (commented out)
     # - name: Build for Linux amd64 (zig)
