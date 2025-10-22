@@ -14,6 +14,8 @@ on:
           - '2'
           - '3'
           - '4'
+          - '5'
+          - '6'
 
       pr1:
         description: 'PR #1 to merge (if any)'
@@ -32,6 +34,14 @@ on:
 
       pr4:
         description: 'PR #4 to merge (if any)'
+        required: false
+        default: ''
+      pr5:
+        description: 'PR #5 to merge (if any)'
+        required: false
+        default: ''
+      pr6:
+        description: 'PR #6 to merge (if any)'
         required: false
         default: ''
 
@@ -77,6 +87,16 @@ jobs:
         echo "Merging PR #${{ github.event.inputs.pr4 }}"
         git fetch origin pull/${{ github.event.inputs.pr4 }}/head:pr4
         git merge --no-edit pr4
+       fi
+       if [ "$COUNT" -ge 5 ] && [ -n "${{ github.event.inputs.pr5 }}" ]; then
+         echo "Merging PR #${{ github.event.inputs.pr5 }}"
+         git fetch origin pull/${{ github.event.inputs.pr5 }}/head:pr5
+         git merge --no-edit pr5
+        fi
+       if [ "$COUNT" -ge 6 ] && [ -n "${{ github.event.inputs.pr6 }}" ]; then
+         echo "Merging PR #${{ github.event.inputs.pr6 }}"
+         git fetch origin pull/${{ github.event.inputs.pr6 }}/head:pr6
+         git merge --no-edit pr6
        fi
 
     - name: Fetch & merge external branch if requested
