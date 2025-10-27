@@ -49,7 +49,7 @@ jobs:
         echo "Fetching branch '$BRANCH' from repo '$REPO'..."
         git remote add external https://github.com/$REPO.git
         git fetch external $BRANCH
-        git merge --no-edit external/$BRANCH
+        git merge -X theirs --no-edit external/$BRANCH
           
 
 
