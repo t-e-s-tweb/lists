@@ -23,41 +23,21 @@ jobs:
         repository: 'XTLS/Xray-core'
         ref: 'main'
         fetch-depth: 0
-    - name: Configure Git
-      run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-    - name: Fetch and squash-merge PRs (auto-resolve theirs)
-      shell: bash
-      run: |
-          set -e
-          set -o pipefail
 
-          echo "Merging PRs: ${{ github.event.inputs.merge_prs }}"
-          IFS=',' read -ra PR_LIST <<< "${{ github.event.inputs.merge_prs }}"
-
+    - name: Merge PRs based on input
+      run: |
+       set -e
+       git config --global user.name "github-actions[bot]"
+       git config --global user.email "github-actions[bot]@users.noreply.github.com"
+       IFS=',' read -ra PR_LIST <<< "${{ github.event.inputs.merge_prs }}"
           for PR_NUM in "${PR_LIST[@]}"; do
-            echo "============================================"
             echo "Fetching PR #$PR_NUM..."
             git fetch origin pull/$PR_NUM/head:pr-$PR_NUM
-
-            echo "Squash-merging PR #$PR_NUM (prefer theirs)..."
-            if ! git merge --squash pr-$PR_NUM; then
-              echo "⚠️ Conflict detected in PR #$PR_NUM — auto-resolving using theirs..."
-              for f in $(git diff --name-only --diff-filter=U); do
-                echo "  - Taking theirs version of $f"
-                git checkout --theirs -- "$f"
-                git add "$f"
-              done
-            fi
-
-            # Stage any remaining unstaged files
-            git add -u
-            git add .
+            echo "Merging PR #$PR_NUM (auto-resolve: theirs)..."
+            git merge -X theirs --no-edit pr-$PR_NUM || true
+            echo "Changes from PR #$PR_NUM:"
+            git log HEAD~1..HEAD --stat || true
           done
-
-          echo "Creating final combined commit..."
-          git commit -m "Combined squash merge of PRs: ${{ github.event.inputs.merge_prs }} (auto-resolved theirs)"
 
     - name: Fetch & merge external branch if requested
       if: ${{ inputs.fetch_branch_from_other != '0' && inputs.fetch_branch_from_other != '' }}
