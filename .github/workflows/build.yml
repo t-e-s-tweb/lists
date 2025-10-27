@@ -23,7 +23,10 @@ jobs:
         repository: 'XTLS/Xray-core'
         ref: 'main'
         fetch-depth: 0
-
+    - name: Configure Git
+      run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
     - name: Fetch and squash-merge PRs (auto-resolve theirs)
       shell: bash
       run: |
