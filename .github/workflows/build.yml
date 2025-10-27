@@ -29,15 +29,47 @@ jobs:
        set -e
        git config --global user.name "github-actions[bot]"
        git config --global user.email "github-actions[bot]@users.noreply.github.com"
-       IFS=',' read -ra PR_LIST <<< "${{ github.event.inputs.merge_prs }}"
+    - name: Merge each PR (squash + prefer theirs)
+      shell: bash
+      run: |
+          set -e
+
+          IFS=',' read -ra PR_LIST <<< "${{ github.event.inputs.merge_prs }}"
+          echo "Merging PRs: ${PR_LIST[@]}"
+
           for PR_NUM in "${PR_LIST[@]}"; do
+            echo "==============================="
             echo "Fetching PR #$PR_NUM..."
             git fetch origin pull/$PR_NUM/head:pr-$PR_NUM
-            echo "Merging PR #$PR_NUM (auto-resolve: theirs)..."
-            git merge -X theirs --no-edit pr-$PR_NUM || true
-            echo "Changes from PR #$PR_NUM:"
-            git log HEAD~1..HEAD --stat || true
+
+            # ✅ Ensure working tree is clean before merging next PR
+            if ! git diff-index --quiet HEAD --; then
+              echo "Uncommitted changes found. Committing before next squash..."
+              git add -A
+              git commit -m "Auto-commit pending changes before PR #$PR_NUM"
+            fi
+
+            echo "Squash-merging PR #$PR_NUM (prefer theirs)..."
+            if ! git merge --squash pr-$PR_NUM; then
+              echo "⚠️ Conflict detected — resolving using theirs..."
+              for f in $(git diff --name-only --diff-filter=U); do
+                git checkout --theirs -- "$f"
+                git add "$f"
+              done
+            fi
+
+            # ✅ Finalize squash merge
+            git commit -m "Squashed merge of PR #$PR_NUM (auto-resolved theirs)"
+
+            echo "✅ Finished PR #$PR_NUM"
+            echo
           done
+
+    - name: Show final commit log
+      run: |
+          echo "==== Final Commit Log ===="
+          git --no-pager log --oneline -5
+
 
     - name: Fetch & merge external branch if requested
       if: ${{ inputs.fetch_branch_from_other != '0' && inputs.fetch_branch_from_other != '' }}
