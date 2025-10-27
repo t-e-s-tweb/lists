@@ -34,7 +34,7 @@ jobs:
             echo "Fetching PR #$PR_NUM..."
             git fetch origin pull/$PR_NUM/head:pr-$PR_NUM
             echo "Merging PR #$PR_NUM (auto-resolve: theirs)..."
-            git merge --no-edit pr-$PR_NUM || true
+            git merge -X theirs --no-edit pr-$PR_NUM || true
             echo "Changes from PR #$PR_NUM:"
             git log HEAD~1..HEAD --stat || true
           done
