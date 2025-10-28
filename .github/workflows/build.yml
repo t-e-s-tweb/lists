@@ -36,7 +36,6 @@ jobs:
             echo "Merging PR #$PR_NUM (auto-resolve: theirs)..."
             git merge -X theirs pr-$PR_NUM || true
             git add -A
-            git commit -m "Auto-commit pending changes before PR #$PR_NUM"
             echo "Changes from PR #$PR_NUM:"
             git log HEAD~1..HEAD --stat || true
           done
