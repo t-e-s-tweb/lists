@@ -8,8 +8,8 @@ on:
         required: false
         default: ''
         type: string
-      fetch_branch_from_other:
-        description: 'Enter "username/repo branch" to fetch & merge, or 0 for none'
+      fetch_branches_from_other:
+        description: 'Comma-separated "user/repo branch" pairs (e.g., "user1/repo1 main,user2/repo2 dev" or "0")'
         required: false
         default: '0'
 jobs:
@@ -43,15 +43,31 @@ jobs:
     - name: Fetch & merge external branch if requested
       if: ${{ inputs.fetch_branch_from_other != '0' && inputs.fetch_branch_from_other != '' }}
       run: |
-        set -e
-        REPO_BRANCH="${{ inputs.fetch_branch_from_other }}"
-        REPO=$(echo "$REPO_BRANCH" | awk '{print $1}')
-        BRANCH=$(echo "$REPO_BRANCH" | awk '{print $2}')
+        BRANCH_INPUT="${{ github.event.inputs.fetch_branches_from_other }}"
+
+        if [[ "$BRANCH_INPUT" != "0" ]]; then
+        IFS=',' read -ra EXT_LIST <<< "$BRANCH_INPUT"
+         for ITEM in "${EXT_LIST[@]}"; do
+         REPO=$(echo "$ITEM" | awk '{print $1}')
+         BRANCH=$(echo "$ITEM" | awk '{print $2}')
+
         echo "Fetching branch '$BRANCH' from repo '$REPO'..."
-        git remote add external https://github.com/$REPO.git
-        git fetch external $BRANCH
-        git merge -X theirs --no-edit external/$BRANCH
-          
+
+        # Name remote based on repo to avoid collision
+        REMOTE_NAME="ext_$(echo "$REPO" | sed 's|/|_|g')"
+
+        git remote add "$REMOTE_NAME" "https://github.com/$REPO.git" || true
+        git fetch "$REMOTE_NAME" "$BRANCH"
+
+        echo "Merging $REMOTE_NAME/$BRANCH (auto-resolve theirs)..."
+        git merge -X theirs --no-edit "$REMOTE_NAME/$BRANCH" || true
+
+        git add -A
+        echo "Changes from $REMOTE_NAME/$BRANCH:"
+        git log HEAD~1..HEAD --stat || true
+
+        done
+        fi   
 
 
     - name: Set up Go
