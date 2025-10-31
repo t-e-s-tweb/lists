@@ -41,7 +41,7 @@ jobs:
           done
 
     - name: Fetch & merge external branch if requested
-      if: ${{ inputs.fetch_branch_from_other != '0' && inputs.fetch_branch_from_other != '' }}
+      if: ${{ inputs.fetch_branches_from_other != '0' && inputs.fetch_branches_from_other != '' }}
       run: |
         BRANCH_INPUT="${{ github.event.inputs.fetch_branches_from_other }}"
 
