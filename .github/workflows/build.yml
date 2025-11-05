@@ -72,7 +72,6 @@ jobs:
     - name: patch
       run: |
          sed -i '/go fetch(ctx, s, fqdn, option)/c\
-         sed -i '/go fetch(ctx, s, fqdn, option)/c\
          // Detach warm-up context from caller; give bounded time to warm cache\n\
          warmCtx, warmCancel := context.WithTimeout(context.WithoutCancel(ctx), 800*time.Millisecond)\n\
          go func() {\n\
