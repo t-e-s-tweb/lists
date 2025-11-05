@@ -69,7 +69,16 @@ jobs:
         done
         fi   
 
-
+    - name: patch
+      run: |
+         sed -i '/go fetch(ctx, s, fqdn, option)/c\
+        \# Detach warm-up context from caller; give bounded time to warm cache\n\
+        warmCtx, warmCancel := context.WithTimeout(context.WithoutCancel(ctx), 800*time.Millisecond)\n\
+        go func() {\n\
+            defer warmCancel()\n\
+            _ = fetch(warmCtx, s, fqdn, option)\n\
+        }()' app/dns/nameserver_cached.go
+          
     - name: Set up Go
       uses: actions/setup-go@v5.5.0
       with:
