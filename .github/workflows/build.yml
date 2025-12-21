@@ -69,12 +69,23 @@ jobs:
         done
         fi   
         
-    - name: roundrobin
+    - name: Disable round-robin via sed
       run: |
-           # On your local machine:
-           echo "ZGlmZiAtLWdpdCBhL2FwcC9wcm94eW1hbi9vdXRib3VuZC9vdXRib3VuZC5nbyBiL2FwcC9wcm94eW1hbi9vdXRib3VuZC9vdXRib3VuZC5nbwppbmRleCAyNDRmY2ZmZS4uZGYwYzliZTYgMTAwNjQ0Ci0tLSBhL2FwcC9wcm94eW1hbi9vdXRib3VuZC9vdXRib3VuZC5nbworKysgYi9hcHAvcHJveHltYW4vb3V0Ym91bmQvb3V0Ym91bmQuZ28KQEAgLTIsNyArMiw3IEBACCBwYWNrYWdlIG91dGJvdW5kCgogaW1wb3J0ICgKIAljb250ZXh0IgoJLy9Tb3J0IgoJInN0cmluZ3MiCgkic3luYyIKCkBAIC0xODIsNyArMTgyLDcgQEAgZnVuYyAobSAqTWFuYWdlcikgU2VsZWN0KHNlbGVjdG9ycyBbXXN0cmluZykgW11zdHJpbmcgewoJCQl9CgkJfQoKCS8vc29ydC5TdHJpbmdzKHRhZ3MpCgkJdGFnc0NhY2hlLlN0b3JlKGtleSwgdGFncykKCmRpZmYgLS1naXQgYS9hcHAvcm91dGVyL2JhbGFuY2luZy5nbyBiL2FwcC9yb3V0ZXIvYmFsYW5jaW5nLmdvCmluZGV4IDVlOGNiMWMyLi5hZjI2NGM2YyAxMDA2NDQKLS0tIGEvYXBwL3JvdXRlci9iYWxhbmNpbmcuZ28KKysrIGIvYXBwL3JvdXRlci9iYWxhbmNpbmcuZ28KQEAgLTk1LDEwICs5NSwxMSBAQCBmdW5jIChzICpSb3VuZFJvYmluU3RyYXRlZ3kpIFBpY2tPdXRib3VuZCh0YWdzIFtdc3RyaW5nKSBzdHJpbmcgewoJCXJldHVybiAiIgoJCX0KCQkicGFjay5tdS5Mb2NrKCkiCgkJLy9kZWZlciBzLm11LlVubG9jaygpCgkJLy90YWcgOj0gdGFnc1tzLmluZGV4JW5dCgkJLy9zLmluZGV4ID0gKHMuaW5kZXggKyAxKSAlIG4KCQl0YWcgOj0gdGFnc1swXQoJCXJldHVybiB0YWc=" | base64 -d > roundrobin.patch
+       # Patch 1: Comment out sort import and usage
+       sed -i 's/^	"sort"/	\/\/"sort"/' app/proxyman/outbound/outbound.go
+       sed -i 's/^	sort\.Strings(tags)/	\/\/sort.Strings(tags)/' app/proxyman/outbound/outbound.go
+    
+       # Patch 2: Disable round-robin logic and force first tag
+       sed -i 's/^	s\.mu\.Lock()/	\/\/s.mu.Lock()/' app/router/balancing.go
+       sed -i 's/^	defer s\.mu\.Unlock()/	\/\/defer s.mu.Unlock()/' app/router/balancing.go
+       sed -i 's/^	tag := tags\[s\.index%n\]/	\/\/tag := tags[s.index%n]/' app/router/balancing.go
+       sed -i 's/^	s\.index = (s\.index + 1) % n/	\/\/s.index = (s.index + 1) % n/' app/router/balancing.go
+       sed -i '/^	\/\/tag := tags\[s\.index%n\]/a\	tag := tags[0]' app/router/balancing.go
+    
+       # Verify patches applied
+       grep -q '//sort.Strings' app/proxyman/outbound/outbound.go && echo "✓ outbound.go patched"
+       grep -q 'tag := tags\[0\]' app/router/balancing.go && echo "✓ balancing.go patched" || exit 1
 
-           git apply --verbose roundrobin.patch
     - name: Set up Go
       uses: actions/setup-go@v5.5.0
       with:
