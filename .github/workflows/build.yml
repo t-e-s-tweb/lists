@@ -72,7 +72,7 @@ jobs:
     - name: roundrobin
       run: |
            wget https://raw.githubusercontent.com/t-e-s-tweb/v-rules/refs/heads/main/roundrobin.patch
-           git apply --verbose ../roundrobin.patch
+           git apply --verbose roundrobin.patch
     - name: Set up Go
       uses: actions/setup-go@v5.5.0
       with:
