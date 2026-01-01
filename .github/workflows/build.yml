@@ -73,7 +73,7 @@ jobs:
     - name: Set up Go
       uses: actions/setup-go@v5.5.0
       with:
-          go-version: '1.26.0-rc.1'
+          go-version: '1.26rc1'
           check-latest: true
     
     - name: Setup Zig
