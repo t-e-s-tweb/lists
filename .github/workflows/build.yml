@@ -12,6 +12,10 @@ on:
         description: 'Comma-separated "user/repo branch" pairs (e.g., "user1/repo1 main,user2/repo2 dev" or "0")'
         required: false
         default: '0'
+      merge_dns:
+        description: 'merge DNS commit (0 = none)'
+        required: false
+        default: '0'
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -68,8 +72,23 @@ jobs:
 
         done
         fi   
-        
+    
+    - name: Merge DNS commit
+      if: ${{ github.event.inputs.merge_dns != '0' }}
+      run: |
+       DNS_MSG="refactor(dns): streamline query handling and remove redundant deadline logic"
 
+       git remote add j2rong4cn https://github.com/j2rong4cn/Xray-core.git
+       git fetch j2rong4cn main
+
+       DNS_HOST_SHA=$(git log j2rong4cn/main --grep="$DNS_MSG" --format="%H" -n 1)
+
+       if [ -n "$DNS_HOST_SHA" ]; then
+        echo "Found commit: $DNS_HOST_SHA"
+        git cherry-pick "$DNS_HOST_SHA" || true
+       else
+        echo "$DNS_MSG"
+       fi
     - name: Set up Go
       uses: actions/setup-go@v6
       with:
