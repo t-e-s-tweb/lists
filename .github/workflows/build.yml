@@ -30,7 +30,9 @@ jobs:
     - name: Install linker
       run: |
        sudo apt-get update
-       sudo apt-get install -y binutils
+       sudo apt-get install -y binutils clang 
+       
+       
     - name: Merge PRs based on input
       run: |
        set -e
@@ -145,6 +147,8 @@ jobs:
         CGO_ENABLED: 0
         GOOS: linux
         GOARCH: amd64
+        CC: clang
+        CXX: clang++
       run: |
         #go build -o xadm64 -trimpath -gcflags="all=-l=4" -buildvcs=false -ldflags "-s -w -buildid=" -v ./main
         CGO_ENABLED=1 go build -o xadm64 -trimpath -gcflags="all=-l=4" -buildvcs=false -ldflags "-s -w -buildid='' -linkmode=external -extldflags '-fuse-ld=lld -Wl,--gc-sections -Wl,--build-id=none -Wl,--strip-all'" -v ./main
