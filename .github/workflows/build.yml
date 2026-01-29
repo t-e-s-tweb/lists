@@ -143,7 +143,8 @@ jobs:
         GOOS: linux
         GOARCH: amd64
       run: |
-        go build -o xadm64 -trimpath -gcflags="all=-l=4" -buildvcs=false -ldflags "-s -w -buildid=" -v ./main
+        #go build -o xadm64 -trimpath -gcflags="all=-l=4" -buildvcs=false -ldflags "-s -w -buildid=" -v ./main
+        CGO_ENABLED=1 go build -o xadm64 -trimpath -gcflags="all=-l=4" -buildvcs=false -ldflags "-s -w -buildid='' -linkmode=external -extldflags '-fuse-ld=lld -Wl,--gc-sections -Wl,--build-id=none -Wl,--strip-all'" -v ./main
 
     # # Alternative Linux amd64 build with Zig (commented out)
     # - name: Build for Linux amd64 (zig)
