@@ -27,7 +27,10 @@ jobs:
         repository: 'XTLS/Xray-core'
         ref: 'main'
         fetch-depth: 0
-
+    - name: Install linker
+      run: |
+       sudo apt-get update
+       sudo apt-get install -y binutils
     - name: Merge PRs based on input
       run: |
        set -e
