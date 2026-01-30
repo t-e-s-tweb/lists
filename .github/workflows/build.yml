@@ -152,14 +152,14 @@ jobs:
       run: |
         #go build -o xadm64 -trimpath -gcflags="all=-l=4" -buildvcs=false -ldflags "-s -w -buildid=" -v ./main
         export GOMAXPROCS=$(nproc)
-        export GOEXPERIMENT="greenteagc,jsonv2,newinliner,regabi,swissmap,heapminimum512kib"
+        export GOEXPERIMENT="arenas,greenteagc,jsonv2,newinliner,regabi,swissmap,heapminimum512kib"
 
         # Generic C/C++ optimization (works on ALL processors)
-        export CGO_CFLAGS="-O3 -flto=thin -fomit-frame-pointer -ffunction-sections -fdata-sections"
-        export CGO_CXXFLAGS="-O3 -flto=thin -fomit-frame-pointer -ffunction-sections -fdata-sections"
-        export CGO_LDFLAGS="-O3 -flto=thin -fuse-ld=lld"
+        export CGO_CFLAGS="-O3 -flto=full -fomit-frame-pointer -fno-semantic-interposition -falign-functions=32"
+        export CGO_CXXFLAGS="-O3 -flto=full -fomit-frame-pointer -fno-semantic-interposition -falign-functions=32"
+        export CGO_LDFLAGS="-O3 -flto=full -fuse-ld=lld -Wl,-O3 -Wl,--lto-O3"
 
-        CGO_ENABLED=1 go build -o xadm64 -trimpath -gcflags="all=-l=4" -buildvcs=false -ldflags "-s -w -buildid='' -linkmode=external -extldflags '-fuse-ld=lld -flto=thin -O3 -Wl,--gc-sections -Wl,--build-id=none -Wl,--strip-all'" -v ./main
+        CGO_ENABLED=1 go build -o xadm64 -trimpath -gcflags="all=-l=4 -c=10" -buildvcs=false -ldflags "-s -w -buildid='' -linkmode=external -extldflags '-fuse-ld=lld -flto=full -O3 -Wl,-O3 -Wl,--lto-O3 -Wl,--build-id=none'" -v ./main
         llvm-strip --strip-all xadm64
     # # Alternative Linux amd64 build with Zig (commented out)
     # - name: Build for Linux amd64 (zig)
