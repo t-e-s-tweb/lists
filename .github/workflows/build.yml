@@ -152,7 +152,7 @@ jobs:
       run: |
         #go build -o xadm64 -trimpath -gcflags="all=-l=4" -buildvcs=false -ldflags "-s -w -buildid=" -v ./main
         export GOMAXPROCS=$(nproc)
-        export GOEXPERIMENT="arenas,greenteagc,jsonv2,newinliner,regabi,swissmap,heapminimum512kib"
+        export GOEXPERIMENT="synchashtriemap,arenas,greenteagc,jsonv2,newinliner,regabi,swissmap,heapminimum512kib"
         
         # Generic C/C++ optimization (works on ALL processors)
         export CGO_CFLAGS="-O2 -flto=thin -fomit-frame-pointer -fno-semantic-interposition -falign-functions=32"
