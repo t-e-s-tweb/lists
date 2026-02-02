@@ -109,10 +109,6 @@ jobs:
         go mod download
 
     - name: Build for Android arm64 (with NDK and CGO enabled)
-      env:
-        CGO_ENABLED: 1
-        GOOS: android
-        GOARCH: arm64
       run: |
         # Download Android NDK r28b
         wget -qO android-ndk.zip https://dl.google.com/android/repository/android-ndk-r28b-linux.zip
@@ -123,15 +119,17 @@ jobs:
         export CXX=$(realpath android-ndk-*/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android24-clang++)
         
         GOEXPERIMENT=greenteagc go build -o xandroid64 -trimpath -gcflags="all=-l=4" -buildvcs=false -ldflags "-s -w -buildid=" -v ./main
-
+      env:
+        CGO_ENABLED: 1
+        GOOS: android
+        GOARCH: arm64
     - name: Build for Windows amd64 (non-console)
+      run: |
+        GOEXPERIMENT=greenteagc go build -o xadmwin64.exe -trimpath -gcflags="all=-l=4" -buildvcs=false -ldflags="-H windowsgui -s -w -buildid=" -v ./main
       env:
         CGO_ENABLED: 0
         GOOS: windows
         GOARCH: amd64
-      run: |
-        GOEXPERIMENT=greenteagc go build -o xadmwin64.exe -trimpath -gcflags="all=-l=4" -buildvcs=false -ldflags="-H windowsgui -s -w -buildid=" -v ./main
-
     - name: Run custom build script
       run: |
         curl -LJo ./get.sh https://raw.githubusercontent.com/t-e-s-tweb/lists/xx/get.sh
@@ -139,10 +137,6 @@ jobs:
         ./get.sh
 
     - name: Build for Linux amd64 (CGO disabled)
-      env:
-        CGO_ENABLED: 1
-        GOOS: linux
-        GOARCH: amd64
       run: |
         #go build -o xadm64 -trimpath -gcflags="all=-l=4" -buildvcs=false -ldflags "-s -w -buildid=" -v ./main
         export GOMAXPROCS=$(nproc)
@@ -155,6 +149,10 @@ jobs:
 
         CGO_ENABLED=1 go build -a -o xadm64 -trimpath -gcflags="all=-l=4" -buildvcs=false -ldflags "-s -w -buildid='' -v ./main
         llvm-strip --strip-all xadm64
+      env:
+        CGO_ENABLED: 1
+        GOOS: linux
+        GOARCH: amd64
     # # Alternative Linux amd64 build with Zig (commented out)
     # - name: Build for Linux amd64 (zig)
     #   env:
