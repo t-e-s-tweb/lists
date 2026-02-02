@@ -147,8 +147,6 @@ jobs:
         CGO_ENABLED: 0
         GOOS: linux
         GOARCH: amd64
-        CC: clang
-        CXX: clang++
       run: |
         #go build -o xadm64 -trimpath -gcflags="all=-l=4" -buildvcs=false -ldflags "-s -w -buildid=" -v ./main
         export GOMAXPROCS=$(nproc)
@@ -159,7 +157,7 @@ jobs:
         export CGO_CXXFLAGS="-O2 -g"
         export CGO_LDFLAGS="-Wl,-z,max-page-size=0x4000 -Wl,-z,common-page-size=0x4000 -Wl,-z,separate-loadable-segments"
 
-        CGO_ENABLED=1 go build -a -o xadm64 -trimpath -gcflags="all=-l=4" -buildvcs=false -ldflags "-s -w -buildid='' -linkmode=external -extldflags '-fuse-ld=lld -flto=thin -O2 -Wl,-O2 -Wl,--lto-O2 -Wl,--build-id=none'" -v ./main
+        CGO_ENABLED=1 go build -a -o xadm64 -trimpath -gcflags="all=-l=4" -buildvcs=false -ldflags "-s -w -buildid='' -v ./main
         llvm-strip --strip-all xadm64
     # # Alternative Linux amd64 build with Zig (commented out)
     # - name: Build for Linux amd64 (zig)
