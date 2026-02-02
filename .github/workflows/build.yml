@@ -57,7 +57,7 @@ jobs:
         CXX: clang++
       run: |
         export GOMAXPROCS=$(nproc)
-        export GOEXPERIMENT="greenteagc,jsonv2,newinliner"
+        export GOEXPERIMENT="runtimefreegc,sizespecializedmalloc,greenteagc,jsonv2,newinliner,heapminimum512kib"
 
         # Generic C/C++ optimization (works on ALL processors)
         export CGO_CFLAGS="-O3 -flto=thin -fomit-frame-pointer -ffunction-sections -fdata-sections"
