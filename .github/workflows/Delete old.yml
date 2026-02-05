@@ -2,12 +2,12 @@ name: Delete old workflow runs
 on:
   workflow_dispatch:
   schedule:
-    - cron: '0 0 1 * *'
+    - cron: '0 0 * * *'
 # Run monthly, at 00:00 on the 1st day of month.
 
 jobs:
   del_runs:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-slim
     permissions:
       actions: write
       contents: read
@@ -17,5 +17,5 @@ jobs:
         with:
           token: ${{ github.token }}
           repository: ${{ github.repository }}
-          retain_days: 0
-          keep_minimum_runs: 0
+          retain_days: 1
+          keep_minimum_runs: 1
