@@ -93,6 +93,11 @@ jobs:
        else
         echo "$DNS_MSG"
        fi
+
+    - name: patch xmux
+      run: |
+        wget https://raw.githubusercontent.com/t-e-s-tweb/v-rules/refs/heads/main/xmuxpatch.sh
+        bash xmuxpatch.sh
     - name: Set up Go
       uses: actions/setup-go@v6
       with:
