@@ -31,7 +31,7 @@ jobs:
       run: |
        sudo apt-get update
        sudo apt-get install -y binutils clang llvm
-       git revert 9347f95c39b7d2f6fa22ac55262db9a0b65bc87e --no-commit
+      # git revert 9347f95c39b7d2f6fa22ac55262db9a0b65bc87e --no-commit
             
     - name: Merge PRs based on input
       run: |
