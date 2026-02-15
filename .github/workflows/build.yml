@@ -164,10 +164,10 @@ jobs:
         export GOEXPERIMENT="runtimefreegc,sizespecializedmalloc,greenteagc,jsonv2,newinliner,heapminimum512kib"
         
         # Generic C/C++ optimization (works on ALL processors)
-        export CGO_CFLAGS="-O3 -fvisibility=hidden -ffunction-sections -fdata-sections -fomit-frame-pointer"
-        export CGO_CXXFLAGS="-O3 -fvisibility=hidden -ffunction-sections -fdata-sections -fomit-frame-pointer"
-        export CGO_LDFLAGS="-Wl,-z,max-page-size=16384 -Wl,-z,common-page-size=16384 -Wl,-z,separate-loadable-segments -Wl,-z,now -Wl,--gc-sections -Wl,--strip-all"
-        export GOFLAGS="-pgo=main/default.pgo"
+        export CGO_CFLAGS="-O2"
+        export CGO_CXXFLAGS="-O2"
+        export CGO_LDFLAGS="-Wl,-z,max-page-size=16384 -Wl,-z,common-page-size=16384 -Wl,--gc-sections -Wl,--strip-all"
+        #export GOFLAGS="-pgo=main/default.pgo"
     
         CGO_ENABLED=1 go build -a -o xadm64 -trimpath -gcflags="all=-l=4" -buildvcs=false -ldflags "-s -w -linkmode=external" -v ./main
         llvm-strip --strip-all xadm64
