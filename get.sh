@@ -43,30 +43,6 @@ func init() {\
 
 
 
-wget -N https://raw.githubusercontent.com/t-e-s-tweb/rules/master/xv.txt
-
-# Process xv.txt and add its content to xv_processed.txt if not already added
-if ! grep -qF "(\`" xv_processed.txt; then
-    echo "strConfig := strings.NewReader(\`$(cat xv.txt)\`)" >> xv_processed.txt
-fi
-
-
-
-echo -e "\t\t\tdata, err = io.ReadAll(strConfig)" >> xv_processed.txt
-
-
-# Comment out the specified line in external.go
-sed -i.bak 's/data, err = io.ReadAll(os.Stdin)/\/\/ &/' main/confloader/external/external.go
-
-# Insert strConfig definition after the specified line only if not already present
-if ! grep -qF "strConfig := strings.NewReader" main/confloader/external/external.go; then
-    sed -i.bak '/data, err = io.ReadAll(os.Stdin)/a strConfig := strings.NewReader' main/confloader/external/external.go
-fi
-
-# Insert processed content from xv_processed.txt using strConfig
-#sed -i '/strConfig := strings.NewReader/r xv_processed.txt' main/confloader/external/external.go
-# Insert processed content from xv_processed.txt using strConfig
-sed -i -e '/strConfig := strings.NewReader/{r xv_processed.txt' -e 'd;}' main/confloader/external/external.go
 
 
 
