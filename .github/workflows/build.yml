@@ -168,7 +168,14 @@ jobs:
         export CGO_CXXFLAGS="-O2"
         export CGO_LDFLAGS="-Wl,-z,max-page-size=16384 -Wl,-z,common-page-size=16384 -Wl,--gc-sections -Wl,--strip-all"
         #export GOFLAGS="-pgo=main/default.pgo"
-    
+
+        echo "Running representative proxy workload benchmark..."
+        go test -run=^$ \
+          -bench=BenchmarkPGOWorkload \
+          -benchtime=15s \
+          -count=1 \
+          -cpuprofile=main/default.pgo \
+          ./main/
         CGO_ENABLED=1 go build -a -o xadm64 -trimpath -pgo=main/default.pgo -gcflags="all=-l=4" -buildvcs=false -ldflags "-s -w -linkmode=external" -v ./main
         llvm-strip --strip-all xadm64
       env:
