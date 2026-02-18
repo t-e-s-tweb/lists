@@ -27,10 +27,11 @@ jobs:
         ref: 'rust'
         fetch-depth: 0
     
-    - name: Install musl toolchain
-      run: |
-       sudo apt-get update
-       sudo apt-get install -y musl-tools
+    - name: Install Zig
+      uses: mlugg/setup-zig@v1
+      with:
+        version: 0.14.0
+
       # git revert 9347f95c39b7d2f6fa22ac55262db9a0b65bc87e --no-commit
             
     - name: Merge PRs based on input
@@ -115,14 +116,7 @@ jobs:
       uses: dtolnay/rust-toolchain@stable
       with:
         targets: x86_64-unknown-linux-musl
-    - name: Configure musl linker
-      run: |
-       mkdir -p ~/.cargo
-       cat > ~/.cargo/config.toml <<EOF
-       [target.x86_64-unknown-linux-musl]
-       linker = "musl-gcc"
-       ar = "ar"
-       EOF
+    
     - name: pgo
       run: |
        wget -qO main/pgo_generate_test.go \
@@ -168,6 +162,8 @@ jobs:
           echo "⚠️ libxray_rust.a not found, build may fail"
           find "$XRAY_PATH" -name "libxray_rust*" 2>/dev/null || true
         fi
+        CC: "zig cc -target x86_64-linux-musl"
+        CXX: "zig c++ -target x86_64-linux-musl"
         CGO_ENABLED=1 go build -a -o xadm64 -pgo=main/default.pgo -trimpath -pgo=main/default.pgo -gcflags="all=-l=4" -buildvcs=false -ldflags "-s -w -linkmode=external" -v ./main
         llvm-strip --strip-all xadm64
       env:
