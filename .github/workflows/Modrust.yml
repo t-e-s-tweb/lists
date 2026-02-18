@@ -197,7 +197,7 @@ jobs:
         RUST_LIB_DIR="${{ github.workspace }}/rust/xray-rust/target/x86_64-unknown-linux-musl/release"
         
         echo "=== Rust lib check ==="
-        ls -la "${RAPPER_DIR}/libxray_rust.a" || { echo "❌ Rust lib MISSING!"; exit 1; }
+        ls -la "${RUST_LIB_DIR}/libxray_rust.a" || { echo "❌ Rust lib MISSING!"; exit 1; }
         
         # Use Zig for Go build as well
         export CC="zig cc -target x86_64-linux-musl"
