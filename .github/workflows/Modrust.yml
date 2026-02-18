@@ -28,10 +28,14 @@ jobs:
         ref: 'rust'
         fetch-depth: 0
 
-    - name: Install Zig
-      uses: mlugg/setup-zig@v1
-      with:
-        version: 0.14.0
+    - name: Install musl toolchain (fixes ring + blake3)
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y musl-tools musl-dev
+        # Symlink required by ring@0.17.14 and blake3 build scripts
+        sudo ln -sf /usr/bin/musl-gcc /usr/bin/x86_64-linux-musl-gcc
+        sudo ln -sf /usr/bin/musl-g++ /usr/bin/x86_64-linux-musl-g++ || true
+        echo "✅ musl toolchain ready"
 
     - name: Merge PRs based on input
       run: |
@@ -40,13 +44,15 @@ jobs:
         git config --global user.email "github-actions[bot]@users.noreply.github.com"
         IFS=',' read -ra PR_LIST <<< "${{ github.event.inputs.merge_prs }}"
         for PR_NUM in "${PR_LIST[@]}"; do
-          echo "Fetching PR #$PR_NUM..."
-          git fetch origin pull/$PR_NUM/head:pr-$PR_NUM
-          echo "Merging PR #$PR_NUM (auto-resolve: theirs)..."
-          git merge -X theirs pr-$PR_NUM || true
-          git add -A
-          echo "Changes from PR #$PR_NUM:"
-          git log HEAD\~1..HEAD --stat || true
+          if [[ "$PR_NUM" != "0" && -n "$PR_NUM" ]]; then
+            echo "Fetching PR #$PR_NUM..."
+            git fetch origin pull/$PR_NUM/head:pr-$PR_NUM
+            echo "Merging PR #$PR_NUM (auto-resolve: theirs)..."
+            git merge -X theirs pr-$PR_NUM || true
+            git add -A
+            echo "Changes from PR #$PR_NUM:"
+            git log HEAD\~1..HEAD --stat || true
+          fi
         done
 
     - name: Fetch & merge external branch if requested
@@ -105,22 +111,27 @@ jobs:
       with:
         targets: x86_64-unknown-linux-musl
 
-    - name: pgo (build Rust staticlib with Zig)
+    - name: Configure Cargo for musl
+      run: |
+        mkdir -p \~/.cargo
+        cat > \~/.cargo/config.toml <<EOF
+        [target.x86_64-unknown-linux-musl]
+        linker = "x86_64-linux-musl-gcc"
+        ar = "ar"
+        EOF
+
+    - name: Build Rust staticlib (pgo) - fixes blake3 + ring
       run: |
         wget -qO main/pgo_generate_test.go \
         https://raw.githubusercontent.com/Mit0chrondr1a/Xray-core/refs/heads/perf/main/pgo_generate_test.go
         mkdir -p main
         
         cd rust/xray-rust
+        export CC=x86_64-linux-musl-gcc
+        export CXX=x86_64-linux-musl-g++
         rustup target add x86_64-unknown-linux-musl
-        
-        # Critical: Use Zig as C compiler so ring@0.17.14 works perfectly
-        export CC="zig cc -target x86_64-linux-musl"
-        export CXX="zig c++ -target x86_64-linux-musl"
-        
         cargo build --release --target x86_64-unknown-linux-musl
-        
-        ls -la target/x86_64-unknown-linux-musl/release/libxray_rust.a || echo "⚠️ libxray_rust.a missing!"
+        ls -la target/x86_64-unknown-linux-musl/release/libxray_rust.a || { echo "Rust lib MISSING!"; exit 1; }
 
     - name: Run custom build script
       run: |
@@ -128,13 +139,13 @@ jobs:
         chmod +x get.sh
         ./get.sh
 
-    - name: Build for Linux amd64 (CGO + Rust staticlib via Zig)
+    - name: Build for Linux amd64 (CGO + Rust staticlib)
       env:
         CGO_ENABLED: 1
         GOOS: linux
         GOARCH: amd64
-        CC: "zig cc -target x86_64-linux-musl"
-        CXX: "zig c++ -target x86_64-linux-musl"
+        CC: x86_64-linux-musl-gcc
+        CXX: x86_64-linux-musl-g++
       run: |
         export GOMAXPROCS=$(nproc)
         export GOEXPERIMENT="runtimefreegc,sizespecializedmalloc,greenteagc,jsonv2,newinliner,heapminimum512kib"
@@ -142,7 +153,7 @@ jobs:
         RUST_LIB_DIR="${{ github.workspace }}/rust/xray-rust/target/x86_64-unknown-linux-musl/release"
         
         echo "=== Rust lib check ==="
-        ls -la "${RUST_LIB_DIR}/libxray_rust.a" || { echo "Rust lib MISSING!"; exit 1; }
+        ls -la "${RUST_LIB_DIR}/libxray_rust.a"
         
         export CGO_CFLAGS="-O2"
         export CGO_LDFLAGS="-L${RUST_LIB_DIR} -static -Wl,-z,max-page-size=16384 -Wl,--gc-sections"
@@ -155,7 +166,7 @@ jobs:
           -ldflags "-s -w -linkmode=external -extldflags '-static'" \
           -v ./main
         
-        strip --strip-all xadm64
+        strip --strip-all xadm64 || true
         ls -lh xadm64
 
     - name: Upload Linux binaries to release
