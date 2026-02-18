@@ -22,18 +22,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v4.1.1
+      uses: actions/checkout@v4
       with:
         repository: 'Mit0chrondr1a/Xray-core'
         ref: 'rust'
         fetch-depth: 0
 
-    - name: Install musl toolchain (fixes ring + blake3)
+    - name: Install build dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y musl-tools musl-dev
-        
-        echo "✅ musl toolchain ready"
+        sudo apt-get install -y musl-tools musl-dev libunwind-dev
+        echo "✅ musl + libunwind ready (Go will be dynamic)"
 
     - name: Merge PRs based on input
       run: |
@@ -118,15 +117,16 @@ jobs:
         ar = "ar"
         EOF
 
-    - name: Build Rust staticlib (pgo) - fixes blake3 + ring
+    - name: Build Rust staticlib (pgo) - no unwind
       run: |
         wget -qO main/pgo_generate_test.go \
         https://raw.githubusercontent.com/Mit0chrondr1a/Xray-core/refs/heads/perf/main/pgo_generate_test.go
         mkdir -p main
         
         cd rust/xray-rust
-        export CC=x86_64-linux-musl-gcc
-        export CXX=x86_64-linux-musl-g++
+        export CC=musl-gcc
+        export CXX=musl-g++
+        export RUSTFLAGS="-C panic=abort -C target-feature=+crt-static"
         rustup target add x86_64-unknown-linux-musl
         cargo build --release --target x86_64-unknown-linux-musl
         ls -la target/x86_64-unknown-linux-musl/release/libxray_rust.a || { echo "Rust lib MISSING!"; exit 1; }
@@ -137,13 +137,11 @@ jobs:
         chmod +x get.sh
         ./get.sh
 
-    - name: Build for Linux amd64 (CGO + Rust staticlib)
+    - name: Build for Linux amd64 (CGO enabled - DYNAMIC binary as requested)
       env:
         CGO_ENABLED: 1
         GOOS: linux
         GOARCH: amd64
-        CC: x86_64-linux-musl-gcc
-        CXX: x86_64-linux-musl-g++
       run: |
         export GOMAXPROCS=$(nproc)
         export GOEXPERIMENT="runtimefreegc,sizespecializedmalloc,greenteagc,jsonv2,newinliner,heapminimum512kib"
@@ -154,18 +152,19 @@ jobs:
         ls -la "${RUST_LIB_DIR}/libxray_rust.a"
         
         export CGO_CFLAGS="-O2"
-        export CGO_LDFLAGS="-L${RUST_LIB_DIR} -static -Wl,-z,max-page-size=16384 -Wl,--gc-sections"
+        export CGO_LDFLAGS="-L${RUST_LIB_DIR} -Wl,-z,max-page-size=16384 -Wl,--gc-sections"
         
         go build -a -o xadm64 \
           -trimpath \
           -pgo=main/default.pgo \
           -gcflags="all=-l=4" \
           -buildvcs=false \
-          -ldflags "-s -w -linkmode=external -extldflags '-static'" \
+          -ldflags "-s -w -linkmode=external" \
           -v ./main
         
         strip --strip-all xadm64 || true
         ls -lh xadm64
+        file xadm64   # shows if it's dynamically linked
 
     - name: Upload Linux binaries to release
       uses: svenstaro/upload-release-action@2.7.0
