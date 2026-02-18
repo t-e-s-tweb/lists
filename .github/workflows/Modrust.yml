@@ -22,17 +22,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v4
+      uses: actions/checkout@v4.1.1
       with:
         repository: 'Mit0chrondr1a/Xray-core'
         ref: 'rust'
         fetch-depth: 0
 
-    - name: Install build dependencies
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y musl-tools musl-dev libunwind-dev
-        echo "✅ musl + libunwind ready (Go will be dynamic)"
+    - name: Install Zig
+      uses: mlugg/setup-zig@v1
+      with:
+        version: 0.14.0
 
     - name: Merge PRs based on input
       run: |
@@ -108,28 +107,73 @@ jobs:
       with:
         targets: x86_64-unknown-linux-musl
 
-    - name: Configure Cargo for musl
+    - name: Build Rust staticlib with Zig wrappers (fixes ring/blake3 + unwind)
       run: |
-        mkdir -p \~/.cargo
-        cat > \~/.cargo/config.toml <<EOF
-        [target.x86_64-unknown-linux-musl]
-        linker = "x86_64-linux-musl-gcc"
-        ar = "ar"
-        EOF
-
-    - name: Build Rust staticlib (pgo) - no unwind
-      run: |
-        wget -qO main/pgo_generate_test.go \
-        https://raw.githubusercontent.com/Mit0chrondr1a/Xray-core/refs/heads/perf/main/pgo_generate_test.go
+        wget -qO main/pgo_generate_test.go https://raw.githubusercontent.com/Mit0chrondr1a/Xray-core/refs/heads/perf/main/pgo_generate_test.go
         mkdir -p main
         
         cd rust/xray-rust
-        export CC=musl-gcc
-        export CXX=musl-g++
-        export RUSTFLAGS="-C panic=abort -C target-feature=+crt-static"
-        rustup target add x86_64-unknown-linux-musl
-        cargo build --release --target x86_64-unknown-linux-musl
-        ls -la target/x86_64-unknown-linux-musl/release/libxray_rust.a || { echo "Rust lib MISSING!"; exit 1; }
+        
+        # From Taskfile: Sysroot detection
+        SYSROOT="$(rustc --print sysroot)"
+        CARGO_BUILD_STD_FLAGS=""
+        if [ -d "${SYSROOT}/lib/rustlib/x86_64-unknown-linux-musl" ]; then
+          echo ">> Using pre-built target: x86_64-unknown-linux-musl"
+        else
+          echo ">> Installing target via rustup"
+          rustup target add x86_64-unknown-linux-musl || true
+          if [ -d "${SYSROOT}/lib/rustlib/x86_64-unknown-linux-musl" ]; then
+            echo ">> Installed target via rustup"
+          else
+            echo ">> Falling back to -Z build-std"
+            export RUSTC_BOOTSTRAP=1
+            CARGO_BUILD_STD_FLAGS="-Z build-std=std,panic_abort"
+          fi
+        fi
+        
+        # From Taskfile: Zig wrappers for cc-rs (strips --target, uses Zig target)
+        WRAPPER_DIR="$(mktemp -d)"
+        trap 'rm -rf "$WRAPPER_DIR"' EXIT
+        
+        ZIG_BIN="$(command -v zig)"
+        ZIG_TARGET="x86_64-linux-musl"
+        
+        for mode in cc c++; do
+          cat > "\( {WRAPPER_DIR}/zig- \){mode}.sh" <<EOF
+          #!/usr/bin/env bash
+          set -euo pipefail
+          args=()
+          while [ "\$#" -gt 0 ]; do
+            case "\$1" in
+               --target=*) shift ;;
+               --target) shift; [ "\$#" -gt 0 ] && shift ;;
+               *) args+=("\$1"); shift ;;
+            esac
+            done
+          exec "\${ZIG_BIN}" \${mode} -target "\${ZIG_TARGET}" "\${args[@]}"
+          EOF
+          chmod +x "\( {WRAPPER_DIR}/zig- \){mode}.sh"
+        done
+        
+        export CC_x86_64_unknown_linux_musl="${WRAPPER_DIR}/zig-cc.sh"
+        export CXX_x86_64_unknown_linux_musl="${WRAPPER_DIR}/zig-c++.sh"
+        export CARGO_TARGET_X86_64_UNKNOWN_LINUX_MUSL_LINKER="${WRAPPER_DIR}/zig-cc.sh"
+        
+        # From Taskfile: RUSTFLAGS for CPU
+        export RUSTFLAGS="-C target-cpu=x86-64-v3 -C panic=abort"
+        
+        # Skip eBPF (not in your workflow)
+        EBPF_FEATURES=""
+        echo ">> Building without eBPF support"
+        
+        rm -f target/release/libxray_rust.a
+        
+        cargo build \${CARGO_BUILD_STD_FLAGS} --release --locked --target x86_64-unknown-linux-musl \${EBPF_FEATURES}
+        
+        mkdir -p target/release
+        install -m 644 target/x86_64-unknown-linux-musl/release/libxray_rust.a target/release/libxray_rust.a || true
+        
+        ls -la target/release/libxray_rust.a || { echo "Rust lib MISSING!"; exit 1; }
 
     - name: Run custom build script
       run: |
@@ -137,7 +181,7 @@ jobs:
         chmod +x get.sh
         ./get.sh
 
-    - name: Build for Linux amd64 (CGO enabled - DYNAMIC binary as requested)
+    - name: Build for Linux amd64 with Zig (static, CGO)
       env:
         CGO_ENABLED: 1
         GOOS: linux
@@ -145,26 +189,34 @@ jobs:
       run: |
         export GOMAXPROCS=$(nproc)
         export GOEXPERIMENT="runtimefreegc,sizespecializedmalloc,greenteagc,jsonv2,newinliner,heapminimum512kib"
+        export GOAMD64=v3
         
-        RUST_LIB_DIR="${{ github.workspace }}/rust/xray-rust/target/x86_64-unknown-linux-musl/release"
+        ZIG_BIN="$(command -v zig)"
+        ZIG_TARGET="x86_64-linux-musl"
+        
+        export CC="${ZIG_BIN} cc -target ${ZIG_TARGET}"
+        export CXX="${ZIG_BIN} c++ -target ${ZIG_TARGET}"
+        
+        RUST_LIB_DIR="${{ github.workspace }}/rust/xray-rust/target/release"
         
         echo "=== Rust lib check ==="
-        ls -la "${RUST_LIB_DIR}/libxray_rust.a"
+        ls -la "${RUST_LIB_DIR}/libxray_rust.a" || { echo "Rust lib MISSING!"; exit 1; }
         
-        export CGO_CFLAGS="-O2"
-        export CGO_LDFLAGS="-L${RUST_LIB_DIR} -static -Wl,-z,max-page-size=16384 -Wl,--gc-sections"
+        export CGO_LDFLAGS="-L${RUST_LIB_DIR} -Wl,-z,max-page-size=16384 -Wl,--gc-sections"
+        
+        COMMID="$(git describe --always --dirty 2>/dev/null || echo "dev")"
         
         go build -a -o xadm64 \
           -trimpath \
           -pgo=main/default.pgo \
           -gcflags="all=-l=4" \
           -buildvcs=false \
-          -ldflags "-s -w -linkmode=external -extldflags '-static'" \
+          -ldflags "-s -w -buildid= -X github.com/xtls/xray-core/core.build=${COMMID} -linkmode=external -extldflags '-static -s'" \
           -v ./main
         
         strip --strip-all xadm64 || true
         ls -lh xadm64
-        file xadm64   # shows if it's dynamically linked
+        file xadm64  # Should be static
 
     - name: Upload Linux binaries to release
       uses: svenstaro/upload-release-action@2.7.0
