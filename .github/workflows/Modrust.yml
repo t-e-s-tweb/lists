@@ -27,10 +27,7 @@ jobs:
         ref: 'rust'
         fetch-depth: 0
     
-    - name: Install linker
-      run: |
-       sudo apt-get update
-       sudo apt-get install -y binutils clang llvm
+   
       # git revert 9347f95c39b7d2f6fa22ac55262db9a0b65bc87e --no-commit
             
     - name: Merge PRs based on input
@@ -121,7 +118,7 @@ jobs:
        wget -qO main/pgo_generate_test.go \
        https://raw.githubusercontent.com/Mit0chrondr1a/Xray-core/refs/heads/perf/main/pgo_generate_test.go
        mkdir -p main
-       cd rust
+       cd rust/xray-rust
        rustup target add x86_64-unknown-linux-gnu
        cargo build --release --target x86_64-unknown-linux-gnu
         
