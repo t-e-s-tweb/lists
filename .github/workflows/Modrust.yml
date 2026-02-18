@@ -76,14 +76,14 @@ jobs:
       if: ${{ github.event.inputs.merge_dns != '0' }}
       run: |
         DNS_MSG="refactor(dns): streamline query handling and remove redundant deadline logic"
-        git remote add j2rong4cn https://github.com/j2rong4cn/Xray-core.git
+        git remote add j2rong4cn https://github.com/j2rong4cn/Xray-core.git || true
         git fetch j2rong4cn main
         DNS_HOST_SHA=$(git log j2rong4cn/main --grep="$DNS_MSG" --format="%H" -n 1)
         if [ -n "$DNS_HOST_SHA" ]; then
           echo "Found commit: $DNS_HOST_SHA"
           git cherry-pick "$DNS_HOST_SHA" || true
         else
-          echo "$DNS_MSG"
+          echo "DNS commit not found: $DNS_MSG"
         fi
 
     - name: patch xmux
@@ -107,73 +107,29 @@ jobs:
       with:
         targets: x86_64-unknown-linux-musl
 
-    - name: Build Rust staticlib with Zig wrappers (fixes ring/blake3 + unwind)
+    - name: Build Rust staticlib with Zig (no unwinding conflicts)
       run: |
-        wget -qO main/pgo_generate_test.go https://raw.githubusercontent.com/Mit0chrondr1a/Xray-core/refs/heads/perf/main/pgo_generate_test.go
+        wget -qO main/pgo_generate_test.go \
+        https://raw.githubusercontent.com/Mit0chrondr1a/Xray-core/refs/heads/perf/main/pgo_generate_test.go
         mkdir -p main
         
         cd rust/xray-rust
         
-        # From Taskfile: Sysroot detection
-        SYSROOT="$(rustc --print sysroot)"
-        CARGO_BUILD_STD_FLAGS=""
-        if [ -d "${SYSROOT}/lib/rustlib/x86_64-unknown-linux-musl" ]; then
-          echo ">> Using pre-built target: x86_64-unknown-linux-musl"
-        else
-          echo ">> Installing target via rustup"
-          rustup target add x86_64-unknown-linux-musl || true
-          if [ -d "${SYSROOT}/lib/rustlib/x86_64-unknown-linux-musl" ]; then
-            echo ">> Installed target via rustup"
-          else
-            echo ">> Falling back to -Z build-std"
-            export RUSTC_BOOTSTRAP=1
-            CARGO_BUILD_STD_FLAGS="-Z build-std=std,panic_abort"
-          fi
-        fi
+        # Install target if not present
+        rustup target add x86_64-unknown-linux-musl
         
-        # From Taskfile: Zig wrappers for cc-rs (strips --target, uses Zig target)
-        WRAPPER_DIR="$(mktemp -d)"
-        trap 'rm -rf "$WRAPPER_DIR"' EXIT
+        # CRITICAL FIXES from Taskfile:
+        # 1. Use panic=abort to avoid libgcc_eh unwinding conflicts
+        # 2. Use crt-static for fully static Rust std
+        # 3. Use Zig as CC/CXX (it handles musl target correctly)
+        export RUSTFLAGS="-C panic=abort -C target-feature=+crt-static -C target-cpu=x86-64-v3"
+        export CC="zig cc -target x86_64-linux-musl"
+        export CXX="zig c++ -target x86_64-linux-musl"
         
-        ZIG_BIN="$(command -v zig)"
-        ZIG_TARGET="x86_64-linux-musl"
+        # Build without default features that might pull in unwinding
+        cargo build --release --target x86_64-unknown-linux-musl --locked
         
-        for mode in cc c++; do
-        cat > "${WRAPPER_DIR}/zig-${mode}.sh" <<EOF
-        #!/usr/bin/env bash
-        set -euo pipefail
-        args=()
-        while [ "\$#" -gt 0 ]; do
-          case "\$1" in
-            --target=*) shift ;;
-            --target) shift; [ "\$#" -gt 0 ] && shift ;;
-            *) args+=("\$1"); shift ;;
-          esac
-          done
-          exec "\${ZIG_BIN}" \${mode} -target "\${ZIG_TARGET}" "\${args[@]}"
-          EOF
-        chmod +x "${WRAPPER_DIR}/zig-${mode}.sh"
-        done
-        
-        export CC_x86_64_unknown_linux_musl="${WRAPPER_DIR}/zig-cc.sh"
-        export CXX_x86_64_unknown_linux_musl="${WRAPPER_DIR}/zig-c++.sh"
-        export CARGO_TARGET_X86_64_UNKNOWN_LINUX_MUSL_LINKER="${WRAPPER_DIR}/zig-cc.sh"
-        
-        # From Taskfile: RUSTFLAGS for CPU
-        export RUSTFLAGS="-C target-cpu=x86-64-v3 -C panic=abort"
-        
-        # Skip eBPF (not in your workflow)
-        EBPF_FEATURES=""
-        echo ">> Building without eBPF support"
-        
-        rm -f target/release/libxray_rust.a
-        
-        cargo build \${CARGO_BUILD_STD_FLAGS} --release --locked --target x86_64-unknown-linux-musl \${EBPF_FEATURES}
-        
-        mkdir -p target/release
-        install -m 644 target/x86_64-unknown-linux-musl/release/libxray_rust.a target/release/libxray_rust.a || true
-        
-        ls -la target/release/libxray_rust.a || { echo "Rust lib MISSING!"; exit 1; }
+        ls -la target/x86_64-unknown-linux-musl/release/libxray_rust.a || { echo "❌ Rust lib missing!"; exit 1; }
 
     - name: Run custom build script
       run: |
@@ -181,42 +137,46 @@ jobs:
         chmod +x get.sh
         ./get.sh
 
-    - name: Build for Linux amd64 with Zig (static, CGO)
+    - name: Build for Linux amd64 (CGO + fully static via Zig)
       env:
         CGO_ENABLED: 1
         GOOS: linux
         GOARCH: amd64
+        GOAMD64: v3
       run: |
         export GOMAXPROCS=$(nproc)
         export GOEXPERIMENT="runtimefreegc,sizespecializedmalloc,greenteagc,jsonv2,newinliner,heapminimum512kib"
         
-        
-        ZIG_BIN="$(command -v zig)"
-        ZIG_TARGET="x86_64-linux-musl"
-        
-        export CC="${ZIG_BIN} cc -target ${ZIG_TARGET}"
-        export CXX="${ZIG_BIN} c++ -target ${ZIG_TARGET}"
-        
-        RUST_LIB_DIR="${{ github.workspace }}/rust/xray-rust/target/release"
+        RUST_LIB_DIR="${{ github.workspace }}/rust/xray-rust/target/x86_64-unknown-linux-musl/release"
         
         echo "=== Rust lib check ==="
-        ls -la "${RUST_LIB_DIR}/libxray_rust.a" || { echo "Rust lib MISSING!"; exit 1; }
+        ls -la "${RUST_LIB_DIR}/libxray_rust.a" || { echo "❌ Rust lib MISSING!"; exit 1; }
         
-        export CGO_LDFLAGS="-L${RUST_LIB_DIR} -Wl,-z,max-page-size=16384 -Wl,--gc-sections"
+        # CRITICAL: Use Zig for both compilation AND linking
+        # This ensures consistent musl target handling and avoids libgcc conflicts
+        export CC="zig cc -target x86_64-linux-musl"
+        export CXX="zig c++ -target x86_64-linux-musl"
         
-        COMMID="$(git describe --always --dirty 2>/dev/null || echo "dev")"
+        # CGO flags - NO static in CGO_LDFLAGS (let extldflags handle it)
+        export CGO_CFLAGS="-O2"
+        export CGO_LDFLAGS="-L${RUST_LIB_DIR} -lxray_rust"
         
+        # Build with external linker (Zig) and fully static flags
+        # -extldflags '-static' is the key for static binary
+        # NO -Wl,--gc-sections (causes issues with some Go versions)
         go build -a -o xadm64 \
           -trimpath \
           -pgo=main/default.pgo \
           -gcflags="all=-l=4" \
           -buildvcs=false \
-          -ldflags "-s -w -buildid= -X github.com/xtls/xray-core/core.build=${COMMID} -linkmode=external -extldflags '-static -s'" \
+          -ldflags "-s -w -buildid= -X github.com/xtls/xray-core/core.build=$(git describe --always --dirty) -linkmode=external -extldflags '-static -s'" \
           -v ./main
         
-        strip --strip-all xadm64 || true
+        # Verify it's actually static
+        echo "=== Binary check ==="
+        file xadm64
+        ldd xadm64 2>/dev/null || echo "✅ Static binary (no dynamic deps)"
         ls -lh xadm64
-        file xadm64  # Should be static
 
     - name: Upload Linux binaries to release
       uses: svenstaro/upload-release-action@2.7.0
