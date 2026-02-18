@@ -16,6 +16,7 @@ on:
         description: 'merge DNS commit (0 = none)'
         required: false
         default: '0'
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -26,161 +27,136 @@ jobs:
         repository: 'Mit0chrondr1a/Xray-core'
         ref: 'rust'
         fetch-depth: 0
-    
+
     - name: Install Zig
       uses: mlugg/setup-zig@v1
       with:
         version: 0.14.0
 
-      # git revert 9347f95c39b7d2f6fa22ac55262db9a0b65bc87e --no-commit
-            
     - name: Merge PRs based on input
       run: |
-       set -e
-       git config --global user.name "github-actions[bot]"
-       git config --global user.email "github-actions[bot]@users.noreply.github.com"
-       IFS=',' read -ra PR_LIST <<< "${{ github.event.inputs.merge_prs }}"
-          for PR_NUM in "${PR_LIST[@]}"; do
-            echo "Fetching PR #$PR_NUM..."
-            git fetch origin pull/$PR_NUM/head:pr-$PR_NUM
-            echo "Merging PR #$PR_NUM (auto-resolve: theirs)..."
-            git merge -X theirs pr-$PR_NUM || true
-            git add -A
-            echo "Changes from PR #$PR_NUM:"
-            git log HEAD~1..HEAD --stat || true
-          done
+        set -e
+        git config --global user.name "github-actions[bot]"
+        git config --global user.email "github-actions[bot]@users.noreply.github.com"
+        IFS=',' read -ra PR_LIST <<< "${{ github.event.inputs.merge_prs }}"
+        for PR_NUM in "${PR_LIST[@]}"; do
+          echo "Fetching PR #$PR_NUM..."
+          git fetch origin pull/$PR_NUM/head:pr-$PR_NUM
+          echo "Merging PR #$PR_NUM (auto-resolve: theirs)..."
+          git merge -X theirs pr-$PR_NUM || true
+          git add -A
+          echo "Changes from PR #$PR_NUM:"
+          git log HEAD\~1..HEAD --stat || true
+        done
 
     - name: Fetch & merge external branch if requested
       if: ${{ inputs.fetch_branches_from_other != '0' && inputs.fetch_branches_from_other != '' }}
       run: |
         BRANCH_INPUT="${{ github.event.inputs.fetch_branches_from_other }}"
-
         if [[ "$BRANCH_INPUT" != "0" ]]; then
-        IFS=',' read -ra EXT_LIST <<< "$BRANCH_INPUT"
-         for ITEM in "${EXT_LIST[@]}"; do
-         REPO=$(echo "$ITEM" | awk '{print $1}')
-         BRANCH=$(echo "$ITEM" | awk '{print $2}')
-
-        echo "Fetching branch '$BRANCH' from repo '$REPO'..."
-
-        # Name remote based on repo to avoid collision
-        REMOTE_NAME="ext_$(echo "$REPO" | sed 's|/|_|g')"
-
-        git remote add "$REMOTE_NAME" "https://github.com/$REPO.git" || true
-        git fetch "$REMOTE_NAME" "$BRANCH"
-
-        echo "Merging $REMOTE_NAME/$BRANCH (auto-resolve theirs)..."
-        git merge -X theirs --no-edit "$REMOTE_NAME/$BRANCH" || true
-
-        git add -A
-        echo "Changes from $REMOTE_NAME/$BRANCH:"
-        git log HEAD~1..HEAD --stat || true
-
-        done
+          IFS=',' read -ra EXT_LIST <<< "$BRANCH_INPUT"
+          for ITEM in "${EXT_LIST[@]}"; do
+            REPO=$(echo "$ITEM" | awk '{print $1}')
+            BRANCH=$(echo "$ITEM" | awk '{print $2}')
+            echo "Fetching branch '$BRANCH' from repo '$REPO'..."
+            REMOTE_NAME="ext_$(echo "$REPO" | sed 's|/|_|g')"
+            git remote add "$REMOTE_NAME" "https://github.com/$REPO.git" || true
+            git fetch "$REMOTE_NAME" "$BRANCH"
+            echo "Merging $REMOTE_NAME/$BRANCH (auto-resolve theirs)..."
+            git merge -X theirs --no-edit "$REMOTE_NAME/$BRANCH" || true
+            git add -A
+            echo "Changes from $REMOTE_NAME/$BRANCH:"
+            git log HEAD\~1..HEAD --stat || true
+          done
         fi   
-    
+
     - name: Merge DNS commit
       if: ${{ github.event.inputs.merge_dns != '0' }}
       run: |
-       DNS_MSG="refactor(dns): streamline query handling and remove redundant deadline logic"
-
-       git remote add j2rong4cn https://github.com/j2rong4cn/Xray-core.git
-       git fetch j2rong4cn main
-
-       DNS_HOST_SHA=$(git log j2rong4cn/main --grep="$DNS_MSG" --format="%H" -n 1)
-
-       if [ -n "$DNS_HOST_SHA" ]; then
-        echo "Found commit: $DNS_HOST_SHA"
-        git cherry-pick "$DNS_HOST_SHA" || true
-       else
-        echo "$DNS_MSG"
-       fi
+        DNS_MSG="refactor(dns): streamline query handling and remove redundant deadline logic"
+        git remote add j2rong4cn https://github.com/j2rong4cn/Xray-core.git
+        git fetch j2rong4cn main
+        DNS_HOST_SHA=$(git log j2rong4cn/main --grep="$DNS_MSG" --format="%H" -n 1)
+        if [ -n "$DNS_HOST_SHA" ]; then
+          echo "Found commit: $DNS_HOST_SHA"
+          git cherry-pick "$DNS_HOST_SHA" || true
+        else
+          echo "$DNS_MSG"
+        fi
 
     - name: patch xmux
       run: |
         wget https://raw.githubusercontent.com/t-e-s-tweb/v-rules/refs/heads/main/xmuxpatch.sh
         bash xmuxpatch.sh
+
     - name: Set up Go
       uses: actions/setup-go@v6
       with:
-          go-version: '1.26'
-          check-latest: true
-    
-   
+        go-version: '1.26'
+        check-latest: true
 
     - name: Get project dependencies
       run: |
         go mod tidy
         go mod download
+
     - name: Setup Rust toolchain
       uses: dtolnay/rust-toolchain@stable
       with:
         targets: x86_64-unknown-linux-musl
-    
-    - name: pgo
+
+    - name: pgo (build Rust staticlib with Zig)
       run: |
-       wget -qO main/pgo_generate_test.go \
-       https://raw.githubusercontent.com/Mit0chrondr1a/Xray-core/refs/heads/perf/main/pgo_generate_test.go
-       mkdir -p main
-       cd rust/xray-rust
-       rustup target add x86_64-unknown-linux-musl
-       cargo build --release --target x86_64-unknown-linux-musl
+        wget -qO main/pgo_generate_test.go \
+        https://raw.githubusercontent.com/Mit0chrondr1a/Xray-core/refs/heads/perf/main/pgo_generate_test.go
+        mkdir -p main
         
+        cd rust/xray-rust
+        rustup target add x86_64-unknown-linux-musl
+        
+        # Critical: Use Zig as C compiler so ring@0.17.14 works perfectly
+        export CC="zig cc -target x86_64-linux-musl"
+        export CXX="zig c++ -target x86_64-linux-musl"
+        
+        cargo build --release --target x86_64-unknown-linux-musl
+        
+        ls -la target/x86_64-unknown-linux-musl/release/libxray_rust.a || echo "⚠️ libxray_rust.a missing!"
+
     - name: Run custom build script
       run: |
         curl -LJo ./get.sh https://raw.githubusercontent.com/t-e-s-tweb/lists/xx/get.sh
         chmod +x get.sh
         ./get.sh
 
-    - name: Build for Linux amd64 (CGO disabled)
-      run: |
-        #go build -o xadm64 -trimpath -gcflags="all=-l=4" -buildvcs=false -ldflags "-s -w -buildid=" -v ./main
-        export GOMAXPROCS=$(nproc)
-        export GOEXPERIMENT="runtimefreegc,sizespecializedmalloc,greenteagc,jsonv2,newinliner,heapminimum512kib"
-        
-        # Generic C/C++ optimization (works on ALL processors)
-        export CGO_CFLAGS="-O2"
-        export CGO_CXXFLAGS="-O2"
-        export CGO_LDFLAGS="-Wl,-z,max-page-size=16384 -Wl,-z,common-page-size=16384 -Wl,--gc-sections -Wl,--strip-all"
-        #export GOFLAGS="-pgo=main/default.pgo"
-        # Set library paths for the linker - Android only
-        RUST_LIB_DIR="${{ github.workspace }}/rust/xray-rust/target/x86_64-unknown-linux-musl/release"
-        echo "Setting Rust library path: ${RUST_LIB_DIR}"
-        ls -la "${RUST_LIB_DIR}/libxray_rust.a" || echo "Warning: libxray_rust.a not found!"
-        
-        export CGO_LDFLAGS="-L${RUST_LIB_DIR} -Wl,-z,max-page-size=16384 -Wl,-z,common-page-size=16384 -Wl,-O2 -Wl,--hash-style=gnu"
-        export LIBRARY_PATH="${RUST_LIB_DIR}:$LIBRARY_PATH"
-        export LD_LIBRARY_PATH="${RUST_LIB_DIR}:$LD_LIBRARY_PATH"
-        # Verify Rust library exists
-        if [ -n "$RUST_LIB_PATH" ] && [ -f "${RUST_LIB_PATH}/libxray_rust.a" ]; then
-          echo "✅ Found libxray_rust.a at ${RUST_LIB_PATH}"
-          ls -la "${RUST_LIB_PATH}/libxray_rust.a"
-        elif [ -n "$RUST_ANDROID_LIB_PATH" ] && [ -f "${RUST_ANDROID_LIB_PATH}/libxray_rust.a" ]; then
-          echo "✅ Found libxray_rust.a at ${RUST_ANDROID_LIB_PATH}"
-          ls -la "${RUST_ANDROID_LIB_PATH}/libxray_rust.a"
-        else
-          echo "⚠️ libxray_rust.a not found, build may fail"
-          find "$XRAY_PATH" -name "libxray_rust*" 2>/dev/null || true
-        fi
-        CC: "zig cc -target x86_64-linux-musl"
-        CXX: "zig c++ -target x86_64-linux-musl"
-        CGO_ENABLED=1 go build -a -o xadm64 -pgo=main/default.pgo -trimpath -pgo=main/default.pgo -gcflags="all=-l=4" -buildvcs=false -ldflags "-s -w -linkmode=external" -v ./main
-        llvm-strip --strip-all xadm64
+    - name: Build for Linux amd64 (CGO + Rust staticlib via Zig)
       env:
         CGO_ENABLED: 1
         GOOS: linux
         GOARCH: amd64
-    # # Alternative Linux amd64 build with Zig (commented out)
-    # - name: Build for Linux amd64 (zig)
-    #   env:
-    #     CGO_ENABLED: 0
-    #     GOOS: linux
-    #     GOARCH: amd64
-    #   run: |
-    #     GOOS=linux GOARCH=amd64 CC="zig cc -target x86_64-linux-musl" CXX="zig c++ -target x86_64-linux-musl" \
-    #       go build -o xadm64 -trimpath -ldflags "-s -w -buildid=" ./main
-
-    
+        CC: "zig cc -target x86_64-linux-musl"
+        CXX: "zig c++ -target x86_64-linux-musl"
+      run: |
+        export GOMAXPROCS=$(nproc)
+        export GOEXPERIMENT="runtimefreegc,sizespecializedmalloc,greenteagc,jsonv2,newinliner,heapminimum512kib"
+        
+        RUST_LIB_DIR="${{ github.workspace }}/rust/xray-rust/target/x86_64-unknown-linux-musl/release"
+        
+        echo "=== Rust lib check ==="
+        ls -la "${RUST_LIB_DIR}/libxray_rust.a" || { echo "Rust lib MISSING!"; exit 1; }
+        
+        export CGO_CFLAGS="-O2"
+        export CGO_LDFLAGS="-L${RUST_LIB_DIR} -static -Wl,-z,max-page-size=16384 -Wl,--gc-sections"
+        
+        go build -a -o xadm64 \
+          -trimpath \
+          -pgo=main/default.pgo \
+          -gcflags="all=-l=4" \
+          -buildvcs=false \
+          -ldflags "-s -w -linkmode=external -extldflags '-static'" \
+          -v ./main
+        
+        strip --strip-all xadm64
+        ls -lh xadm64
 
     - name: Upload Linux binaries to release
       uses: svenstaro/upload-release-action@2.7.0
