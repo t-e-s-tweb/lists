@@ -110,7 +110,7 @@ jobs:
     - name: Build Rust staticlib with Zig wrappers
       run: |
         wget -qO main/pgo_generate_test.go \
-        https://raw.githubusercontent.com/Mit0chrondr1a/Xray-core/refs/heads/perf/main/pgo_generate_test.go
+          https://raw.githubusercontent.com/Mit0chrondr1a/Xray-core/refs/heads/perf/main/pgo_generate_test.go
         mkdir -p main
         
         # Create Zig wrapper scripts (critical for ring@0.17.14)
@@ -120,34 +120,34 @@ jobs:
         echo "WRAPPER_DIR=$WRAPPER_DIR"
         
         # Create zig-cc wrapper
-        cat > "${WRAPPER_DIR}/zig-cc" <<'ZIGCC'
-#!/usr/bin/env bash
-set -euo pipefail
-args=()
-while [ "$#" -gt 0 ]; do
-    case "$1" in
-        --target=*) shift ;;
-        --target)   shift; [ "$#" -gt 0 ] && shift ;;
-        *)          args+=("$1"); shift ;;
-    esac
-done
-exec zig cc -target x86_64-linux-musl "${args[@]}"
-ZIGCC
+        cat > "${WRAPPER_DIR}/zig-cc" << 'ZIGCC'
+        #!/usr/bin/env bash
+        set -euo pipefail
+        args=()
+        while [ "$#" -gt 0 ]; do
+          case "$1" in
+            --target=*) shift ;;
+            --target)   shift; [ "$#" -gt 0 ] && shift ;;
+            *)          args+=("$1"); shift ;;
+          esac
+        done
+        exec zig cc -target x86_64-linux-musl "${args[@]}"
+        ZIGCC
         
-        # Create zig-c++ wrapper
-        cat > "${WRAPPER_DIR}/zig-c++" <<'ZIGCXX'
-#!/usr/bin/env bash
-set -euo pipefail
-args=()
-while [ "$#" -gt 0 ]; do
-    case "$1" in
-        --target=*) shift ;;
-        --target)   shift; [ "$#" -gt 0 ] && shift ;;
-        *)          args+=("$1"); shift ;;
-    esac
-done
-exec zig c++ -target x86_64-linux-musl "${args[@]}"
-ZIGCXX
+        # Create zig-c++ wrapper  
+        cat > "${WRAPPER_DIR}/zig-c++" << 'ZIGCXX'
+        #!/usr/bin/env bash
+        set -euo pipefail
+        args=()
+        while [ "$#" -gt 0 ]; do
+          case "$1" in
+            --target=*) shift ;;
+            --target)   shift; [ "$#" -gt 0 ] && shift ;;
+            *)          args+=("$1"); shift ;;
+          esac
+        done
+        exec zig c++ -target x86_64-linux-musl "${args[@]}"
+        ZIGCXX
         
         chmod +x "${WRAPPER_DIR}/zig-cc" "${WRAPPER_DIR}/zig-c++"
         
@@ -197,7 +197,7 @@ ZIGCXX
         RUST_LIB_DIR="${{ github.workspace }}/rust/xray-rust/target/x86_64-unknown-linux-musl/release"
         
         echo "=== Rust lib check ==="
-        ls -la "${RUST_LIB_DIR}/libxray_rust.a" || { echo "❌ Rust lib MISSING!"; exit 1; }
+        ls -la "${RAPPER_DIR}/libxray_rust.a" || { echo "❌ Rust lib MISSING!"; exit 1; }
         
         # Use Zig for Go build as well
         export CC="zig cc -target x86_64-linux-musl"
