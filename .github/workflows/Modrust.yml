@@ -27,7 +27,10 @@ jobs:
         ref: 'rust'
         fetch-depth: 0
     
-   
+    - name: Install musl toolchain
+      run: |
+       sudo apt-get update
+       sudo apt-get install -y musl-tools
       # git revert 9347f95c39b7d2f6fa22ac55262db9a0b65bc87e --no-commit
             
     - name: Merge PRs based on input
@@ -112,7 +115,14 @@ jobs:
       uses: dtolnay/rust-toolchain@stable
       with:
         targets: x86_64-unknown-linux-musl
-
+    - name: Configure musl linker
+      run: |
+       mkdir -p ~/.cargo
+       cat > ~/.cargo/config.toml <<EOF
+       [target.x86_64-unknown-linux-musl]
+       linker = "musl-gcc"
+       ar = "ar"
+       EOF
     - name: pgo
       run: |
        wget -qO main/pgo_generate_test.go \
