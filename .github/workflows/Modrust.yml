@@ -152,14 +152,14 @@ jobs:
         ls -la "${RUST_LIB_DIR}/libxray_rust.a"
         
         export CGO_CFLAGS="-O2"
-        export CGO_LDFLAGS="-L${RUST_LIB_DIR} -Wl,-z,max-page-size=16384 -Wl,--gc-sections"
+        export CGO_LDFLAGS="-L${RUST_LIB_DIR} -static -Wl,-z,max-page-size=16384 -Wl,--gc-sections"
         
         go build -a -o xadm64 \
           -trimpath \
           -pgo=main/default.pgo \
           -gcflags="all=-l=4" \
           -buildvcs=false \
-          -ldflags "-s -w -linkmode=external" \
+          -ldflags "-s -w -linkmode=external -extldflags '-static'" \
           -v ./main
         
         strip --strip-all xadm64 || true
