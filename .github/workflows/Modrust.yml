@@ -139,20 +139,20 @@ jobs:
         ZIG_TARGET="x86_64-linux-musl"
         
         for mode in cc c++; do
-          cat > "\( {WRAPPER_DIR}/zig- \){mode}.sh" <<EOF
-          #!/usr/bin/env bash
-          set -euo pipefail
-          args=()
-          while [ "\$#" -gt 0 ]; do
-            case "\$1" in
-               --target=*) shift ;;
-               --target) shift; [ "\$#" -gt 0 ] && shift ;;
-               *) args+=("\$1"); shift ;;
-            esac
-            done
+        cat > "${WRAPPER_DIR}/zig-${mode}.sh" <<EOF
+        #!/usr/bin/env bash
+        set -euo pipefail
+        args=()
+        while [ "\$#" -gt 0 ]; do
+          case "\$1" in
+            --target=*) shift ;;
+            --target) shift; [ "\$#" -gt 0 ] && shift ;;
+            *) args+=("\$1"); shift ;;
+          esac
+          done
           exec "\${ZIG_BIN}" \${mode} -target "\${ZIG_TARGET}" "\${args[@]}"
           EOF
-          chmod +x "\( {WRAPPER_DIR}/zig- \){mode}.sh"
+        chmod +x "${WRAPPER_DIR}/zig-${mode}.sh"
         done
         
         export CC_x86_64_unknown_linux_musl="${WRAPPER_DIR}/zig-cc.sh"
@@ -189,7 +189,7 @@ jobs:
       run: |
         export GOMAXPROCS=$(nproc)
         export GOEXPERIMENT="runtimefreegc,sizespecializedmalloc,greenteagc,jsonv2,newinliner,heapminimum512kib"
-        export GOAMD64=v3
+        
         
         ZIG_BIN="$(command -v zig)"
         ZIG_TARGET="x86_64-linux-musl"
