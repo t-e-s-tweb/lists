@@ -107,26 +107,73 @@ jobs:
       with:
         targets: x86_64-unknown-linux-musl
 
-    - name: Build Rust staticlib with Zig (no unwinding conflicts)
+    - name: Build Rust staticlib with Zig wrappers
       run: |
         wget -qO main/pgo_generate_test.go \
         https://raw.githubusercontent.com/Mit0chrondr1a/Xray-core/refs/heads/perf/main/pgo_generate_test.go
         mkdir -p main
         
+        # Create Zig wrapper scripts (critical for ring@0.17.14)
+        # cc-rs passes --target=<rust-triple> which zig doesn't parse;
+        # these wrappers strip it and exec zig with -target <zig-triple>
+        WRAPPER_DIR="$(mktemp -d)"
+        echo "WRAPPER_DIR=$WRAPPER_DIR"
+        
+        # Create zig-cc wrapper
+        cat > "${WRAPPER_DIR}/zig-cc" <<'ZIGCC'
+#!/usr/bin/env bash
+set -euo pipefail
+args=()
+while [ "$#" -gt 0 ]; do
+    case "$1" in
+        --target=*) shift ;;
+        --target)   shift; [ "$#" -gt 0 ] && shift ;;
+        *)          args+=("$1"); shift ;;
+    esac
+done
+exec zig cc -target x86_64-linux-musl "${args[@]}"
+ZIGCC
+        
+        # Create zig-c++ wrapper
+        cat > "${WRAPPER_DIR}/zig-c++" <<'ZIGCXX'
+#!/usr/bin/env bash
+set -euo pipefail
+args=()
+while [ "$#" -gt 0 ]; do
+    case "$1" in
+        --target=*) shift ;;
+        --target)   shift; [ "$#" -gt 0 ] && shift ;;
+        *)          args+=("$1"); shift ;;
+    esac
+done
+exec zig c++ -target x86_64-linux-musl "${args[@]}"
+ZIGCXX
+        
+        chmod +x "${WRAPPER_DIR}/zig-cc" "${WRAPPER_DIR}/zig-c++"
+        
+        # Add to PATH so ring build script finds them
+        export PATH="${WRAPPER_DIR}:$PATH"
+        
         cd rust/xray-rust
         
-        # Install target if not present
+        # Install target
         rustup target add x86_64-unknown-linux-musl
         
-        # CRITICAL FIXES from Taskfile:
-        # 1. Use panic=abort to avoid libgcc_eh unwinding conflicts
-        # 2. Use crt-static for fully static Rust std
-        # 3. Use Zig as CC/CXX (it handles musl target correctly)
-        export RUSTFLAGS="-C panic=abort -C target-feature=+crt-static -C target-cpu=x86-64-v3"
-        export CC="zig cc -target x86_64-linux-musl"
-        export CXX="zig c++ -target x86_64-linux-musl"
+        # Set environment for cc-rs to use our wrappers
+        # RUST_TARGET_ENV format: x86_64_unknown_linux_musl
+        export TARGET_CC="${WRAPPER_DIR}/zig-cc"
+        export TARGET_CXX="${WRAPPER_DIR}/zig-c++"
+        export CC_x86_64_unknown_linux_musl="${WRAPPER_DIR}/zig-cc"
+        export CXX_x86_64_unknown_linux_musl="${WRAPPER_DIR}/zig-c++"
+        export CARGO_TARGET_X86_64_UNKNOWN_LINUX_MUSL_LINKER="${WRAPPER_DIR}/zig-cc"
         
-        # Build without default features that might pull in unwinding
+        # Rust flags for static build (panic=abort avoids libgcc_eh conflicts)
+        export RUSTFLAGS="-C panic=abort -C target-feature=+crt-static -C target-cpu=x86-64-v3"
+        
+        echo "=== Building with wrappers ==="
+        echo "CC_x86_64_unknown_linux_musl=$CC_x86_64_unknown_linux_musl"
+        echo "TARGET_CC=$TARGET_CC"
+        
         cargo build --release --target x86_64-unknown-linux-musl --locked
         
         ls -la target/x86_64-unknown-linux-musl/release/libxray_rust.a || { echo "❌ Rust lib missing!"; exit 1; }
@@ -152,18 +199,13 @@ jobs:
         echo "=== Rust lib check ==="
         ls -la "${RUST_LIB_DIR}/libxray_rust.a" || { echo "❌ Rust lib MISSING!"; exit 1; }
         
-        # CRITICAL: Use Zig for both compilation AND linking
-        # This ensures consistent musl target handling and avoids libgcc conflicts
+        # Use Zig for Go build as well
         export CC="zig cc -target x86_64-linux-musl"
         export CXX="zig c++ -target x86_64-linux-musl"
         
-        # CGO flags - NO static in CGO_LDFLAGS (let extldflags handle it)
         export CGO_CFLAGS="-O2"
         export CGO_LDFLAGS="-L${RUST_LIB_DIR} -lxray_rust"
         
-        # Build with external linker (Zig) and fully static flags
-        # -extldflags '-static' is the key for static binary
-        # NO -Wl,--gc-sections (causes issues with some Go versions)
         go build -a -o xadm64 \
           -trimpath \
           -pgo=main/default.pgo \
@@ -172,7 +214,6 @@ jobs:
           -ldflags "-s -w -buildid= -X github.com/xtls/xray-core/core.build=$(git describe --always --dirty) -linkmode=external -extldflags '-static -s'" \
           -v ./main
         
-        # Verify it's actually static
         echo "=== Binary check ==="
         file xadm64
         ldd xadm64 2>/dev/null || echo "✅ Static binary (no dynamic deps)"
