@@ -1,0 +1,187 @@
+name: Build and Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      merge_prs:
+        description: 'Comma-separated PR numbers to merge (e.g., "1,2,3" or "0" for none)'
+        required: false
+        default: ''
+        type: string
+      fetch_branches_from_other:
+        description: 'Comma-separated "user/repo branch" pairs (e.g., "user1/repo1 main,user2/repo2 dev" or "0")'
+        required: false
+        default: '0'
+      merge_dns:
+        description: 'merge DNS commit (0 = none)'
+        required: false
+        default: '0'
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4.1.1
+      with:
+        repository: 'Mit0chrondr1a/Xray-core'
+        ref: 'rust'
+        fetch-depth: 0
+    
+    - name: Install linker
+      run: |
+       sudo apt-get update
+       sudo apt-get install -y binutils clang llvm
+      # git revert 9347f95c39b7d2f6fa22ac55262db9a0b65bc87e --no-commit
+            
+    - name: Merge PRs based on input
+      run: |
+       set -e
+       git config --global user.name "github-actions[bot]"
+       git config --global user.email "github-actions[bot]@users.noreply.github.com"
+       IFS=',' read -ra PR_LIST <<< "${{ github.event.inputs.merge_prs }}"
+          for PR_NUM in "${PR_LIST[@]}"; do
+            echo "Fetching PR #$PR_NUM..."
+            git fetch origin pull/$PR_NUM/head:pr-$PR_NUM
+            echo "Merging PR #$PR_NUM (auto-resolve: theirs)..."
+            git merge -X theirs pr-$PR_NUM || true
+            git add -A
+            echo "Changes from PR #$PR_NUM:"
+            git log HEAD~1..HEAD --stat || true
+          done
+
+    - name: Fetch & merge external branch if requested
+      if: ${{ inputs.fetch_branches_from_other != '0' && inputs.fetch_branches_from_other != '' }}
+      run: |
+        BRANCH_INPUT="${{ github.event.inputs.fetch_branches_from_other }}"
+
+        if [[ "$BRANCH_INPUT" != "0" ]]; then
+        IFS=',' read -ra EXT_LIST <<< "$BRANCH_INPUT"
+         for ITEM in "${EXT_LIST[@]}"; do
+         REPO=$(echo "$ITEM" | awk '{print $1}')
+         BRANCH=$(echo "$ITEM" | awk '{print $2}')
+
+        echo "Fetching branch '$BRANCH' from repo '$REPO'..."
+
+        # Name remote based on repo to avoid collision
+        REMOTE_NAME="ext_$(echo "$REPO" | sed 's|/|_|g')"
+
+        git remote add "$REMOTE_NAME" "https://github.com/$REPO.git" || true
+        git fetch "$REMOTE_NAME" "$BRANCH"
+
+        echo "Merging $REMOTE_NAME/$BRANCH (auto-resolve theirs)..."
+        git merge -X theirs --no-edit "$REMOTE_NAME/$BRANCH" || true
+
+        git add -A
+        echo "Changes from $REMOTE_NAME/$BRANCH:"
+        git log HEAD~1..HEAD --stat || true
+
+        done
+        fi   
+    
+    - name: Merge DNS commit
+      if: ${{ github.event.inputs.merge_dns != '0' }}
+      run: |
+       DNS_MSG="refactor(dns): streamline query handling and remove redundant deadline logic"
+
+       git remote add j2rong4cn https://github.com/j2rong4cn/Xray-core.git
+       git fetch j2rong4cn main
+
+       DNS_HOST_SHA=$(git log j2rong4cn/main --grep="$DNS_MSG" --format="%H" -n 1)
+
+       if [ -n "$DNS_HOST_SHA" ]; then
+        echo "Found commit: $DNS_HOST_SHA"
+        git cherry-pick "$DNS_HOST_SHA" || true
+       else
+        echo "$DNS_MSG"
+       fi
+
+    - name: patch xmux
+      run: |
+        wget https://raw.githubusercontent.com/t-e-s-tweb/v-rules/refs/heads/main/xmuxpatch.sh
+        bash xmuxpatch.sh
+    - name: Set up Go
+      uses: actions/setup-go@v6
+      with:
+          go-version: '1.26'
+          check-latest: true
+    
+   
+
+    - name: Get project dependencies
+      run: |
+        go mod tidy
+        go mod download
+    - name: Setup Rust toolchain
+      uses: dtolnay/rust-toolchain@stable
+      with:
+        targets: x86_64-unknown-linux-gnu
+
+    - name: pgo
+      run: |
+       wget -qO main/pgo_generate_test.go \
+       https://raw.githubusercontent.com/Mit0chrondr1a/Xray-core/refs/heads/perf/main/pgo_generate_test.go
+       mkdir -p main
+       cd xray-rust
+       rustup target add x86_64-unknown-linux-gnu
+       cargo build --release --target x86_64-unknown-linux-gnu
+        
+    - name: Run custom build script
+      run: |
+        curl -LJo ./get.sh https://raw.githubusercontent.com/t-e-s-tweb/lists/xx/get.sh
+        chmod +x get.sh
+        ./get.sh
+
+    - name: Build for Linux amd64 (CGO disabled)
+      run: |
+        #go build -o xadm64 -trimpath -gcflags="all=-l=4" -buildvcs=false -ldflags "-s -w -buildid=" -v ./main
+        export GOMAXPROCS=$(nproc)
+        export GOEXPERIMENT="runtimefreegc,sizespecializedmalloc,greenteagc,jsonv2,newinliner,heapminimum512kib"
+        
+        # Generic C/C++ optimization (works on ALL processors)
+        export CGO_CFLAGS="-O2"
+        export CGO_CXXFLAGS="-O2"
+        export CGO_LDFLAGS="-Wl,-z,max-page-size=16384 -Wl,-z,common-page-size=16384 -Wl,--gc-sections -Wl,--strip-all"
+        #export GOFLAGS="-pgo=main/default.pgo"
+
+        CGO_ENABLED=1 go build -a -o xadm64 -pgo=main/default.pgo -trimpath -pgo=main/default.pgo -gcflags="all=-l=4" -buildvcs=false -ldflags "-s -w -linkmode=external" -v ./main
+        llvm-strip --strip-all xadm64
+      env:
+        CGO_ENABLED: 1
+        GOOS: linux
+        GOARCH: amd64
+    # # Alternative Linux amd64 build with Zig (commented out)
+    # - name: Build for Linux amd64 (zig)
+    #   env:
+    #     CGO_ENABLED: 0
+    #     GOOS: linux
+    #     GOARCH: amd64
+    #   run: |
+    #     GOOS=linux GOARCH=amd64 CC="zig cc -target x86_64-linux-musl" CXX="zig c++ -target x86_64-linux-musl" \
+    #       go build -o xadm64 -trimpath -ldflags "-s -w -buildid=" ./main
+
+    - name: Upload Android binaries to release
+      uses: svenstaro/upload-release-action@2.7.0
+      with:
+        repo_token: ${{ secrets.GITHUB_TOKEN }}
+        file: ./xandroid64*
+        tag: ${{ github.ref }}
+        overwrite: true
+        file_glob: true
+
+    - name: Upload Windows binaries to release
+      uses: svenstaro/upload-release-action@2.7.0
+      with:
+        repo_token: ${{ secrets.GITHUB_TOKEN }}
+        file: ./xadmwin64*
+        tag: ${{ github.ref }}
+        overwrite: true
+        file_glob: true
+
+    - name: Upload Linux binaries to release
+      uses: svenstaro/upload-release-action@2.7.0
+      with:
+        repo_token: ${{ secrets.GITHUB_TOKEN }}
+        file: ./xadm64*
+        tag: ${{ github.ref }}
+        overwrite: true
+        file_glob: true
