@@ -139,7 +139,25 @@ jobs:
         export CGO_CXXFLAGS="-O2"
         export CGO_LDFLAGS="-Wl,-z,max-page-size=16384 -Wl,-z,common-page-size=16384 -Wl,--gc-sections -Wl,--strip-all"
         #export GOFLAGS="-pgo=main/default.pgo"
-
+        # Set library paths for the linker - Android only
+        RUST_LIB_DIR="${{ github.workspace }}/rust/xray-rust/target/x86_64-unknown-linux-gnu/release"
+        echo "Setting Rust library path: ${RUST_LIB_DIR}"
+        ls -la "${RUST_LIB_DIR}/libxray_rust.a" || echo "Warning: libxray_rust.a not found!"
+        
+        export CGO_LDFLAGS="-L${RUST_LIB_DIR} -Wl,-z,max-page-size=16384 -Wl,-z,common-page-size=16384 -Wl,-O2 -Wl,--hash-style=gnu"
+        export LIBRARY_PATH="${RUST_LIB_DIR}:$LIBRARY_PATH"
+        export LD_LIBRARY_PATH="${RUST_LIB_DIR}:$LD_LIBRARY_PATH"
+        # Verify Rust library exists
+        if [ -n "$RUST_LIB_PATH" ] && [ -f "${RUST_LIB_PATH}/libxray_rust.a" ]; then
+          echo "✅ Found libxray_rust.a at ${RUST_LIB_PATH}"
+          ls -la "${RUST_LIB_PATH}/libxray_rust.a"
+        elif [ -n "$RUST_ANDROID_LIB_PATH" ] && [ -f "${RUST_ANDROID_LIB_PATH}/libxray_rust.a" ]; then
+          echo "✅ Found libxray_rust.a at ${RUST_ANDROID_LIB_PATH}"
+          ls -la "${RUST_ANDROID_LIB_PATH}/libxray_rust.a"
+        else
+          echo "⚠️ libxray_rust.a not found, build may fail"
+          find "$XRAY_PATH" -name "libxray_rust*" 2>/dev/null || true
+        fi
         CGO_ENABLED=1 go build -a -o xadm64 -pgo=main/default.pgo -trimpath -pgo=main/default.pgo -gcflags="all=-l=4" -buildvcs=false -ldflags "-s -w -linkmode=external" -v ./main
         llvm-strip --strip-all xadm64
       env:
