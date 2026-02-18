@@ -111,7 +111,7 @@ jobs:
     - name: Setup Rust toolchain
       uses: dtolnay/rust-toolchain@stable
       with:
-        targets: x86_64-unknown-linux-gnu
+        targets: x86_64-unknown-linux-musl
 
     - name: pgo
       run: |
@@ -119,8 +119,8 @@ jobs:
        https://raw.githubusercontent.com/Mit0chrondr1a/Xray-core/refs/heads/perf/main/pgo_generate_test.go
        mkdir -p main
        cd rust/xray-rust
-       rustup target add x86_64-unknown-linux-gnu
-       cargo build --release --target x86_64-unknown-linux-gnu
+       rustup target add x86_64-unknown-linux-musl
+       cargo build --release --target x86_64-unknown-linux-musl
         
     - name: Run custom build script
       run: |
@@ -140,7 +140,7 @@ jobs:
         export CGO_LDFLAGS="-Wl,-z,max-page-size=16384 -Wl,-z,common-page-size=16384 -Wl,--gc-sections -Wl,--strip-all"
         #export GOFLAGS="-pgo=main/default.pgo"
         # Set library paths for the linker - Android only
-        RUST_LIB_DIR="${{ github.workspace }}/rust/xray-rust/target/x86_64-unknown-linux-gnu/release"
+        RUST_LIB_DIR="${{ github.workspace }}/rust/xray-rust/target/x86_64-unknown-linux-musl/release"
         echo "Setting Rust library path: ${RUST_LIB_DIR}"
         ls -la "${RUST_LIB_DIR}/libxray_rust.a" || echo "Warning: libxray_rust.a not found!"
         
