@@ -121,7 +121,7 @@ jobs:
        wget -qO main/pgo_generate_test.go \
        https://raw.githubusercontent.com/Mit0chrondr1a/Xray-core/refs/heads/perf/main/pgo_generate_test.go
        mkdir -p main
-       cd xray-rust
+       cd rust
        rustup target add x86_64-unknown-linux-gnu
        cargo build --release --target x86_64-unknown-linux-gnu
         
