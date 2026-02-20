@@ -1,0 +1,81 @@
+name: Build and Release
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4.1.1
+      with:
+       repository: '0xERR0R/blocky'
+       ref: 'main'
+
+    
+   # - run: sed -i 's|const pathDohQuery = "/dns-query"|const pathDohQuery = "/thanksforallthefish"|g' server/server_endpoints.go
+    - name: Set up Go
+      uses: actions/setup-go@v6
+      with:
+        go-version: '1.26.0-rc.2'
+        cache: true
+        check-latest: true
+    - name: update
+      run: | 
+       sudo apt-get update
+       sudo apt-get install -y clang llvm lld
+    - name: Setup Zig
+      uses: mlugg/setup-zig@v2
+      with:
+       version: master
+    - name: Install dependencies
+      run: |
+          go get github.com/KimMachineGun/automemlimit@latest
+    - name: Add imports to main.go
+      run: |
+        sed -i '/^import/ { N; N; N; s/\(.*\)/&\n\t"github.com\/KimMachineGun\/automemlimit\/memlimit"/; }' main.go
+        sed -i '/import (/ {
+          :a; N; /\n)/!ba;
+          s/)\(.*\)/)\1\
+          \
+          func init() {\
+            memlimit.SetGoMemLimitWithEnv();\
+          }/
+        }' main.go
+  #  - name: build for arm64
+  #    run: env CGO_ENABLED="0" GOOS=linux GOARCH=arm64 CC="zig cc -target aarch64-linux-musl" CXX="zig c++ -target aarch64-linux-musl" go build -o blockyarm64 -trimpath -ldflags "-s -w -buildid=" ./
+    - name: Go mod
+      run: go mod download
+    - name: build for amd64
+      env:
+        CGO_ENABLED: 1
+        GOOS: linux
+        GOARCH: amd64
+        CC: clang
+        CXX: clang++
+      run: |
+        export GOMAXPROCS=$(nproc)
+        export GOEXPERIMENT="runtimefreegc,sizespecializedmalloc,greenteagc,jsonv2,newinliner,heapminimum512kib"
+
+        # Generic C/C++ optimization (works on ALL processors)
+        export CGO_CFLAGS="-O3 -flto=thin -fomit-frame-pointer -ffunction-sections -fdata-sections"
+        export CGO_CXXFLAGS="-O3 -flto=thin -fomit-frame-pointer -ffunction-sections -fdata-sections"
+        export CGO_LDFLAGS="-O3 -flto=thin -fuse-ld=lld"
+        wget -O pgo_generate_test.go https://raw.githubusercontent.com/t-e-s-tweb/v-rules/refs/heads/main/blocky/pgo_generate_test.go
+        go test -run=^$ -bench=BenchmarkPGOWorkload -benchtime=20s -cpuprofile=default.pgo .
+        go build -o blocky -pgo=default.pgo -trimpath -gcflags="all=-l=4" -buildvcs=false -ldflags "-s -w -buildid='' -linkmode=external -extldflags '-fuse-ld=lld -flto=thin -O3 -Wl,--gc-sections -Wl,--build-id=none -Wl,--strip-all'" -v ./
+        llvm-strip --strip-all blocky
+       #GOOS=linux GOARCH=amd64 CC="zig cc -target x86_64-linux-musl" CXX="zig c++ -target x86_64-linux-musl" GOEXPERIMENT=greenteagc go build -o blocky -trimpath -gcflags="all=-l=4" -ldflags "-s -w -buildid=" ./
+    - name: build for freebsd
+      run: env CGO_ENABLED="0" GOOS=freebsd GOARCH=amd64 CC="zig cc -target aarch64-linux-musl" CXX="zig c++ -target aarch64-linux-musl" GOEXPERIMENT=greenteagc go build -o blockyfreebsd -gcflags="all=-l=4" -trimpath -ldflags "-s -w -buildid=" ./
+ 
+    - name: Upload binaries to release
+      uses: svenstaro/upload-release-action@2.7.0
+      with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: ./blocky*
+          tag: ${{ github.ref }}
+          overwrite: true
+          file_glob: true
