@@ -205,7 +205,17 @@ jobs:
         
         export CGO_CFLAGS="-O2"
         export CGO_LDFLAGS="-L${RUST_LIB_DIR} -lxray_rust"
-        
+        echo "Running representative proxy workload benchmark..."
+        go test -run=^$ \
+          -bench=BenchmarkPGOWorkload \
+          -benchtime=15s \
+          -count=1 \
+          -cpuprofile=main/default.pgo \
+          ./main/
+        echo "PGO profile generated:"
+        ls -lh main/default.pgo
+        echo "Verifying profile..."
+        go tool pprof -top main/default.pgo >/dev/null
         go build -a -o xadm64 \
           -trimpath \
           -pgo=main/default.pgo \
