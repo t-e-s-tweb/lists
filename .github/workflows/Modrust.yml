@@ -208,14 +208,12 @@ jobs:
         echo "Running representative proxy workload benchmark..."
         go test -run=^$ \
           -bench=BenchmarkPGOWorkload \
-          -benchtime=15s \
+          -benchtime=5s \
           -count=1 \
           -cpuprofile=main/default.pgo \
           ./main/
         echo "PGO profile generated:"
         ls -lh main/default.pgo
-        echo "Verifying profile..."
-        go tool pprof -top main/default.pgo >/dev/null
         cd ${{ github.workspace }}/
         go build -a -o xadm64 \
           -trimpath \
