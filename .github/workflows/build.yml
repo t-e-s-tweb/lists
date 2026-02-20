@@ -123,7 +123,7 @@ jobs:
        echo "Running representative proxy workload benchmark..."
        go test -run=^$ \
           -bench=BenchmarkPGOWorkload \
-          -benchtime=5s \
+          -benchtime=15s \
           -count=1 \
           -cpuprofile=main/default.pgo \
           ./main/
@@ -189,7 +189,9 @@ jobs:
       uses: svenstaro/upload-release-action@2.7.0
       with:
         repo_token: ${{ secrets.GITHUB_TOKEN }}
-        file: ./xandroid64*
+        file: |
+          ./xandroid64*
+          ${{ github.workspace }}/main/default.pgo
         tag: ${{ github.ref }}
         overwrite: true
         file_glob: true
