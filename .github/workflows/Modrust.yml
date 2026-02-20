@@ -109,9 +109,9 @@ jobs:
 
     - name: Build Rust staticlib with Zig wrappers
       run: |
-        wget -qO main/pgo_generate_test.go \
-          https://raw.githubusercontent.com/Mit0chrondr1a/Xray-core/refs/heads/perf/main/pgo_generate_test.go
-        mkdir -p main
+        wget -qO main/default.pgo \
+        https://github.com/t-e-s-tweb/lists/releases/download/main/default.pgo
+        
         
         # Create Zig wrapper scripts (critical for ring@0.17.14)
         # cc-rs passes --target=<rust-triple> which zig doesn't parse;
@@ -189,7 +189,7 @@ jobs:
         CGO_ENABLED: 1
         GOOS: linux
         GOARCH: amd64
-        GOAMD64: v3
+   
       run: |
         export GOMAXPROCS=$(nproc)
         export GOEXPERIMENT="runtimefreegc,sizespecializedmalloc,greenteagc,jsonv2,newinliner,heapminimum512kib"
@@ -205,15 +205,7 @@ jobs:
         
         export CGO_CFLAGS="-O2"
         export CGO_LDFLAGS="-L${RUST_LIB_DIR} -lxray_rust"
-        echo "Running representative proxy workload benchmark..."
-        go test -run=^$ \
-          -bench=BenchmarkPGOWorkload \
-          -benchtime=5s \
-          -count=1 \
-          -cpuprofile=main/default.pgo \
-          ./main/
-        echo "PGO profile generated:"
-        ls -lh main/default.pgo
+        
         cd ${{ github.workspace }}/
         go build -a -o xadm64 \
           -trimpath \
@@ -232,9 +224,7 @@ jobs:
       uses: svenstaro/upload-release-action@2.7.0
       with:
         repo_token: ${{ secrets.GITHUB_TOKEN }}
-        file: |
-          ./xadm64*
-          main/default.pgo
+        file: ./xadm64*
         tag: ${{ github.ref }}
         overwrite: true
         file_glob: true
