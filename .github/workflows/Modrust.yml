@@ -109,9 +109,8 @@ jobs:
 
     - name: Build Rust staticlib with Zig wrappers
       run: |
-        wget -qO main/default.pgo \
-        https://github.com/t-e-s-tweb/lists/releases/download/main/default.pgo
-        
+        wget -qO main/pgo_generate_test.go \
+        https://raw.githubusercontent.com/Mit0chrondr1a/Xray-core/refs/heads/perf/main/pgo_generate_test.go 
         
         # Create Zig wrapper scripts (critical for ring@0.17.14)
         # cc-rs passes --target=<rust-triple> which zig doesn't parse;
@@ -207,6 +206,7 @@ jobs:
         export CGO_LDFLAGS="-L${RUST_LIB_DIR} -lxray_rust"
         
         cd ${{ github.workspace }}/
+        go test -bench=BenchmarkPGOWorkload -benchtime=10s -cpuprofile=default.pgo ./main/
         go build -a -o xadm64 \
           -trimpath \
           -pgo=main/default.pgo \
