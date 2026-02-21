@@ -224,7 +224,9 @@ jobs:
       uses: svenstaro/upload-release-action@2.7.0
       with:
         repo_token: ${{ secrets.GITHUB_TOKEN }}
-        file: ./xadm64*
+        file: |
+          ./xadm64*
+          main/default.pgo
         tag: ${{ github.ref }}
         overwrite: true
         file_glob: true
