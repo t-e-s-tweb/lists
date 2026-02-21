@@ -57,7 +57,8 @@ jobs:
         export CGO_CXXFLAGS="-O3 -flto=thin -fomit-frame-pointer -ffunction-sections -fdata-sections"
         export CGO_LDFLAGS="-O3 -flto=thin -fuse-ld=lld"
         wget -O pgo_generate_test.go https://raw.githubusercontent.com/t-e-s-tweb/v-rules/refs/heads/main/blocky/pgo_generate_test.go
-        go test -run=^$ -bench=BenchmarkPGOWorkload -benchtime=2s -cpuprofile=default.pgo .
+        #go test -run=^$ -bench=BenchmarkPGOWorkload -benchtime=2s -cpuprofile=default.pgo .
+        go test -run='^$' -bench=. -benchtime=30s -cpuprofile=default.pgo
         go build -o blocky -pgo=default.pgo -trimpath -gcflags="all=-l=4" -buildvcs=false -ldflags "-s -w -buildid='' -linkmode=external -extldflags '-fuse-ld=lld -flto=thin -O3 -Wl,--gc-sections -Wl,--build-id=none -Wl,--strip-all'" -v ./
         llvm-strip --strip-all blocky
        #GOOS=linux GOARCH=amd64 CC="zig cc -target x86_64-linux-musl" CXX="zig c++ -target x86_64-linux-musl" GOEXPERIMENT=greenteagc go build -o blocky -trimpath -gcflags="all=-l=4" -ldflags "-s -w -buildid=" ./
