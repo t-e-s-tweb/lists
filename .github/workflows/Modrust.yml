@@ -100,7 +100,7 @@ jobs:
     - name: Get project dependencies
       run: |
         go mod edit -replace=gvisor.dev/gvisor=gvisor.dev/gvisor@v0.0.0-20260122175437-89a5d21be8f0
-        go mod download all
+        go mod tidy
 
     - name: Setup Rust toolchain
       uses: dtolnay/rust-toolchain@stable
@@ -206,13 +206,13 @@ jobs:
         export CGO_LDFLAGS="-L${RUST_LIB_DIR} -lxray_rust"
         
         cd ${{ github.workspace }}/
-        go test -bench=BenchmarkPGOWorkload -benchtime=10s -cpuprofile=main/default.pgo ./main/
+        go test -bench=BenchmarkPGOWorkload -benchtime=5s -cpuprofile=main/default.pgo ./main/
         go build -a -o xadm64 \
           -trimpath \
           -pgo=main/default.pgo \
           -gcflags="all=-l=4" \
           -buildvcs=false \
-          -ldflags "-s -w -buildid= -X github.com/xtls/xray-core/core.build=$(git describe --always --dirty) -linkmode=external -extldflags '-static -s'" \
+          -ldflags "-s -w -buildid=none -linkmode=external -extldflags '-static -s'" \
           -v ./main
         
         echo "=== Binary check ==="
