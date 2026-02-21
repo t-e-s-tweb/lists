@@ -103,8 +103,7 @@ jobs:
     - name: Get project dependencies
       run: |
         go mod edit -replace=gvisor.dev/gvisor=gvisor.dev/gvisor@v0.0.0-20260122175437-89a5d21be8f0
-        go mod tidy
-        go mod download
+        go mod download all
     - name: pgo
       run: |
        wget -qO main/pgo_generate_test.go \
@@ -114,7 +113,7 @@ jobs:
        echo "Running representative proxy workload benchmark..."
        go test -run=^$ \
           -bench=BenchmarkPGOWorkload \
-          -benchtime=60s \
+          -benchtime=20s \
           -count=1 \
           -cpuprofile=main/default.pgo \
           ./main/
