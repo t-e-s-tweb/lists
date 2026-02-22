@@ -206,7 +206,7 @@ jobs:
         export CGO_LDFLAGS="-L${RUST_LIB_DIR} -lxray_rust"
         
         cd ${{ github.workspace }}/
-        go test -bench=BenchmarkPGOWorkload -benchtime=5s -cpuprofile=main/default.pgo ./main/
+        go test -bench=BenchmarkPGOWorkload -benchtime=60s -cpuprofile=main/default.pgo ./main/
         go build -a -o xadm64 \
           -trimpath \
           -pgo=main/default.pgo \
