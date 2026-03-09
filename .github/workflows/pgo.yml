@@ -102,7 +102,7 @@ jobs:
 
     - name: Get project dependencies
       run: |
-        go mod edit -replace=gvisor.dev/gvisor=gvisor.dev/gvisor@v0.0.0-20260122175437-89a5d21be8f0
+        #go mod edit -replace=gvisor.dev/gvisor=gvisor.dev/gvisor@v0.0.0-20260122175437-89a5d21be8f0
         go mod download all
     - name: pgo
       run: |
