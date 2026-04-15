@@ -114,19 +114,19 @@ jobs:
       run: |
         go mod tidy
         go mod download
-    - name: pgo
-      run: |
-       wget -qO main/pgo_generate_test.go \
-       https://raw.githubusercontent.com/Mit0chrondr1a/Xray-core/refs/heads/perf/main/pgo_generate_test.go
-       mkdir -p main
+   # - name: pgo
+    #  run: |
+ #      wget -qO main/pgo_generate_test.go \
+     #  https://raw.githubusercontent.com/Mit0chrondr1a/Xray-core/refs/heads/perf/main/pgo_generate_test.go
+     #  mkdir -p main
 
-       echo "Running representative proxy workload benchmark..."
-       go test -run=^$ \
-          -bench=BenchmarkPGOWorkload \
-          -benchtime=3s \
-          -count=1 \
-          -cpuprofile=main/default.pgo \
-          ./main/
+      # echo "Running representative proxy workload benchmark..."
+      # go test -run=^$ \
+       #   -bench=BenchmarkPGOWorkload \
+         # -benchtime=3s \
+       # #  -count=1 \
+       #   -cpuprofile=main/default.pgo \
+        #  ./main/
         
 
     - name: Build for Android arm64 (with NDK and CGO enabled)
