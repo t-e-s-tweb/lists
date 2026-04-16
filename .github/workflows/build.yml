@@ -26,7 +26,10 @@ jobs:
         repository: 'XTLS/Xray-core'
         ref: 'main'
         fetch-depth: 0
-    
+    - name: patch
+      run: |
+        sed -i 's/case "ios", "android":/case "ios", "android", "linux":/' common/geodata/domain_matcher.go
+        grep -A 5 "func newDomainMatcherFactory" common/geodata/domain_matcher.go
     - name: Install linker
       run: |
        sudo apt-get update
