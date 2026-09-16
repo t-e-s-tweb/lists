@@ -29,10 +29,10 @@ jobs:
           go mod vendor
 
 
-    - name: Update main.go
-      run: |
-        sed -i '/^import/ { N; N; N; s/\(.*\)/&\n\t"github.com\/KimMachineGun\/automemlimit\/memlimit"/; }' cmd/cloudflared/main.go
-        sed -i '/import (/ { :a; N; /\n)/!ba; s/)\(.*\)/)\1\n\nfunc init() {\n    memlimit.SetGoMemLimitWithEnv();\n}/ }' cmd/cloudflared/main.go
+    #- name: Update main.go
+      #run: |
+        #sed -i '/^import/ { N; N; N; s/\(.*\)/&\n\t"github.com\/KimMachineGun\/automemlimit\/memlimit"/; }' cmd/cloudflared/main.go
+        #sed -i '/import (/ { :a; N; /\n)/!ba; s/)\(.*\)/)\1\n\nfunc init() {\n    memlimit.SetGoMemLimitWithEnv();\n}/ }' cmd/cloudflared/main.go
 
  #   - name: build for arm64
   #    run: env CGO_ENABLED="0" GOOS=linux GOARCH=arm64 CC="zig cc -target aarch64-linux-musl" CXX="zig c++ -target aarch64-linux-musl" go build -mod=mod -o cloudyarm64 -trimpath -ldflags "-s -w -buildid=" ./cmd/cloudflared
