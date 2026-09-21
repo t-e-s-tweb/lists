@@ -139,14 +139,14 @@ jobs:
         export CXX=$(realpath android-ndk-*/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android24-clang++)
         export GOEXPERIMENT="runtimefreegc,sizespecializedmalloc,greenteagc,jsonv2,newinliner,heapminimum512kib"
        
-        go build -o xandroid64 -trimpath -gcflags="all=-l=4" -buildvcs=false -ldflags "-s -w -buildid= -checklinkname=0" -v ./main
+        go build -o xandroid64 -tags http2legacy -trimpath -gcflags="all=-l=4" -buildvcs=false -ldflags "-s -w -buildid= -checklinkname=0" -v ./main
       env:
         CGO_ENABLED: 1
         GOOS: android
         GOARCH: arm64
     - name: Build for Windows amd64 (non-console)
       run: |
-        GOEXPERIMENT=greenteagc go build -o xadmwin64.exe -trimpath -gcflags="all=-l=4" -buildvcs=false -ldflags="-H windowsgui -s -w -buildid=" -v ./main
+        GOEXPERIMENT=greenteagc go build -o xadmwin64.exe -tags http2legacy -trimpath -gcflags="all=-l=4" -buildvcs=false -ldflags="-H windowsgui -s -w -buildid=" -v ./main
       env:
         CGO_ENABLED: 0
         GOOS: windows
@@ -169,7 +169,7 @@ jobs:
         export CGO_LDFLAGS="-Wl,-z,max-page-size=16384 -Wl,-z,common-page-size=16384 -Wl,--gc-sections -Wl,--strip-all"
         #export GOFLAGS="-pgo=main/default.pgo"
 
-        CGO_ENABLED=1 go build -a -o xadm64 -trimpath -gcflags="all=-l=4" -buildvcs=false -ldflags "-s -w -linkmode=external -checklinkname=0" -v ./main
+        CGO_ENABLED=1 go build -a -o xadm64 -tags http2legacy -trimpath -gcflags="all=-l=4" -buildvcs=false -ldflags "-s -w -linkmode=external -checklinkname=0" -v ./main
         llvm-strip --strip-all xadm64
       env:
         CGO_ENABLED: 1
