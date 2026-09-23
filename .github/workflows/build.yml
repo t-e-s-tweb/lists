@@ -42,8 +42,8 @@ jobs:
             echo "Fetching PR #$PR_NUM..."
             git fetch origin pull/$PR_NUM/head:pr-$PR_NUM
             echo "Merging PR #$PR_NUM (auto-resolve: theirs)..."
-            git cherry-pick -X theirs 71488bc
-            #git merge -X theirs pr-$PR_NUM || true
+            #git cherry-pick -X theirs 71488bc
+            git merge -X theirs pr-$PR_NUM || true
             git add -A
             echo "Changes from PR #$PR_NUM:"
             git log HEAD~1..HEAD --stat || true
