@@ -110,6 +110,11 @@ jobs:
       run: |
         go mod tidy
         go mod download
+
+    - name: buffer patch
+      run: | 
+        sed -i 's/pipe.WithSizeLimit(16\*1024)/pipe.WithSizeLimit(1024*1024)/' app/proxyman/inbound/worker.go
+        grep -n 'WithSizeLimit' app/proxyman/inbound/worker.go
    # - name: pgo
     #  run: |
  #      wget -qO main/pgo_generate_test.go \
