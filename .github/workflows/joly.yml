@@ -40,7 +40,7 @@ jobs:
        IFS=',' read -ra PR_LIST <<< "${{ github.event.inputs.merge_prs }}"
           for PR_NUM in "${PR_LIST[@]}"; do
             echo "Fetching PR #$PR_NUM..."
-            git fetch origin pull/$PR_NUM/head:pr-$PR_NUM
+            git fetch https://github.com/XTLS/Xray-core.git pull/$PR_NUM/head:pr-$PR_NUM
             echo "Merging PR #$PR_NUM (auto-resolve: theirs)..."
             #git cherry-pick -X theirs 71488bc
             git merge -X theirs pr-$PR_NUM || true
