@@ -164,24 +164,7 @@ jobs:
     #     GOOS=linux GOARCH=amd64 CC="zig cc -target x86_64-linux-musl" CXX="zig c++ -target x86_64-linux-musl" \
     #       go build -o xadm64 -trimpath -ldflags "-s -w -buildid=" ./main
 
-    - name: Upload Android binaries to release
-      uses: svenstaro/upload-release-action@2.7.0
-      with:
-        repo_token: ${{ secrets.GITHUB_TOKEN }}
-        file: ./xandroid64*
-        tag: ${{ github.ref }}
-        overwrite: true
-        file_glob: true
-
-    - name: Upload Windows binaries to release
-      uses: svenstaro/upload-release-action@2.7.0
-      with:
-        repo_token: ${{ secrets.GITHUB_TOKEN }}
-        file: ./xadmwin64*
-        tag: ${{ github.ref }}
-        overwrite: true
-        file_glob: true
-
+    
     - name: Upload Linux binaries to release
       uses: svenstaro/upload-release-action@2.7.0
       with:
