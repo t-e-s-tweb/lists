@@ -149,7 +149,7 @@ jobs:
         #export GOFLAGS="-pgo=main/default.pgo"
 
         CGO_ENABLED=1 go build -a -o xadm64 -tags http2legacy -trimpath -gcflags="all=-l=4" -buildvcs=false -ldflags "-s -w -linkmode=external -checklinkname=0" -v ./main
-        llvm-strip --strip-all xadm64
+        #llvm-strip --strip-all xadm64
       env:
         CGO_ENABLED: 1
         GOOS: linux
