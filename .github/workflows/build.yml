@@ -139,9 +139,9 @@ jobs:
         # Setup CC and CXX for arm64 android
         export CC=$(realpath android-ndk-*/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android24-clang)
         export CXX=$(realpath android-ndk-*/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android24-clang++)
-        export GOEXPERIMENT="runtimefreegc,sizespecializedmalloc,greenteagc,jsonv2,newinliner,heapminimum512kib"
+        export GOEXPERIMENT="jsonv2,newinliner"
        
-        go build -o xandroid64 -tags grpcnotrace,http2legacy -trimpath -gcflags="all=-l=4" -buildvcs=false -ldflags "-s -w -buildid= -checklinkname=0 -extldflags=-Wl,--pack-dyn-relocs=android" -v ./main
+        go build -o xandroid64 -tags http2legacy -trimpath -gcflags="all=-l=4" -buildvcs=false -ldflags "-s -w -buildid= -checklinkname=0" -v ./main
       env:
         CGO_ENABLED: 1
         GOOS: android
@@ -166,12 +166,12 @@ jobs:
         export GOEXPERIMENT="jsonv2,newinliner"
         
         # Generic C/C++ optimization (works on ALL processors)
-        export CGO_CFLAGS="-O3"
-        export CGO_CXXFLAGS="-O3"
+        export CGO_CFLAGS="-O2"
+        export CGO_CXXFLAGS="-O2"
         export CGO_LDFLAGS="-Wl,-z,max-page-size=16384 -Wl,-z,common-page-size=16384 -Wl,--gc-sections -Wl,--strip-all"
         #export GOFLAGS="-pgo=main/default.pgo"
 
-        CGO_ENABLED=1 go build -a -o xadm64 -tags grpcnotrace,http2legacy -trimpath -gcflags="all=-l=4" -buildvcs=false -ldflags "-s -w -linkmode=external -checklinkname=0 -extldflags=-Wl,-z,pack-relative-relocs" -v ./main
+        CGO_ENABLED=1 go build -o xadm64 -tags http2legacy -trimpath -gcflags="all=-l=4" -buildvcs=false -ldflags "-s -w -linkmode=external -checklinkname=0" -v ./main
         llvm-strip --strip-all xadm64
       env:
         CGO_ENABLED: 1
