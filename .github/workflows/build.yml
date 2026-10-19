@@ -101,7 +101,7 @@ jobs:
       with:
           go-version: '1.27'
           check-latest: true
-          cache: false
+          cache: true
     
     - name: Setup Zig
       uses: xyzzylabs/setup-zig@v1
@@ -172,7 +172,7 @@ jobs:
         export CGO_LDFLAGS="-Wl,-z,max-page-size=16384 -Wl,-z,common-page-size=16384 -Wl,--gc-sections -Wl,--strip-all"
         #export GOFLAGS="-pgo=main/default.pgo"
 
-        CGO_ENABLED=1 go build -o xadm64 -tags http2legacy -trimpath -gcflags="all=-l=4" -buildvcs=false -ldflags "-s -w -linkmode=external -checklinkname=0" -v ./main
+        CGO_ENABLED=1 go build -o xadm64 -tags grpcnotrace,http2legacy -trimpath -gcflags="all=-l=4" -buildvcs=false -ldflags "-s -w -linkmode=external -checklinkname=0 -extldflags=-Wl,-z,pack-relative-relocs" -v ./main
         llvm-strip --strip-all xadm64
       env:
         CGO_ENABLED: 1
