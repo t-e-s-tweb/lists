@@ -142,7 +142,7 @@ jobs:
         export CXX=$(realpath android-ndk-*/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android24-clang++)
         export GOEXPERIMENT="jsonv2,newinliner"
        
-        go build -o xandroid64 -tags http2legacy -trimpath -gcflags="all=-l=4" -buildvcs=false -ldflags "-s -w -buildid= -checklinkname=0" -v ./main
+        go build -o xandroid64 -tags http2legacy -trimpath -gcflags="all=-l=4" -buildvcs=false -ldflags "-s -w -buildid= -checklinkname=0 -extldflags=-Wl,--pack-dyn-relocs=android" -v ./main
       env:
         CGO_ENABLED: 1
         GOOS: android
